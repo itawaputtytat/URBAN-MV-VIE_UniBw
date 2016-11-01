@@ -47,6 +47,7 @@ source("fun/cut2dist.R")
 source("fun/computeVar_dist2steermax.R")
 source("fun/rbindPassings.R")
 source("fun/convertGPS2XYDistances.R")
+source("fun/computeRadius_batch.R")
 outputDone(step = T)
 
 
@@ -74,6 +75,8 @@ outputDone(step = T)
 # Processing --------------------------------------------------------------
 
 outputString("Attaching libraries ...")
+library(zoo) ## Interpolation, rollmean
+library(tripack) ## Compute path curvature
 library(geosphere) ## Computing gps-distances
 library(TraMineR) # Sequence analysis
 library(TraMineRextras) # Sequence analysis

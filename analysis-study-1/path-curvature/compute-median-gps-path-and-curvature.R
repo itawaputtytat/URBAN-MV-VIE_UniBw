@@ -3,7 +3,7 @@
 
 ## Smoothing path
 set4path <- c()
-set4path$sxx <- 5
+set4path$sxx <- 9
 set4path$row4origin <- 501
 set4path$kwidth <- 75
 #set4path$kwidth <- 100
@@ -296,6 +296,7 @@ plot(curv, type = "l", main = "Adjusted curvature ^ (1/3)")
 
 ## Reset of plot settings
 par(mfrow = c(1, 1))
+
 
 
 # Visualise curvature -----------------------------------------------------

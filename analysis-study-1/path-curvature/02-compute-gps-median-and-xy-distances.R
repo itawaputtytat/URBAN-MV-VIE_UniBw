@@ -3,7 +3,7 @@
 
 set4proc <- c()
 set4proc$objname <- "can_sxx_dist_m_rnd1.intrpl.cut.rb"
-set4proc$sxx <- 5
+set4proc$sxx <- 1
 set4proc$plot <- T
 set4proc$smooth_gps$loess_span <- 1/10
 set4proc$smooth_gps$degree <- 1
@@ -16,7 +16,7 @@ set4proc$kwidth <- 75
 
 # Compute GPS path median -------------------------------------------------
 
-dat2proc <- 
+dat4med <- 
   get(set4proc$objname) %>% 
   filter(sxx == set4proc$sxx) %>% 
   group_by(sxx, sxx_dist_m_rnd1) %>%
@@ -29,7 +29,8 @@ dat2proc <-
 # Visualise GPS path median -----------------------------------------------
 
 if(set4proc$plot == T)
-  plot(dat2proc$gps_lon_med, dat2proc$gps_lat_med, type = "l")
+  plot(dat4med$gps_lon_med, dat4med$gps_lat_med, type = "l")
+
 
 
 # Smooth GPS path ---------------------------------------------------------
@@ -39,21 +40,19 @@ if(set4proc$plot == T)
 
 ## Compute model and predict values for longitudinal GPS values
 model <-
-  loess(dat2proc$gps_lon_med ~
-          c(1:length(dat2proc$gps_lon_med)),
+  loess(dat4med$gps_lon_med ~ c(1:length(dat4med$gps_lon_med)),
         span = set4proc$smooth_gps$loess_span, 
         degree = set4proc$smooth_gps$degree)
 
-gps_lon_med_smooth <- predict(model, c(1:length(dat2proc$gps_lon_med)))
+gps_lon_med_smooth <- predict(model, c(1:length(dat4med$gps_lon_med)))
 
 ## Compute model and predict values for lateral GPS values
 model <-
-  loess(dat2proc$gps_lat_med ~
-          c(1:length(dat2proc$gps_lat_med)),
+  loess(dat4med$gps_lat_med ~ c(1:length(dat4med$gps_lat_med)),
         span = set4proc$smooth_gps$loess_span, 
         degree = set4proc$smooth_gps$degree)
 
-gps_lat_med_smooth <- predict(model, c(1:length(dat2proc$gps_lat_med)))
+gps_lat_med_smooth <- predict(model, c(1:length(dat4med$gps_lat_med)))
 
 
 
@@ -61,8 +60,8 @@ gps_lat_med_smooth <- predict(model, c(1:length(dat2proc$gps_lat_med)))
 
 if(set4proc$plot == T) {
   
-  plot(dat2proc$gps_lon_med,
-       dat2proc$gps_lat_med,
+  plot(dat4med$gps_lon_med,
+       dat4med$gps_lat_med,
        type = "l")
   lines(gps_lon_med_smooth,
         gps_lat_med_smooth,
@@ -81,19 +80,10 @@ gps_lonlat_med_smooth_xyconv <-
 
 
 
-# Visualise xy-distance ---------------------------------------------------
-
-if(set4proc$plot == T) 
-  plot(gps_lonlat_med_smooth_xyconv$gps_lon_conv,
-       gps_lonlat_med_smooth_xyconv$gps_lat_conv, 
-       type = "l", xlim = set4proc$xlim, ylim = set4proc$ylim)
-
-
-
 # Merge data and new values -----------------------------------------------
 
-dat2proc <- 
-  rbind(dat2proc,
+dat4med <- 
+  cbind(dat4med,
         gps_lon_med_smooth,
         gps_lat_med_smooth,
         gps_lon_med_smooth_xyconv = 
@@ -106,20 +96,27 @@ dat2proc <-
 # Filter data (for special cases) -----------------------------------------
 
 if(set4proc$sxx == 9)
-  dat2proc <- dat2proc %>% filter(gps_lat_med_smooth_xyconv > -35)
+  dat4med <- dat4med %>% filter(gps_lat_med_smooth_xyconv > -35)
 
-if(set4proc$sxx == 14) {
-  dat2proc <-
-    data.frame(
-      gps_lon_med_smooth_xyconv =
-        rollmean(dat2proc$gps_lon_med_smooth_xyconv, set4proc$kwidth),
-      gps_lat_med_smooth_xyconv =
-        rollmean(dat2proc$gps_lat_med_smooth_xyconv, set4proc$kwidth))
-} else {
-  dat2proc <-
-    data.frame(gps_lon.dist.rollavg = dat2proc$gps_lon_med_smooth_xyconv,
-               gps_lat.dist.rollavg = dat2proc$gps_lat_med_smooth_xyconv)
-}
+# if(set4proc$sxx == 14) {
+#   dat4med <-
+#     data.frame(
+#       gps_lon_med_smooth_xyconv =
+#         rollmean(dat4med$gps_lon_med_smooth_xyconv, set4proc$kwidth),
+#       gps_lat_med_smooth_xyconv =
+#         rollmean(dat4med$gps_lat_med_smooth_xyconv, set4proc$kwidth))
+# } else {
+#   dat4med <-
+#     data.frame(gps_lon.dist.rollavg = dat4med$gps_lon_med_smooth_xyconv,
+#                gps_lat.dist.rollavg = dat4med$gps_lat_med_smooth_xyconv)
+# }
 
 
+
+# Visualise xy-distance ---------------------------------------------------
+
+if(set4proc$plot == T) 
+  plot(gps_lonlat_med_smooth_xyconv$gps_lon_conv,
+       gps_lonlat_med_smooth_xyconv$gps_lat_conv, 
+       type = "l", xlim = set4proc$xlim, ylim = set4proc$ylim)
 
