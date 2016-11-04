@@ -1,16 +1,17 @@
-convertGPS2XYDistances <- function(dat4gps_lon, 
-                                   dat4gps_lat,
-                                   row4origin) {
+convertGPS2XYDistances <- function(dat2proc, set4proc) {
+  
+  gps_lon <- dat2proc[, 1]
+  gps_lat <- dat2proc[, 2]
   
   ## Determine origin
   ## Depending on setting (1 = real origin, 501 = critdist)
-  origin <- data.frame(gps_lon = dat4gps_lon[row4origin], 
-                       gps_lat = dat4gps_lat[row4origin])
+  origin <- data.frame(gps_lon = gps_lon[set4proc$row4origin], 
+                       gps_lat = gps_lat[set4proc$row4origin])
   
   ## Create data copy
   #dat2proc.gps_med.conv <- dat2proc.gps_med
-  dat <- data.frame(gps_lon = dat4gps_lon, 
-                    gps_lat = dat4gps_lat)
+  dat <- data.frame(gps_lon = gps_lon, 
+                    gps_lat = gps_lat)
   
   ## Conversion
   dat <-
@@ -37,4 +38,13 @@ convertGPS2XYDistances <- function(dat4gps_lon,
     mutate(gps_lon = NULL,
            gps_lat = NULL) %>% 
     data.frame()
+  
+  if (set4proc$plot == T)
+    plot(dat$gps_lon_conv,
+         dat$gps_lat_conv,
+         type = "l", 
+         xlim = set4proc$xlim, 
+         ylim = set4proc$ylim)
+  
+  return(dat)
 }

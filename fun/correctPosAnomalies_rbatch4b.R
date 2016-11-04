@@ -1,11 +1,10 @@
-correctPositionAnomalies <- function (prefix,
-                                      suffix,
-                                      sxx2corr = NA,
-                                      colname4ref = "sxx_dist_m_rnd1",
-                                      dbconn = "dbconn_study1",
-                                      save2src = T) {
+correctPositionAnomalies_batch4rb <- function (dat2proc,
+                                               colname4ref = "sxx_dist_m_rnd1",
+                                               dbconn = "dbconn_study1",
+                                               save2src = T) {
 
   outputFunProc(R)
+  objname <- deparse(substitute(dat2proc))
 
   ## Select cases to correct (coded with "correction" in database)
   ## ... and create column: Direction for correction (plus or minus)
@@ -17,31 +16,12 @@ correctPositionAnomalies <- function (prefix,
   ## Load data for correction (average or median positions)
   pos_stat <- dbGetSrc(dbconn, "t_sxx_steerangle_deg_max_stats")
 
-  ## Find data names of interest and filter for needed corrections
-  objnames <- findObjNames(c(prefix, suffix, "intrpl"), "cut", output = F)
-  filter4sxx <- sapply(objnames, function(x)
-    substr(x, nchar("can") + 3, nchar("can") + 4))
-  filter4sxx <- as.numeric(filter4sxx)
-
-  ## Pre-filter correction data depending on sxx2corr
-  if (!is.na(sxx2corr))
-    cases2corr <- cases2corr %>% filter(sxx %in% sxx2corr) else
-      ## Otherwise: Filter by relevant objectnames
-      cases2corr <- cases2corr %>% filter(sxx %in% filter4sxx)
-
-  if (nrow(cases2corr) == 0) stop("No cases to be corrected")
-  
   for(rownr in 1:nrow(cases2corr)) {
     
     ## Get meta info
     s <- cases2corr$sxx[rownr]
     r <- cases2corr$round_txt[rownr]
     sid <- cases2corr$subid[rownr]
-    
-    ## Load situation specific data
-    objname2proc <- objnames[grepl(sprintf("s%02d", s), objnames)]
-    outputString(paste("* Processing:", objname2proc))
-    dat2proc <- get(objname2proc, env = .GlobalEnv)
     
     ## Compute and remember correction value (statistical position)
     #val4corr <-
@@ -78,33 +58,9 @@ correctPositionAnomalies <- function (prefix,
     dat2proc[rowfinder, colname4ref] <- 
       dat2proc[rowfinder, colname4ref] + pos_ind_dev
     
-    ## Assign changes to old dataname
-    if (save2src == T) assign(objname2proc, dat2proc, env = .GlobalEnv)
-    
   }
-  
-  if (save2src == F) return(dat2proc)
-  
-  # for(s in unique(cases2corr$sxx)) {
-  #   round_list <- unique(cases2corr$round_txt[cases2corr$sxx == s])
-  # 
-  #   ## Compute individual correction
-  #   for(r in round_list) {
-  #     
-  #     subid_list <- unique(cases2corr$subid[cases2corr$sxx == s &
-  #                                             cases2corr$round_text == r])
-  #     
-  #     for(s in subid_list) {
-  # 
-  #       cat("subid", sid, "\n")
-  #       cat("round:", r, "\n")
-  #       cat("\n")
-  #       
-  #      
-  #     } ## subid
-  #   } ## round_txt
-
-
-  #} ## sxx
-
+  ## Assign changes to old dataname
+  if (save2src == T) 
+    assign(objname, dat2proc, env = .GlobalEnv) else 
+      return(dat2proc)
 }

@@ -30,10 +30,11 @@ set4query$var_data <-
 
 # Data processing ---------------------------------------------------------
 
-dbGetQuery_batch("dbconn_study1", set4query, rb = T)
-intrpldf_batch4rb(can_sxx_dist_m_rnd1_rb, suffix = ".intrpl", outputFlag = T)
-correctPositionAnomalies_batch4rb(can_sxx_dist_m_rnd1_rb)
-cut2dist_batch4rb(can_sxx_dist_m_rnd1_rb.intrpl, "sxx_dist_m_rnd1", set4query$dist1, set4query$dist2)
-
-
+dbQueryLoop("dbconn_study1", set4query)
+renameVar_sxx()
+intrpldf_batch()
+correctPositionAnomalies("can", "dist_m_rnd1")
+cut2dist("can", "dist_m_rnd1", "sxx_dist_m_rnd1", set4query$dist1, set4query$dist2)
 computeVar_dist2steermax("can", "dist_m_rnd1")
+can_sxx_dist_m_rnd1.intrpl.cut.rb <- rbindPassings("can", "dist_m_rnd1.intrpl.cut")
+

@@ -1,4 +1,4 @@
-renameVar_sxx <- function () {
+renameVar_sxx <- function (name4df) {
 
   outputFunProc(R)
 

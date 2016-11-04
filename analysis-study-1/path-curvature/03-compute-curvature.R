@@ -1,9 +1,9 @@
 
 # Preparatory settings ----------------------------------------------------
 
-set4proc$objname <- "dat4med"
-set4proc$colname4gps_lon_conv <- "gps_lon_med_smooth_xyconv"
-set4proc$colname4gps_lat_conv <- "gps_lat_med_smooth_xyconv"
+set4proc$objname <- "test"
+set4proc$colname4gps_lon_conv <- "lon_med_smooth"
+set4proc$colname4gps_lat_conv <- "lat_med_smooth"
 set4proc$seqlength <- 3 ## Must be uneven
 ## Info: Resulting number of radius values will be nrow(data) - seglength
 
@@ -85,14 +85,14 @@ yellowness <- ( curv - min(curv) ) / ( max(curv) - min(curv) )
 plotcurv <-
   ggplot() +
   geom_path(data = dat4curv_curv,
-            aes(x = gps_lon_med_smooth_xyconv,
-                y = gps_lat_med_smooth_xyconv),
+            aes_string(x = set4proc$colname4gps_lon_conv,
+                       y = set4proc$colname4gps_lat_conv),
             size = 2) +
   geom_path(data = dat4curv_curv,
-            aes(x = gps_lon_med_smooth_xyconv,
-                y = gps_lat_med_smooth_xyconv,
+            aes_string(x = set4proc$colname4gps_lon_conv,
+                       y = set4proc$colname4gps_lat_conv),
                 #alpha = curv.rollmean),
-                alpha = yellowness^(1/3.5)),
+                alpha = yellowness^(1/3.5),
             #alpha = test.z3),
             colour = "yellow",
             #alpha = dat2plottest$curv.adj.rollmean.z,

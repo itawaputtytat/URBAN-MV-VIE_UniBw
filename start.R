@@ -19,13 +19,13 @@ dbInit()
 outputDone(step = T)
 
 outputString("Attaching functions ...")
-source("fun/dbConnect.R")
+source("fun/dbConnect_operator.R")
 source("fun/dbQueryString.R")
-source("fun/dbQueryLoop.R") ## Can be renamed to study1 similar to next
+source("fun/dbGetQuery_batch.R") ## Can be renamed to study1 similar to next
 outputDone(step = T)
 
 outputString("Connecting to database ...")
-connect2db()
+dbConnect_operator()
 outputDone(step = T)
 
 
@@ -36,7 +36,7 @@ outputSectionTitle("Data manipulation")
 outputString("Attaching libraries ...")
 library(dplyr)
 library(tidyr)
-library(reshape2)
+library(reshape2) ## Still necessary?
 outputDone(step = T)
 
 outputString("Attaching functions ...")

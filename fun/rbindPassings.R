@@ -14,7 +14,8 @@ rbindPassings <- function(prefix,
   outputFunProc(R)
 
   ## Find object names ----
-  objnames <- findObjNames(c(prefix, suffix, "intrpl", "cut"), "rb", output = F)
+  #objnames <- findObjNames(c(prefix, suffix, "intrpl", "cut"), "rb", output = F)
+  objnames <- findObjNames(c(prefix, suffix), "rb", output = F)
 
   outputString("* Processing:")
   dat <- invisible( lapply(objnames, function(objname) {

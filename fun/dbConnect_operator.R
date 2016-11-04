@@ -1,4 +1,4 @@
-connect2db <- function() {
+dbConnect_operator <- function() {
   outputFunProc(R)
 
   ## Adjust settings
@@ -15,5 +15,6 @@ connect2db <- function() {
   set4db <<- set4db
 
   ## Connect to database
-  dbConn(set4db, set4db$name_short)
+  dbConnect_set4db(set4db, set4db$name_short)
+  outputDone()
 }

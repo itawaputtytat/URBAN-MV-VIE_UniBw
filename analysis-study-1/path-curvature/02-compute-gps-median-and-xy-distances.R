@@ -2,11 +2,15 @@
 # Preparatory settings ----------------------------------------------------
 
 set4proc <- c()
-set4proc$objname <- "can_sxx_dist_m_rnd1.intrpl.cut.rb"
-set4proc$sxx <- 1
+set4proc$objname <- "can_sxx_dist_m_rnd1_rb.intrpl.cut"
+set4proc$sxx <- 9
+set4proc$groupby <- c("sxx", "sxx_dist_m_rnd1")
 set4proc$plot <- T
+set4proc$plotdev <- T
+set4proc$plotmap <- T
+set4proc$plotmap_zoom <- 19
 set4proc$smooth_gps$loess_span <- 1/10
-set4proc$smooth_gps$degree <- 1
+set4proc$smooth_gps$degree <- 1 ## 1 is enough, see s14
 set4proc$row4origin <- 501
 set4proc$xlim <- c(-50, 50)
 set4proc$ylim <- c(-50, 50)
@@ -15,15 +19,43 @@ set4proc$kwidth <- 75
 
 
 # Compute GPS path median -------------------------------------------------
-
+ 
 dat4med <- 
   get(set4proc$objname) %>% 
   filter(sxx == set4proc$sxx) %>% 
-  group_by(sxx, sxx_dist_m_rnd1) %>%
+  group_by_(.dots = lapply(set4proc$groupby, as.symbol)) %>%
   summarise(gps_lon_med = median(gps_long),
             gps_lat_med = median(gps_lat)) %>%
   data.frame()
 
+# if (set4proc$sxx == 9) 
+#   dat4med <- 
+#   get(set4proc$objname) %>% 
+#   filter(sxx == set4proc$sxx) %>% 
+#   ## Following filters were results from exact data exploration
+#   ## But there is no better solution
+#   # filter(subid != 2 & round_txt != "normal") %>% 
+#   # filter(subid != 26 & !round_txt %in% c("normal", "stress")) %>% 
+#   # mutate(gps_long = ifelse(sxx_dist_m_rnd1 <= 0 & gps_long < 11.64993, 11.64993, gps_long)) %>% 
+#   # mutate(gps_lat = ifelse(sxx_dist_m_rnd1 <= 0 & gps_lat < 48.10323, 48.10323, gps_lat)) %>% 
+#   group_by(sxx, sxx_dist_m_rnd1) %>%
+#   summarise(gps_lon_med = median(gps_long),
+#             gps_lat_med = median(gps_lat)) %>%
+#   data.frame()
+
+
+# ggplot(can_sxx_dist_m_rnd1_rb.intrpl.cut %>%
+#          # filter(sxx == 9, subid %in% c(26))) +
+#          filter(sxx == set4proc$sxx)) +
+#          #filter(subid != 2 & round_txt != "normal") %>%
+#          #filter(subid != 26 & !round_txt %in% c("normal", "stress"))) +
+#   geom_path(aes(x = gps_long,
+#                 y = gps_lat,
+#                 group = subid)) +
+#   facet_grid(.~round_txt)
+## Insight
+## normal 2
+## normal stress 26
 
 
 # Visualise GPS path median -----------------------------------------------
@@ -35,31 +67,49 @@ if(set4proc$plot == T)
 
 # Smooth GPS path ---------------------------------------------------------
 
-## Smooth GPS-variables seperatly! 
+## Smooth GPS-variables seperatly!
 ## Reason: values can't be projected as real smoothing function
 
-## Compute model and predict values for longitudinal GPS values
-model <-
-  loess(dat4med$gps_lon_med ~ c(1:length(dat4med$gps_lon_med)),
-        span = set4proc$smooth_gps$loess_span, 
+dat4model_lon_med <- dat4med$gps_lon_med
+dat4model_lat_med <- dat4med$gps_lat_med
+
+if(set4proc$sxx == 9) {
+  dat4model_lon_med <- dat4model_lon_med[224:length(dat4model_lon_med)]
+  dat4model_lat_med <- dat4model_lat_med[227:length(dat4model_lat_med)]
+
+  ## See figures for better understanding
+  #plot(dat4model_lat_med[226:250], type = "l", ylim = c(48.1029, 48.1031))
+  #plot(dat4model_lat_med[227:250], type = "l", ylim = c(48.1029, 48.1031))
+  #plot(dat4model_lon_med[223:250], type = "l", ylim = c(11.6498, 11.65))
+  #plot(dat4model_lon_med[224:250], type = "l", ylim = c(11.6498, 11.65))
+}
+
+# Compute model
+model.loess_gps_lon_med_smooth <-
+  loess(dat4model_lon_med ~ c(1:length(dat4model_lon_med)),
+        span = set4proc$smooth_gps$loess_span,
         degree = set4proc$smooth_gps$degree)
 
-gps_lon_med_smooth <- predict(model, c(1:length(dat4med$gps_lon_med)))
-
-## Compute model and predict values for lateral GPS values
-model <-
-  loess(dat4med$gps_lat_med ~ c(1:length(dat4med$gps_lat_med)),
-        span = set4proc$smooth_gps$loess_span, 
+model.loess_gps_lat_med_smooth <-
+  loess(dat4model_lat_med ~ c(1:length(dat4model_lat_med)),
+        span = set4proc$smooth_gps$loess_span,
         degree = set4proc$smooth_gps$degree)
 
-gps_lat_med_smooth <- predict(model, c(1:length(dat4med$gps_lat_med)))
+# Predict values
+gps_lon_med_smooth <-
+  predict(model.loess_gps_lon_med_smooth,
+          c(1:length(dat4med$gps_lon_med)))
+
+gps_lat_med_smooth <-
+  predict(model.loess_gps_lat_med_smooth,
+          c(1:length(dat4med$gps_lat_med)))
 
 
 
 # Visualise smooth gps path -----------------------------------------------
 
 if(set4proc$plot == T) {
-  
+
   plot(dat4med$gps_lon_med,
        dat4med$gps_lat_med,
        type = "l")
@@ -71,52 +121,69 @@ if(set4proc$plot == T) {
 
 
 
+# Visualise smooth deviations from median ---------------------------------
+
+if (set4proc$plotdev)
+  plot(abs(model.loess_gps_lon_med_smooth$residuals), 
+       abs(model.loess_gps_lat_med_smooth$residuals), type = "l",
+       xlim = c(0, 0.00001),
+       ylim = c(0, 0.00001))
+#plot(abs(model.loess_gps_lon_med_smooth$residuals), type = "l")
+#plot(abs(model.loess_gps_lat_med_smooth$residuals), type = "l")
+
+
+
+
+# Visualise results on map image ------------------------------------------
+
+if (set4proc$plotmap) {
+  
+  filepath <- file.path("ressources/study1/map-images")
+  filelist <- list.files(filepath)
+  filelist <- filelist[grepl("RData", filelist)]
+  filename <- filelist[grepl(sprintf("s%02d", set4proc$sxx), filelist)]
+  load(file.path(filepath, filename))
+
+    testplot <- 
+      ggmap(map) + 
+      geom_path(data = data.frame(lon = gps_lon_med_smooth, lat = gps_lat_med_smooth),
+                aes(x = lon, y = lat),
+                colour = "red",
+                size = 1.5) +
+      geom_path(data = dat4med,
+                aes(x = gps_lon_med, y = gps_lat_med),
+                colour = "yellow")
+    
+    plot(testplot)
+}
+
+
+
 # Convert GPS data to xy distances ----------------------------------------
 
-gps_lonlat_med_smooth_xyconv <-
-  convertGPS2XYDistances(gps_lon_med_smooth, 
-                         gps_lat_med_smooth, 
+gps_med_smooth_xyconv <-
+  convertGPS2XYDistances(gps_lon_med_smooth,
+                         gps_lat_med_smooth,
                          set4proc$row4origin)
-
-
-
-# Merge data and new values -----------------------------------------------
-
-dat4med <- 
-  cbind(dat4med,
-        gps_lon_med_smooth,
-        gps_lat_med_smooth,
-        gps_lon_med_smooth_xyconv = 
-          gps_lonlat_med_smooth_xyconv$gps_lon_conv,
-        gps_lat_med_smooth_xyconv = 
-          gps_lonlat_med_smooth_xyconv$gps_lat_conv)
-
-
-
-# Filter data (for special cases) -----------------------------------------
-
-if(set4proc$sxx == 9)
-  dat4med <- dat4med %>% filter(gps_lat_med_smooth_xyconv > -35)
-
-# if(set4proc$sxx == 14) {
-#   dat4med <-
-#     data.frame(
-#       gps_lon_med_smooth_xyconv =
-#         rollmean(dat4med$gps_lon_med_smooth_xyconv, set4proc$kwidth),
-#       gps_lat_med_smooth_xyconv =
-#         rollmean(dat4med$gps_lat_med_smooth_xyconv, set4proc$kwidth))
-# } else {
-#   dat4med <-
-#     data.frame(gps_lon.dist.rollavg = dat4med$gps_lon_med_smooth_xyconv,
-#                gps_lat.dist.rollavg = dat4med$gps_lat_med_smooth_xyconv)
-# }
 
 
 
 # Visualise xy-distance ---------------------------------------------------
 
-if(set4proc$plot == T) 
-  plot(gps_lonlat_med_smooth_xyconv$gps_lon_conv,
-       gps_lonlat_med_smooth_xyconv$gps_lat_conv, 
+if(set4proc$plot == T)
+  plot(gps_med_smooth_xyconv$gps_lon_conv,
+       gps_med_smooth_xyconv$gps_lat_conv,
        type = "l", xlim = set4proc$xlim, ylim = set4proc$ylim)
 
+
+
+# # Merge data and new values -----------------------------------------------
+# 
+# dat4med <-
+#   cbind(dat4med,
+#         gps_lon_med_smooth,
+#         gps_lon_med_smooth,
+#         gps_lon_med_smooth_xyconv =
+#           gps_med_smooth_xyconv$gps_lon_conv,
+#         gps_lat_med_smooth_xyconv =
+#           gps_med_smooth_xyconv$gps_lat_conv)
