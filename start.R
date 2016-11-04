@@ -41,13 +41,20 @@ outputDone(step = T)
 
 outputString("Attaching functions ...")
 source("fun/renameVar_sxx.R")
+source("fun/renameVar_sxx_V2.R")
 source("fun/intrpldf_batch.R")
+source("fun/intrpldf_batch4rb.R")
 source("fun/correctPosAnomalies.R")
+source("fun/correctPosAnomalies_rbatch4b.R")
 source("fun/cut2dist.R")
+source("fun/cut2dist_batch4rb.R")
 source("fun/computeVar_dist2steermax.R")
 source("fun/rbindPassings.R")
+source("fun/computeSmoothGPSMedian.R")
 source("fun/convertGPS2XYDistances.R")
 source("fun/computeRadius_batch.R")
+source("fun/computeCurvature.R")
+
 outputDone(step = T)
 
 
