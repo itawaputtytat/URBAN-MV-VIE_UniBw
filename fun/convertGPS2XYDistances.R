@@ -39,12 +39,14 @@ convertGPS2XYDistances <- function(dat2proc, set4proc) {
            gps_lat = NULL) %>% 
     data.frame()
   
-  if (set4proc$plot == T)
+  if (set4proc$plot == T) {
+    catWSepLine("Visualising: GPS path in metres")
+    
     plot(dat$gps_lon_conv,
          dat$gps_lat_conv,
          type = "l", 
          xlim = set4proc$xlim, 
          ylim = set4proc$ylim)
-  
+  }
   return(dat)
 }

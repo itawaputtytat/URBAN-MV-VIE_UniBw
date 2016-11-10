@@ -37,3 +37,38 @@ cut2dist_batch4rb(can_sxx_dist_m_rnd1_rb.intrpl, "sxx_dist_m_rnd1", set4query$di
 
 
 computeVar_dist2steermax("can", "dist_m_rnd1")
+
+
+
+# Save data ---------------------------------------------------------------
+
+## Path and name settings
+filepath <-
+  file.path("analysis-study-1",
+            "path-curvature")
+filename <- "path-curvature.Rdata"
+
+## Processing of path and name
+datetoday <- format(Sys.time(), "%y%m%d_%H%M%S")
+filename <- paste(datetoday, filename, sep = "_")
+filepath <- file.path(filepath, filename)
+
+## Find object names
+objlist <- findObjNames(c("can", "cut"))
+
+## Save objects
+save(list = objlist, file = filepath)
+
+
+
+# Load data ---------------------------------------------------------------
+
+# ## Path and name settings
+# filepath <-
+#   file.path("analysis-study-1",
+#             "path-curvature")
+# filename <- "160203_can_s01-s18_dist_m_rnd1_intrpl__dist_-50-to-50_intro-normal-stress__gps.Rdata"
+
+## Load objects
+#load(file.path(filepath, filename))
+load(file.choose())

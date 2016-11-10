@@ -20,5 +20,10 @@ computeRadius_batch <- function(x, y, seqlength, output = T) {
     if (output) 
       outputString(paste("Current rows:", paste(rows, collapse = " | ")))
   }
-  return(coll)
+  
+  dummy_values <- rep(max(coll), floor(seqlength/2))
+  dat2proc <- c(dummy_values, coll, dummy_values)
+  #dat2proc <- c(coll, dummy_values, dummy_values)
+  #dat2proc <- coll
+  return(dat2proc)
 }

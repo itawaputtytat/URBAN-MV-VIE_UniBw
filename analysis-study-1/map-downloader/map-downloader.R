@@ -6,7 +6,7 @@ set4proc$sxx <- c(1:18,99)
 #set4proc$sxx <- 1
 set4proc$dbconn <- "dbconn_study1"
 set4proc$name4src <- "t_sxx_gps2"
-set4proc$zoom <- 19
+set4proc$zoom <- 18
 set4proc$scale <- 2
 set4proc$maptype <- "satellite"
 set4proc$source <- "google"

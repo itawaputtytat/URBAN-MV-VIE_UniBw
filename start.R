@@ -71,6 +71,7 @@ library(GGally) #for parallel coordinates
 library(plotly)
 
 outputString("Attaching functions ...")
+source("fun/getMapImage.R")
 #source("fun/adjustGrid.R")
 #source("plotting/adjustMarginGtable.R")
 #source("fun/adjustPanel.R")
