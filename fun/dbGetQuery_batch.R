@@ -21,10 +21,11 @@ dbGetQuery_batch <- function(dbconn, set4query, rb = T, ...) {
     dat2proc <- dbGetQuery(get(dbconn), query, stringsAsFactors = F)
     
     if (rb) {
-      passing <-  paste(sprintf("s%02d", sxx), 
-                        dat2proc$round_txt, 
-                        sprintf("subid%02d", dat2proc$subid),
-                        sep = "_")
+      passing <-  
+        paste(sprintf("s%02d", sxx), 
+              dat2proc$round_txt, 
+              sprintf("subject%02d", dat2proc[, set4idnames$active$subject]),
+              sep = "_")
       dat2proc <- cbind(passing, sxx, dat2proc)
       dat2proc <- renameVar_sxx2(dat2proc)
       datcoll <<- rbind(datcoll, dat2proc)
@@ -38,7 +39,8 @@ dbGetQuery_batch <- function(dbconn, set4query, rb = T, ...) {
   outputDone()
   if (rb) {
     name4obj <- 
-      paste(set4query$save2df_prefix, "sxx", set4query$distvar, "rb", sep = "_")
+      #paste(set4query$save2df_prefix, "sxx", set4query$distvar, "rb", sep = "_")
+      set4query$src
     assign(name4obj, datcoll, envir = .GlobalEnv)
   }
 }

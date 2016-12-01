@@ -11,17 +11,17 @@ dbQueryString <- function(sxx) {
   SELECT <- paste("SELECT", SELECT, sep = "\n")
 
   ## FROM
-  FROM <- paste("FROM", set4query$src, sep = "\n")
+  FROM <- paste("FROM", paste(set4query$src, sprintf("s%02d", set4query$sxx), sep = "_"), sep = "\n")
 
   ## WHERE
-  WHERE_subid <- paste(paste("subid", "=", set4query$subid), collapse = " OR\n")
+  WHERE_subject_id <- paste(paste(set4idnames$active$subject, "=", set4query$subject), collapse = " OR\n")
   WHERE_round_txt <-
     paste(paste("round_txt", "= '", set4query$round, "'", sep = ""),
           collapse = " OR\n")
 
   ## INSERT FILTER HERE !!!!!
-  temp_dist1 <- set4query$dist1 - set4query$distpuffer
-  temp_dist2 <- set4query$dist2 + set4query$distpuffer
+  temp_dist1 <- set4query$dist1 - set4query$distbuffer
+  temp_dist2 <- set4query$dist2 + set4query$distbuffer
 
   WHERE_dist2sxx <-
     paste(
@@ -31,7 +31,7 @@ dbQueryString <- function(sxx) {
             temp_dist2, sep = ""),
       sep = " AND\n")
 
-  WHERE <- c(WHERE_subid, WHERE_round_txt, WHERE_dist2sxx)
+  WHERE <- c(WHERE_subject_id, WHERE_round_txt, WHERE_dist2sxx)
   WHERE <- paste("(\n", WHERE, "\n)", collapse = " AND ", sep = "")
   WHERE <- paste("WHERE", WHERE, sep = "\n")
 

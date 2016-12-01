@@ -1,4 +1,5 @@
 
+
 # Version info ------------------------------------------------------------
 
 library(puttytat4R)
@@ -10,21 +11,25 @@ outputString("* Framework V3.1", type = "message")
 # Database ----------------------------------------------------------------
 
 outputSectionTitle("Database")
-outputString("Attaching libraries ...")
+outputString("* Attaching libraries ...")
 library(RPostgreSQL)
 outputDone(step = T)
 
-outputString("Initialise set4db")
+outputString("* Initialise set4db")
 dbInit()
 outputDone(step = T)
 
-outputString("Attaching functions ...")
+outputString("* Initialise set4idnames")
+source("settings/set4idnames.R")
+outputDone(step = T)
+
+outputString("* Attaching functions ...")
 source("fun/dbConnect_operator.R")
 source("fun/dbQueryString.R")
 source("fun/dbGetQuery_batch.R") ## Can be renamed to study1 similar to next
 outputDone(step = T)
 
-outputString("Connecting to database ...")
+outputString("* Connecting to database ...")
 dbConnect_operator()
 outputDone(step = T)
 
@@ -32,8 +37,8 @@ outputDone(step = T)
 
 # Data manipulation -------------------------------------------------------
 
-outputSectionTitle("Data manipulation")
-outputString("Attaching libraries ...")
+outputSectionTitle("* Data manipulation")
+outputString("* Attaching libraries ...")
 library(dplyr)
 library(tidyr)
 library(reshape2) ## Still necessary?
@@ -44,8 +49,8 @@ source("fun/renameVar_sxx.R")
 source("fun/renameVar_sxx_V2.R")
 source("fun/intrpldf_batch.R")
 source("fun/intrpldf_batch4rb.R")
-source("fun/correctPosAnomalies.R")
-source("fun/correctPosAnomalies_rbatch4b.R")
+source("fun/corrPosAnom.R")
+source("fun/corrPosAnom_batch4rb.R")
 source("fun/cut2dist.R")
 source("fun/cut2dist_batch4rb.R")
 source("fun/computeVar_dist2steermax.R")
@@ -54,15 +59,21 @@ source("fun/computeSmoothGPSMedian.R")
 source("fun/convertGPS2XYDistances.R")
 source("fun/computeRadius_batch.R")
 source("fun/computeCurvature.R")
+source("fun/smoothWithLoess.R")
+source("fun/clust2groups.R")
+source("fun/clust2groups_hclust.R")
+source("fun/clust2groups_kmeans.R")
+source("fun/clust2groups_kmeanspp.R")
 
 outputDone(step = T)
+
 
 
 # Visualisation -----------------------------------------------------------
 
 outputSectionTitle("Visualisation")
 
-outputString("Attaching libraries ...")
+outputString("* Attaching libraries ...")
 library(ggplot2)
 library(gridExtra) # e.g. grid.arrange()
 require(googleVis) # e.g. mouse over plots in browser
@@ -70,7 +81,7 @@ library(ggmap) # GPS-plots
 library(GGally) #for parallel coordinates
 library(plotly)
 
-outputString("Attaching functions ...")
+outputString("* Attaching functions ...")
 source("fun/getMapImage.R")
 #source("fun/adjustGrid.R")
 #source("plotting/adjustMarginGtable.R")
@@ -82,7 +93,7 @@ outputDone(step = T)
 
 # Processing --------------------------------------------------------------
 
-outputString("Attaching libraries ...")
+outputString("* Attaching libraries ...")
 library(zoo) ## Interpolation, rollmean
 library(tripack) ## Compute path curvature
 library(geosphere) ## Computing gps-distances
@@ -141,6 +152,8 @@ select <- dplyr::select
 
 outputString("* Deactivate outputFunProc")
 .outputFunProc_status(F, print = T)
+#.outputFunProc_status(T, print = T)
+
 
 
 # Loading data ------------------------------------------------------------
@@ -148,7 +161,7 @@ outputString("* Deactivate outputFunProc")
 outputSectionTitle("Pre-loading data ...")
 
 ## Initialise t_sxx_critdist
-if (set4db$studyselect == 1) {
+if (set4db$input == 1) {
   outputString("* Loading t_sxx_critdist from database ...")
   t_sxx_critdist <- dbGetSrc("dbconn_study1", "t_sxx_critdist")
 }

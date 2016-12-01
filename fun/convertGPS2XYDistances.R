@@ -1,12 +1,11 @@
-convertGPS2XYDistances <- function(dat2proc, set4proc) {
+convertGPS2XYDistances <- function(gps_lon, gps_lat, row4origin, showplot = F) {
   
-  gps_lon <- dat2proc[, 1]
-  gps_lat <- dat2proc[, 2]
+  outputFunProc(R)
   
   ## Determine origin
   ## Depending on setting (1 = real origin, 501 = critdist)
-  origin <- data.frame(gps_lon = gps_lon[set4proc$row4origin], 
-                       gps_lat = gps_lat[set4proc$row4origin])
+  origin <- data.frame(gps_lon = gps_lon[row4origin], 
+                       gps_lat = gps_lat[row4origin])
   
   ## Create data copy
   #dat2proc.gps_med.conv <- dat2proc.gps_med
@@ -39,7 +38,7 @@ convertGPS2XYDistances <- function(dat2proc, set4proc) {
            gps_lat = NULL) %>% 
     data.frame()
   
-  if (set4proc$plot == T) {
+  if (showplot == T) {
     catWSepLine("Visualising: GPS path in metres")
     
     plot(dat$gps_lon_conv,

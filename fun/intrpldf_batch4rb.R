@@ -9,7 +9,7 @@ intrpldf_batch4rb <- function(dat2proc,
   dat2proc.intrpl <- invisible( lapply(unique(dat2proc$passing), function(p) {
 
     if(outputFlag)
-      outputString(paste("* Processing passing:", p))
+      outputString(paste("* Processing:", p))
 
     ## Get data and run inteprolation
     dat_temp <- dat2proc %>% filter(passing == p)
@@ -17,7 +17,7 @@ intrpldf_batch4rb <- function(dat2proc,
     return(dat.intrpl)
 
   }) ) %>% dplyr::bind_rows()
-
+  
   objname <- paste(deparse(substitute(dat2proc)), suffix, sep = "")
   assign(objname, dat2proc.intrpl, env = .GlobalEnv)
 

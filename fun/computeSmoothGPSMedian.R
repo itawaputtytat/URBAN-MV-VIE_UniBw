@@ -1,11 +1,34 @@
-computeSmoothGPSMedian <- function(sxx_nr, set4proc, pause = F) {
+computeSmoothGPSMedian <- function(dat2proc, sxx_nr, set4proc, pause = F) {
+  
+  outputFunProc(R)
+  
+  ## Remove cases with GPS anomalies
+  ## (might have incorrect GPS interpolation)
+  cases2corr <-
+    dbGetSrc("dbconn_study1", "v_steerangle_pos_correction") %>%
+    filter(grepl("correction", consequence))
+  
+  cases2corr <-
+    paste(paste(sprintf("s%02d", cases2corr$sxx),
+                cases2corr$round_txt,
+                sprintf("subject%02d", cases2corr$subid), sep = "_"))
+  
+  dat4med <-
+    dat2proc %>% 
+    filter(sxx == sxx_nr) %>% 
+    filter(!passing %in% cases2corr)
+    
+  ## Filter data in case of sxx == 9
+  if (sxx_nr == 9)
+    dat4med <-
+      dat4med %>%
+    filter(sxx_dist_m_rnd1 >= -25) ## -25 explored using visualisation
   
   ## Compute GPS path median
   dat4med <- 
-    get(set4proc$objname, envir = .GlobalEnv) %>% 
-    filter(sxx == sxx_nr) %>% 
+    dat4med %>% 
     group_by_(.dots = lapply(set4proc$groupby, as.symbol)) %>%
-    summarise(lon_med = median(gps_long),
+    summarise(lon_med = median(gps_lon),
               lat_med = median(gps_lat)) %>%
     data.frame()
   
@@ -13,24 +36,15 @@ computeSmoothGPSMedian <- function(sxx_nr, set4proc, pause = F) {
   lon_med <- dat4med$lon_med
   lat_med <- dat4med$lat_med
   
-  cat("\n")
-  print(length(lon_med))
-  cat("\n")
-  print(length(lat_med))
-  
-  
-  if (sxx_nr == 9) {
-    ## See protoyping for explanation
-    lon_med <- lon_med[224:length(lon_med)]
-    #lat_med <- lat_med[227:length(lat_med)]
-    lat_med <- lat_med[224:length(lat_med)]
-  } 
-  
-  cat("\n")
-  print(length(lon_med))
-  cat("\n")
-  print(length(lat_med))
-  
+  ## Backup filter
+  # if (sxx_nr == 9) {
+  # #lon_med <- lon_med[224:length(lon_med)]
+  # #lat_med <- lat_med[224:length(lat_med)]
+  #   rowfinder <- which(lat_med > 48.1033) #48.1025
+  #   lon_med <- lon_med[rowfinder]
+  #   lat_med <- lat_med[rowfinder]
+  # }
+
   ## Load smoothing parameters from database
   par4loess <- 
     dbGetSrc("dbconn_study1", "t_sxx_gps2") %>% 
@@ -39,27 +53,15 @@ computeSmoothGPSMedian <- function(sxx_nr, set4proc, pause = F) {
   set4proc$smooth_gps$loess_span <- par4loess$loess_span
   set4proc$smooth_gps$degree <- par4loess$loess_degree
   
-  ## Compute model
-  model_lon <-
-    loess(lon_med ~ c(1:length(lon_med)),
-          span = set4proc$smooth_gps$loess_span,
-          degree = set4proc$smooth_gps$degree)
+  model_lon <- smoothWithLoess(dat4model_lon_med, 
+                               set4proc$smooth_gps$loess_span, 
+                               set4proc$smooth_gps$degree)
+  model_lat <- smoothWithLoess(dat4model_lat_med, 
+                               set4proc$smooth_gps$loess_span, 
+                               set4proc$smooth_gps$degree)
+  lon_med_smooth <- model_lon$fitted
+  lat_med_smooth <- model_lat$fitted
   
-  model_lat <-
-    loess(lat_med ~ c(1:length(lat_med)),
-          span = set4proc$smooth_gps$loess_span,
-          degree = set4proc$smooth_gps$degree)
-  
-  ## Predict values
-  # lon_med_smooth <- predict(model_lon, c(1:length(dat4med$lon_med)) )
-  # lat_med_smooth <- predict(model_lat, c(1:length(dat4med$lat_med)) )
-  lon_med_smooth <- predict(model_lon, c(1:length(lon_med)) )
-  lat_med_smooth <- predict(model_lat, c(1:length(lat_med)) )
-  
-  cat("\n")
-  print(length(lon_med_smooth))
-  cat("\n")
-  print(length(lat_med_smooth))
   
   # if (!is.na(set4proc$rollmean_k)) {
   # #if (set4proc$sxx == 14) {
@@ -140,8 +142,6 @@ computeSmoothGPSMedian <- function(sxx_nr, set4proc, pause = F) {
   
   
   return(data.frame(
-    #gps_lon_med = lon_med, 
-    #gps_lat_med = lat_med, 
     gps_lon = lon_med_smooth, 
     gps_lat = lat_med_smooth))
 }

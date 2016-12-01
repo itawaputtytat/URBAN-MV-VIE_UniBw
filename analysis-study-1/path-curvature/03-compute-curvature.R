@@ -1,11 +1,12 @@
 
 # Preparatory settings ----------------------------------------------------
 
-set4proc$objname <- "test"
-set4proc$colname4gps_lon_conv <- "lon_med_smooth"
-set4proc$colname4gps_lat_conv <- "lat_med_smooth"
+set4proc$objname <- "dat4med"
+set4proc$colname4gps_lon_conv <- "gps_lon_med_smooth_xyconv"
+set4proc$colname4gps_lat_conv <- "gps_lat_med_smooth_xyconv"
 set4proc$seqlength <- 3 ## Must be uneven
 ## Info: Resulting number of radius values will be nrow(data) - seglength
+set4proc$rfilter <- 100
 
 ## Create data copy
 dat4curv <- get(set4proc$objname)
@@ -40,7 +41,7 @@ title(paste("Intersection #", set4proc$sxx, sep = ""), outer=TRUE)
 ## Filter values
 radius.filtered <- radius
 #coll.filtered[coll.filtered > set4curv$thresh] <- set4curv$thresh
-radius.filtered[radius.filtered > 100] <- 100
+radius.filtered[radius.filtered > set4proc$rfilter] <- set4proc$rfilter
 
 ## Plot filtered values
 plot(radius.filtered, type = "l", main = "Filtered radius")
@@ -79,6 +80,8 @@ row_last <- nrow(dat4curv) - floor(set4proc$seqlength/2)
 dat4curv_curv <- cbind(dat4curv[c(row_first:row_last), ], curv)
 
 yellowness <- ( curv - min(curv) ) / ( max(curv) - min(curv) )
+
+
 
 # Visualise ---------------------------------------------------------------
 

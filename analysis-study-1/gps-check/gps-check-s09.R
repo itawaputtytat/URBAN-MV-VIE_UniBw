@@ -75,3 +75,18 @@ for (s in list4subids) {
   pauseAndContinue()
   
 }
+
+
+
+# tresdfds ----------------------------------------------------------------
+
+
+ggplot() + 
+  geom_path(data = can_sxx_dist_m_rnd1_rb.intrpl.cut %>% 
+              filter(sxx == 9),
+            aes(x = gps_long,
+                y = gps_lat,
+                group = subid)) + 
+  facet_grid(.~round_txt) + 
+  coord_cartesian(ylim = c(48.10275, 48.10375),
+                  xlim = c(11.649, 11.505))
