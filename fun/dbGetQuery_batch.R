@@ -5,8 +5,7 @@ dbGetQuery_batch <- function(dbconn, set4query, rb = T, ...) {
   outputFunProc(R)
   ptm <- proc.time()
 
-  if (rb)
-    datcoll <- c()
+  if (rb) datcoll <- c() ## In case of row-binding queried data
   
   invisible( lapply(set4query$sxx, function(sxx, ...) {
     
@@ -20,7 +19,7 @@ dbGetQuery_batch <- function(dbconn, set4query, rb = T, ...) {
     ## Query data
     dat2proc <- dbGetQuery(get(dbconn), query, stringsAsFactors = F)
     
-    if (rb) {
+    if (rb) { ## In case of row-binding queried data
       passing <-  
         paste(sprintf("s%02d", sxx), 
               dat2proc$round_txt, 
@@ -38,9 +37,9 @@ dbGetQuery_batch <- function(dbconn, set4query, rb = T, ...) {
   outputProcTime(ptm)
   outputDone()
   if (rb) {
-    name4obj <- 
-      #paste(set4query$save2df_prefix, "sxx", set4query$distvar, "rb", sep = "_")
-      set4query$src
+    name4obj <- set4query$src
+    ## Alternative
+    #name4obj <- paste(set4query$save2df_prefix, "sxx", set4query$distvar, "rb", sep = "_")
     assign(name4obj, datcoll, envir = .GlobalEnv)
   }
 }

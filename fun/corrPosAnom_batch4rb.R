@@ -45,6 +45,8 @@ corrPosAnom_batch4rb <- function (dat2proc,
           pos_stat %>%
           filter(sxx == s) %>%
           select(sxx_dist_m_rnd1_min_med) %>%
+          ## As correction values may have more decimal numbers than one
+          mutate(sxx_dist_m_rnd1_min_med = round(sxx_dist_m_rnd1_min_med, 1)) %>% 
           as.numeric()
         outputString(paste("*** Median position for steerangle_deg_max:", pos_stat_temp))
         
@@ -73,6 +75,7 @@ corrPosAnom_batch4rb <- function (dat2proc,
         dat2proc[rowfinder, colname4ref] <- 
           dat2proc[rowfinder, colname4ref] + pos_ind_dev
         
+        ## Workaround for floating point errors
         dat2proc[rowfinder, colname4ref] <- round(dat2proc[rowfinder, colname4ref], dec_n)
         
       }

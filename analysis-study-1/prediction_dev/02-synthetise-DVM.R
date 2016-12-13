@@ -14,18 +14,13 @@ set4proc$showplot <- T
 set4proc$showplot4subject_id <- 1
 
 ## Parameters for IDM
-set4idm <- c()
-set4idm$acclon_ms2.max <- 0.5
-set4idm$acclon.exp <- 4
-set4idm$speed_ms.u.max <- 60 / 3.6
-set4idm$declon_ms2.comf <- 3
-set4idm$gap2leadvhcl_m <- 2
-set4idm$gap2leadvhcl_s <- 0.8
+source("fun_Liebner_2013/settings/set4idm.R")
 
 ## Additional parameters necesseray fpr IDM-splitting
 ## (e.g. section for pedestrian)
-set4idm$distlimit <- 11 #old: 12; 11 shows better empirical desired velocites
-set4idm$distlimit <- 11 #for left turning
+set4synth <- c()
+set4synth$distlimit <- 11 #old: 12; 11 shows better empirical desired velocites
+set4synth$distlimit <- 11 #for left turning
 
 
 
@@ -109,7 +104,7 @@ if (set4proc$showplot) plot(plotdat.profiles)
 
 dat4acclon_ms2.est.max <- 
     dat %>%
-    filter_(paste(set4proc$varname4dist_m, ">=", set4idm$distlimit)) %>%
+    filter_(paste(set4proc$varname4dist_m, ">=", set4synth$distlimit)) %>%
     group_by_(set4proc$varname4group) %>%
     
     ## Using maximum values
@@ -118,7 +113,7 @@ dat4acclon_ms2.est.max <-
     ## Using denominator from formula 3 (Liebner et al., 2013)
     mutate(acclon_ms2.est = 
             acclon_ms2 / 
-             (-(speed_ms / set4idm$speed_ms.u.max)^set4idm$acclon.exp + 1)
+             (-(speed_ms / set4idm$u.max)^set4idm$delta + 1)
            ) %>%
     
     ## Summarise for each passing
@@ -140,17 +135,17 @@ dat4idm <-
            ifelse(acclon_ms2.est.max > acclon_ms2,
                   speed_ms / 
                     ( 1 - acclon_ms2 / acclon_ms2.est.max )^
-                    (1 / (set4idm$acclon.exp )),
+                    (1 / (set4idm$delta )),
          ## Workaround: 
          ## In case of max. acceleration is greater before distance limit
          ## ... use absolute value
          ## Alternative 1: Missing values will be imputed using loess (linear)
-         ## Alternative 2: Use speed_ms / ( 1 - 1 )^(1 / (set4idm$acclon.exp ))
+         ## Alternative 2: Use speed_ms / ( 1 - 1 )^(1 / (set4idm$delta ))
          ## ... which will give linear values similar to alternative 1
          ## Alternative 3: Move distance limit 
-         speed_ms / abs( 1 - acclon_ms2 / acclon_ms2.est.max )^(1 / (set4idm$acclon.exp )))
+         speed_ms / abs( 1 - acclon_ms2 / acclon_ms2.est.max )^(1 / (set4idm$delta )))
          ## Compare with actual maximum acceleration
-         #( 1 - acclon_ms2 / acclon_ms2.max )^(1 / set4idm$acclon.exp)
+         #( 1 - acclon_ms2 / acclon_ms2.max )^(1 / set4idm$delta)
   ) %>% 
   data.frame()
 
@@ -189,7 +184,7 @@ dat4idm <-
 dat4idm <-
   dat4idm %>%
   group_by_(set4proc$varname4group, set4proc$varname4dist) %>%
-  mutate(speed_ms.u.limit = min(speed_ms.u, set4idm$speed_ms.u.max, na.rm = T))
+  mutate(speed_ms.u.limit = min(speed_ms.u, set4idm$u.max, na.rm = T))
 
 
 
@@ -216,9 +211,9 @@ dat4idm <-
   group_by_(set4proc$varname4group) %>% 
   ## Add desired velocity for section after turning
   mutate(speed_ms.u.limit =
-           ifelse(sxx_dist_m_rnd1 >= set4idm$distlimit,
-           #ifelse(sxx_dist_m.u >= set4idm$distlimit,
-                  set4idm$speed_ms.u.max,
+           ifelse(sxx_dist_m_rnd1 >= set4synth$distlimit,
+           #ifelse(sxx_dist_m.u >= set4synth$distlimit,
+                  set4idm$u.max,
                   speed_ms.u.limit)) 
 
 

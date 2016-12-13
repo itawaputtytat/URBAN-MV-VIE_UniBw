@@ -12,7 +12,13 @@ set4proc$algorithm = "Hartigan-Wong"
 # Prepare data for processing ---------------------------------------------
 
 ## Get data
-dat4clust <- dat4idm %>% data.frame()
+#dat4clust <- t_adtf_dist_m_rnd1_full.intrpl %>% data.frame()
+dat4clust <- 
+  dat4idm %>% 
+  filter(stopping == "no_stopping") %>% 
+  data.frame()
+
+
 dat4clust <- 
   dat4clust %>% 
   filter_(paste( set4proc$varname4dist_m, ">= -50 & ", 
@@ -85,7 +91,7 @@ plotdat.clust <-
             size = 1
             ,alpha = 0.35
             ) +
-  geom_vline(xintercept = set4idm$distlimit, linetype = "dotted") +
+  geom_vline(xintercept = set4synth$distlimit, linetype = "dotted") +
   # stat_summary(aes_string(x = "dist2sx_m_v2a",
   #                         y = "speed_kmh"),
   #              geom = "line",

@@ -15,10 +15,14 @@ dbQueryString <- function(sxx) {
 
   ## FROM
   #FROM <- paste("FROM", set4query$src, sep = "\n")
-  FROM <- paste("FROM", paste(set4query$src, "_", sxx_txt, sep = ""), sep = "\n")
+  FROM <- 
+    paste("FROM", paste(set4query$src, "_", sxx_txt, sep = ""), 
+          sep = "\n")
 
   ## WHERE
-  WHERE_subject_id <- paste(paste(set4idnames$active$subject, "=", set4query$subject), collapse = " OR\n")
+  WHERE_subject_id <- 
+    paste(paste(set4idnames$active$subject, "=", set4query$subject), 
+          collapse = " OR\n")
   WHERE_round_txt <-
     paste(paste("round_txt", "= '", set4query$round, "'", sep = ""),
           collapse = " OR\n")

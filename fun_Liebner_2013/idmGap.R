@@ -3,8 +3,8 @@ idmGap <- function(intent, d0, v_sim.prev, model_acclon.max, b, s_sim.prev, poso
     gap.des <- 0
     gap.act <- 1
   } else {
-    gap.des <- computeIDM_gap.desired(d0, v_sim.prev, model_acclon.max, b)
-    gap.act <- computeIDM_gap.actual(s_sim.prev, posobj)
+    gap.des <- idmGap_desired(d0, v_sim.prev, model_acclon.max, b)
+    gap.act <- idmGap_actual(s_sim.prev, posobj)
   }
   
   return(list(gap_desired = gap.des,

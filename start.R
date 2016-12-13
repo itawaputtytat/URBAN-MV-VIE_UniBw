@@ -110,6 +110,38 @@ outputDone(step = T)
 
 
 
+# Liebner et al. (2013) ---------------------------------------------------
+
+source("fun_Liebner_2013/idm_createSimDat.R")
+source("fun_Liebner_2013/idmGap.R")
+source("fun_Liebner_2013/idmGap_act.R")
+source("fun_Liebner_2013/idmGap_des.R")
+source("fun_Liebner_2013/idmSpeed.R")
+source("fun_Liebner_2013/idmDistance.R")
+source("fun_Liebner_2013/idmAcc.R")
+
+source("fun_Liebner_2013/predLiebner_compProb_Mk.R")
+source("fun_Liebner_2013/predLiebner_compProb_al_Mk.R")
+source("fun_Liebner_2013/predLiebner_compProb_O_Hi.R")
+
+source("fun_Liebner_2013/predLiebner_initObj4Set.R")
+source("fun_Liebner_2013/predLiebner_initBN.R")
+source("fun_Liebner_2013/predLiebner_updateBN.R")
+source("fun_Liebner_2013/predLiebner_getStartVal4Sim.R")
+source("fun_Liebner_2013/predLiebner_modelDrivBehav.R")
+source("fun_Liebner_2013/predLiebner_modelDrivBehav_batch.R")
+source("fun_Liebner_2013/predLiebner_getu.R")
+source("fun_Liebner_2013/predLiebner_pdf4sim.R")
+source("fun_Liebner_2013/predLiebner_pdf4comp.R")
+
+source("fun_Liebner_2013/predLiebner_visDVM.R")
+source("fun_Liebner_2013/predLiebner_visPassing.R")
+source("fun_Liebner_2013/predLiebner_visPos.R")
+source("fun_Liebner_2013/predLiebner_visProf.R")
+
+library(gRain)
+
+
 # Attaching functions -----------------------------------------------------
 
 # outputString("Attaching functions")

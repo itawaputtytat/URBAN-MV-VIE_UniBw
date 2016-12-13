@@ -8,7 +8,7 @@ intrpldf_batch4rb <- function(dat2proc,
 
   dat2proc.intrpl <- invisible( lapply(unique(dat2proc$passing), function(p) {
 
-    if(outputFlag)
+    if(outputFlag) 
       outputString(paste("* Processing:", p))
 
     ## Get data and run inteprolation

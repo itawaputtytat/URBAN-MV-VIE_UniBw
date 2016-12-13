@@ -5,7 +5,7 @@ idmSpeed <- function(v_sim.prev, a, u, delta, gap_desired, gap_actual) {
   
   # compute new speed values
   # = last speed + acceleration (time difference already included)
-  a_sim <- computeIDM_acc(a, v_sim.prev, u, delta, gap_desired, gap_actual)
+  a_sim <- idmAcc(a, v_sim.prev, u, delta, gap_desired, gap_actual)
   IDM_speed <- v_sim.prev + a_sim
   
   return(IDM_speed)
