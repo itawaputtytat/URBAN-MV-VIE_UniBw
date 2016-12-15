@@ -1,20 +1,22 @@
 predLiebner_modelDrivBehav_batch <- function(algo4hypscore, 
+                                             pos4carryout_m,
                                              set4sim,
                                              set4dat,
                                              dat4sim,
                                              dat4dvm) {
   
-  if (algo4hypscore == "simulation-based") {
-    
     dat4sim2 <- list()
     name4listobj <- c()
+    dummy <- rep(0, length(set4sim_temp$time_s_diff))
+    dummy_v <- c(set4sim_temp$speed1, dummy)
+    dummy_s <- c(set4sim_temp$dist1, dummy)
     
     ## For each hypothesis
     for(j in 1:length(set4sim$computeI)) {
       
       ## Check if driver did not already passed corresponding objects
       ## Otherwise do not simulate driver behaviour
-      if(j %in% c(1,3) | set4sim$pos4carryout <= set4sim$objpos[j]) {
+      if(j %in% c(1,3) | pos4carryout_m <= set4sim$objpos[j]) {
 
         ## For each speed model
         for(k in 1:length(set4sim$v_ms.max)) { 
@@ -25,27 +27,48 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
           if (j %in% c(1, 2))
             u <- set4sim$v_ms.max[k] 
           else 
-            u <- dat4dvm[dat4dvm == set4sim$pos4carryout, paste("k", k, sep = "")]
+            u <- as.numeric(dat4dvm[dat4dvm == pos4carryout_m, paste("k", k, sep = "")])
           
           ## For each acceleration model
           for(l in 1:length(set4sim$acclon_ms2.max)) {
-            
-            ## Initialise object for simulation data
-            dat4sim_temp <-       
-              data.frame(dist_m = set4sim_temp$dist1,
-                         speed_ms = set4sim_temp$speed1)
-            
+
             ## Get acceleration
             acclon_ms2.max <- set4sim$acclon_ms2.max[l]
+            a <- acclon_ms2.max * 0.01
+
+            # v_sim.prev <- set4sim_temp$speed1
+            # s_sim.prev <- set4sim_temp$dist1
+            # lapply(set4sim_temp$time_s_diff, function(dt) {
+            # ##When using individual timesteps
+            #   #a <- acclon_ms2.max * dt
+            #   if (j %in% c(1, 3)) {
+            #     gap_des <- 0
+            #     gap_act <- 1
+            #   } else {
+            #     gap_des <- idmGap_des(set4idm$d0, v_sim.prev, acclon_ms2.max, set4idm$b)
+            #     gap_act <- idmGap_act(s_sim.prev, set4sim$objpos[j])
+            #   }
+            #   a_sim <- a * ( (1 - ( v_sim.prev / u)^set4idm$delta ) - ( gap_des / gap_act)^2 )
+            #   v_sim.prev <<- v_sim.prev + a_sim
+            #   s_sim.prev <<- s_sim.prev + v_sim.prev * dt
+            # })
+            # dat4sim2 <- append(dat4sim2,
+            #                    list(data.frame(dist_m = s_sim.prev,
+            #                                    speed_ms = v_sim.prev)))
             
-            ## For each row in data (excluding first row)
+            # Initialise object for simulation data
+            v_sim.coll <- dummy_v
+            s_sim.coll <- dummy_s
+            i = 2
+            # For each row in data (excluding first row)
             for(dt in set4sim_temp$time_s_diff) {
-              
-              a <- acclon_ms2.max * dt
-              
-              v_sim.prev <- tail(dat4sim_temp$speed_ms, 1)
-              s_sim.prev <- tail(dat4sim_temp$dist_m, 1)
-              
+
+              ## When using individual timesteps
+              #a <- acclon_ms2.max * dt
+
+              v_sim.prev <- v_sim.coll[i-1]
+              s_sim.prev <- s_sim.coll[i-1] 
+
               ## Compute current gap values
               if (j %in% c(1, 3)) {
                 gap_des <- 0
@@ -54,16 +77,23 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
                 gap_des <- idmGap_des(set4idm$d0, v_sim.prev, acclon_ms2.max, set4idm$b)
                 gap_act <- idmGap_act(s_sim.prev, set4sim$objpos[j])
               }
-              
+
               ## Compute new speed and distance
               a_sim <- a * ( (1 - ( v_sim.prev / u)^set4idm$delta ) - ( gap_des / gap_act)^2 )
               v_sim <- v_sim.prev + a_sim
               s_sim <- s_sim.prev + v_sim * dt
 
-              dat4sim_temp <- rbind(dat4sim_temp, c(s_sim, v_sim))
+              v_sim.coll[i] <- v_sim
+              s_sim.coll[i] <- s_sim
+
+              # v_sim.prev <- v_sim.prev + a_sim
+              # s_sim.prev <- s_sim.prev + v_sim.prev * dt
+
+              i = i + 1
             } ## Data
-            
-             dat4sim2 <- append(dat4sim2, list(dat4sim_temp))
+            ## dat4sim2 <- append(dat4sim2, list(dat4sim_temp))
+            dat4sim2 <- append(dat4sim2, list(data.frame(dist_m = s_sim.coll, speed_ms = v_sim.coll)))
+
              name4listobj <- 
                c(name4listobj,
                  paste(c("j", "k", "l"), c(j, k, l), collapse = "_", sep = ""))
@@ -79,7 +109,6 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
     
     names(dat4sim2) <- name4listobj
     
-  } ## Simulation-based approach
   return(dat4sim2)
 }
      

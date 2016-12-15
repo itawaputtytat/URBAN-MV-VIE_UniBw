@@ -5,10 +5,14 @@ predLiebner_visProf <- function(plotdat_prev, set4sim, set4dat, dat4sim, showplo
   invisible(lapply(seq_along(dat4sim), function(x) {
     name <- names(dat4sim)[[x]]
     #print(name)
-    if (grepl("j1", name)) col <- "cyan"
-    if (grepl("j2", name)) col <- "orange"
-    if (grepl("j3", name)) col <- "red"
-    if (grepl("j4", name)) col <- "magenta"
+    if (grepl("j1", name)) 
+      { col <- "#6FCDDD"; shape = 17 } # cyan
+    if (grepl("j2", name)) 
+      { col <- "orange"; shape = 18 } # orange
+    if (grepl("j3", name)) 
+      { col <- "#ED2125"; shape = 16 } # red
+    if (grepl("j4", name)) 
+      { col <- "#B9539F"; shape = 15 } # magenta
     plotdat <<-
       plotdat +
       geom_line(data = dat4sim[[x]],
@@ -22,7 +26,12 @@ predLiebner_visProf <- function(plotdat_prev, set4sim, set4dat, dat4sim, showplo
                 #                      sep = "")),
                 aes(x = dist_m,
                     y = speed_ms),
-                col = col)
+                col = col) + 
+      geom_point(data = tail(dat4sim[[x]]),
+                 aes(x = dist_m,
+                    y = speed_ms),
+                 col = col,
+                 shape = shape)
   }))
   # for (j in 1:length(set4sim$computeI)) {
   #   if(set4sim$computeI[j] == T) {

@@ -13,11 +13,13 @@ set4proc$algorithm = "Hartigan-Wong"
 
 ## Get data
 #dat4clust <- t_adtf_dist_m_rnd1_full.intrpl %>% data.frame()
-dat4clust <- 
-  dat4idm %>% 
-  filter(stopping == "no_stopping") %>% 
-  data.frame()
 
+dat4clust <- dat4idm %>% data.frame()
+
+# dat4clust <-
+#   dat4clust %>%
+#   filter(stopping == "no_stopping") %>%
+#   data.frame()
 
 dat4clust <- 
   dat4clust %>% 
@@ -27,8 +29,9 @@ dat4clust <-
 ## Select only necessary variables
 dat4clust.clean <-
   dat4clust %>%
-  select_(set4proc$varname4group, set4proc$varname4dist,
-          speed_val = set4proc$varname4speed) #%>%
+  select_(.dots = c(set4proc$varname4group, 
+                    set4proc$varname4dist,
+                    speed_val = set4proc$varname4speed)) #%>%
 # mutate(dist2sx_m_v2a_rnd1 = round(dist2sx_m_v2a_rnd1, 1)) %>%
 
 ## Create wide data format
@@ -61,7 +64,7 @@ clustoutput <-
   #clust2groups(dat4clust.clean.spread.filtered[, min:max],
   clust2groups(dat4clust.clean.spread,
                k = set4proc$k, 
-               "kmeans", 
+               "kmeanspp", 
                algorithm = "Hartigan-Wong")
 
 ## Print assignments

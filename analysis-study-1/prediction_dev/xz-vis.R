@@ -1,6 +1,7 @@
 # VISUALISATION -----------------------------------------------------------
 
 source("fun_Liebner_2013/settings/set4plot.R")
+set4sim$pos4carryout <- pos4carryout
 
 # Visualise current case --------------------------------------------------
 
@@ -39,22 +40,30 @@ if(set4plot$show)
 
 if(set4plot$show) {
   
+  results4plot <- round(results * 100, 0)
+  results4plot <- sprintf("%02g", as.vector((unlist(results4plot))))
+  
   plotdat_prob <-
-    ggplot(results,
-           aes(x = rownames(results),
-               y = I,
-               fill = rownames(results))) +
+    ggplot(results4output,
+           aes(x = rownames(results4output),
+               y = P_O_Hi,
+               fill = rownames(results4output))) +
     geom_bar(stat = "identity") +
-    geom_text(aes(label = paste(round(I, 1), "%")),
+    geom_text(aes(label = paste(round(P_O_Hi, 1))),
               vjust = 2,
               size = 3) +
-    coord_cartesian(ylim = c(0,100)) +
+    coord_cartesian(ylim = c(0, 1)) +
     scale_fill_manual(name = "Intent",
-                      labels = c("Going straight",
-                                 "Stop at stop line",
-                                 "Turn right",
-                                 "Turn right but stop"),
-                      values = c("cyan", "orange", "red", "magenta")) + 
+                      # labels = c("Going straight",
+                      #            "Stop at stop line",
+                      #            "Turn right",
+                      #            "Turn right but stop"),
+                      labels = c(paste(results4plot[1], "% Going straight"),
+                                 paste(results4plot[2], "% Stop at stop line"),
+                                 paste(results4plot[3], "% Turn right"),
+                                 paste(results4plot[4], "% Turn right but stop")),
+                      #values = c("cyan", "orange", "red", "magenta")) + 
+                      values = c("#6FCDDD", "orange", "#ED2125", "#B9539F")) + 
     scale_x_discrete(labels = paste("I", c(1:4), sep = "")) +
     scale_y_continuous(expand = c(0, 0))
   
@@ -69,9 +78,12 @@ if(set4plot$show) {
   
   plotdat_passing.dvm.pos.prof <-
     plotdat_passing.dvm.pos.prof +
-    labs(title = "Simulated driving behaviour corresponding to hypothesis Hi",
+    labs(x = "Distance-to-intersection (m)",
+         y = "Speed (m/s)",
+         title = "Simulated driving behaviour corresponding to hypothesis Hi",
          subtitle = paste("Passing:", set4dat$passing, "(carried out at", set4sim$pos4carryout, "m)")) +
-    coord_cartesian(ylim = c(0, 30)) + 
+    coord_cartesian(xlim = c(-50, 25),
+                    ylim = c(0, 30)) + 
     theme_bw()
   
   plotdat_prob <-

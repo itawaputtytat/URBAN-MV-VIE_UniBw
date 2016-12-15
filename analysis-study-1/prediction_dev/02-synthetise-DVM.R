@@ -10,7 +10,7 @@ set4proc$varname4dist <- "sxx_dist_m_rnd1"
 set4proc$varname4dist_m <- "sxx_dist_m_rnd1"
 set4proc$varname4time <- "time_s"
 set4proc$varname4group <- "passing"
-set4proc$showplot <- T
+set4proc$showplot <- F
 set4proc$showplot4subject_id <- 1
 
 ## Parameters for IDM
@@ -210,11 +210,11 @@ dat4idm <-
   dat4idm %>% 
   group_by_(set4proc$varname4group) %>% 
   ## Add desired velocity for section after turning
-  mutate(speed_ms.u.limit =
-           ifelse(sxx_dist_m_rnd1 >= set4synth$distlimit,
+  mutate_(speed_ms.u.limit =
+           paste("ifelse(", set4proc$varname4dist_m, ">=", set4synth$distlimit, ",",
            #ifelse(sxx_dist_m.u >= set4synth$distlimit,
-                  set4idm$u.max,
-                  speed_ms.u.limit)) 
+                  set4idm$u.max, ",",
+                  "speed_ms.u.limit", ")")) 
 
 
 

@@ -37,17 +37,8 @@ addVar4PrecVeh <- function(dat2proc,
   ## Join original data and new preceding vehicle filter
   dat2proc <- 
     left_join(dat2proc,
-              precfinder,
-              by = c(set4dat$varname4subject, set4dat$varname4round))
+              dat4prec,
+              by = c(varname4subject, varname4round))
   
   return(dat2proc)
 }
-
-
-
-ggplot() + 
-  geom_line(data = temp, 
-            aes(x = sxx_dist_m_rnd1,
-                y = speed_kmh,
-                group = passing)) +
-  facet_grid(stopping~round_txt)

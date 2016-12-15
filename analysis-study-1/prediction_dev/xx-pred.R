@@ -1,25 +1,18 @@
-profvis({
-# Prepare data for simulation ---------------------------------------------
-
-set4sim_temp <- predLiebner_getStartVal4Sim(dat4test, set4dat, set4sim)
-
-
 
 # Start timer -------------------------------------------------------------
 
-outputSectionTitle("Start of prediction")
-outputString(paste("* Approach:", set4algo$hypscore))
-outputString(paste("* Carried out at:", set4sim$pos4carryout, "m"))
-outputString(paste("* Time lag:", set4sim$timelag_s, "s"))
+# outputSectionTitle("Start of prediction")
+# outputString(paste("* Approach:", set4algo$hypscore))
+# outputString(paste("* Carried out at:", set4sim$pos4carryout, "m"))
+# outputString(paste("* Time lag:", set4sim$timelag_s, "s"))
 
 ptm <- proc.time()
-
-
 
 # Simulate trajectories ---------------------------------------------------
 
 dat4sim <- 
   predLiebner_modelDrivBehav_batch("simulation-based",
+                                   pos4carryout,
                                    set4sim,
                                    set4dat,
                                    dat4sim,
@@ -29,7 +22,8 @@ dat4sim <-
 
 # Compute P(O|Hi) ---------------------------------------------------------
 
-dat4prob <- predLiebner_compProb_O_Hi(set4sim, dat4sim, P_O_Hi)
+dat4prob <- predLiebner_compProb_O_Hi(set4sim, pos4carryout, dat4sim, P_O_Hi)
+
 
 
 # Re-order P(O|Hi) --------------------------------------------------------
@@ -56,19 +50,10 @@ set4bn$O <-
 
 bn <- predLiebner_updateBN(bn, set4bn$O, set4bn)
 bn.evidence <- setEvidence(bn, nodes = c("O"), states = c("dat4prob$obs"))
-results <- querygrain(bn.evidence, nodes = "I")
+results <- querygrain(bn.evidence, nodes = "I")$I
 
 
 
 # Stop timer --------------------------------------------------------------
 
-outputProcTime(ptm)
-
-
-
-# Output intent probabilities ---------------------------------------------
-cat("\n")
-results <- as.data.frame(results) * 100
-print(round(results, 2))
-#barplot( t(results), ylim = c(0, 100) )
-})
+#outputProcTime(ptm)
