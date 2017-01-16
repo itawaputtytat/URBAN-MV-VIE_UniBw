@@ -2,27 +2,19 @@ dbQueryString <- function(sxx) {
 
   outputFunProc(R)
 
-  ## Create sxx as character index
-  sxx_txt <- sprintf("s%02d", sxx)
-  
   ## SELECT
   SELECT <-
-    c(set4query$var_session, 
-      paste(sxx_txt, set4query$var_sxx, sep = ""),
+    c(set4query$var_session,
+      paste(sprintf("s%02d", sxx), set4query$var_sxx, sep = ""),
       set4query$var_data)
   SELECT <- paste(SELECT, collapse = ",\n")
   SELECT <- paste("SELECT", SELECT, sep = "\n")
 
   ## FROM
-  #FROM <- paste("FROM", set4query$src, sep = "\n")
-  FROM <- 
-    paste("FROM", paste(set4query$src, "_", sxx_txt, sep = ""), 
-          sep = "\n")
+  FROM <- paste("FROM", paste(set4query$src, sprintf("s%02d", set4query$sxx), sep = "_"), sep = "\n")
 
   ## WHERE
-  WHERE_subject_id <- 
-    paste(paste(set4idnames$active$subject, "=", set4query$subject), 
-          collapse = " OR\n")
+  WHERE_subject_id <- paste(paste(set4idnames$active$subject, "=", set4query$subject), collapse = " OR\n")
   WHERE_round_txt <-
     paste(paste("round_txt", "= '", set4query$round, "'", sep = ""),
           collapse = " OR\n")
@@ -33,8 +25,10 @@ dbQueryString <- function(sxx) {
 
   WHERE_dist2sxx <-
     paste(
-      paste(sxx_txt, "_", set4query$distvar, " >= ", temp_dist1, sep = ""),
-      paste(sxx_txt, "_", set4query$distvar, " <= ", temp_dist2, sep = ""),
+      paste(sprintf("s%02d", sxx), "_", set4query$distvar, " >= ",
+            temp_dist1, sep = ""),
+      paste(sprintf("s%02d", sxx), "_", set4query$distvar, " <= ",
+            temp_dist2, sep = ""),
       sep = " AND\n")
 
   WHERE <- c(WHERE_subject_id, WHERE_round_txt, WHERE_dist2sxx)
@@ -42,7 +36,7 @@ dbQueryString <- function(sxx) {
   WHERE <- paste("WHERE", WHERE, sep = "\n")
 
   ## Final string
-  query <- unlist(paste(SELECT, FROM, WHERE, sep = "\n", collapse = "\n\n"))
+  query <- unlist(paste(SELECT, FROM, WHERE, collapse = "\n\n"))
 
   outputDone()
   return(query)

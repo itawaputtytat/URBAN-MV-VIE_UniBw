@@ -25,7 +25,7 @@ outputDone(step = T)
 
 outputString("* Attaching functions ...")
 source("fun/dbConnect_operator.R")
-source("fun/dbQueryString.R")
+source("fun/dbCreateQueryString.R")
 source("fun/dbGetQuery_batch.R") ## Can be renamed to study1 similar to next
 outputDone(step = T)
 
@@ -132,6 +132,7 @@ source("fun_Liebner_2013/predLiebner_updateBN.R")
 source("fun_Liebner_2013/predLiebner_getStartVal4Sim.R")
 source("fun_Liebner_2013/predLiebner_modelDrivBehav.R")
 source("fun_Liebner_2013/predLiebner_modelDrivBehav_batch.R")
+source("fun_Liebner_2013/predLiebner_modelDrivBehav_batch_cpp.R")
 source("fun_Liebner_2013/predLiebner_getu.R")
 source("fun_Liebner_2013/predLiebner_pdf4sim.R")
 source("fun_Liebner_2013/predLiebner_pdf4comp.R")

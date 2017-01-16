@@ -6,17 +6,19 @@
 # outputString(paste("* Carried out at:", set4sim$pos4carryout, "m"))
 # outputString(paste("* Time lag:", set4sim$timelag_s, "s"))
 
-ptm <- proc.time()
+#ptm <- proc.time()
 
 # Simulate trajectories ---------------------------------------------------
 
-dat4sim <- 
+#rm(dat4sim); invisible(gc())
+dat4sim <-
   predLiebner_modelDrivBehav_batch("simulation-based",
                                    pos4carryout,
                                    set4sim,
+                                   set4sim_temp,
                                    set4dat,
-                                   dat4sim,
-                                   dat4dvm)
+                                   dat4dsm,
+                                   coll4simtail)
 
 
 
@@ -35,6 +37,9 @@ dat4prob <- predLiebner_compProb_O_Hi(set4sim, pos4carryout, dat4sim, P_O_Hi)
 # dat4prob_temp <- as.vector(t(dat4prob_temp))
 dat4prob_temp <- as.vector(t(dat4prob))
 dat4prob_temp <- rbind(dat4prob_temp, 1 - dat4prob_temp)
+# dat4prob_temp <- 
+#   data.table::rbindlist(list(dat4prob, 1-dat4prob)) %>% 
+#   data.frame()
 
 
 # Set evidence and query results ------------------------------------------

@@ -2,7 +2,7 @@
 # Preparatory settings ----------------------------------------------------
 
 set4proc <- c()
-set4proc$objname <- "adtf_sxx_dist_m_rnd1_rb.intrpl.cut"
+set4proc$objname <- "t_adtf_dist_m_rnd1_full.intrpl.cut"
 set4proc$sxx <- 4
 set4proc$groupby <- c("sxx", "sxx_dist_m_rnd1")
 set4proc$plot <- T

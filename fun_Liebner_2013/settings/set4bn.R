@@ -1,6 +1,15 @@
 
 set4bn <- c()
 
+# Level indizes for nodes -------------------------------------------------
+
+set4bn$states$I <- paste("Intent", 1:4, sep = "")
+set4bn$states$V <- paste("k", 1:length(set4sim$v_ms.max), sep = "")
+set4bn$states$A <- paste("l", 1:length(set4sim$acclon_ms2.max), sep = "")
+set4bn$states$O <- c("dat4prob$obs", "nodat4prob$obs")
+
+
+
 # Prior probabilities -----------------------------------------------------
 
 ## Intents
@@ -30,7 +39,10 @@ if(set4sim$pos4carryout >= set4sim$objpos[4]) {
 #set4bn$prior$V <- c(75/94, 11/94, 8/94)
 #set4bn$prior$V <- c(85/94, 4/94, 5/94)
 #set4bn$prior$V <- "auto"
+## Assuming same probability for maximum u models as for DVM
 set4bn$prior$V <- prob_Mk
+## Assuming uniform probability for maximum u models compared to DVM
+#set4bn$prior$V_I <- c(rep(1/3, 3), rep(1/3, 3), prob_Mk, prob_Mk)
 
 
 ## P(a|M)
@@ -40,7 +52,7 @@ set4bn$prior$V <- prob_Mk
 #     c(0.5, 0.4, 0.1),
 #     c(0.15, 0.6, 0.25))
 #set4bn$prior$V_A <- "auto"
-set4bn$prior$V_A <- prob_al_Mk
+set4bn$prior$A_V <- prob_al_Mk
 
 
 ## Prepare CPT for node O
@@ -52,16 +64,6 @@ set4bn$prior$O <-
                     I = set4bn$states$I,
                     V = set4bn$states$V,
                     A = set4bn$states$A))
-
-
-
-# Level indizes for nodes -------------------------------------------------
-
-set4bn$states$I <- paste("Intent", 1:4, sep = "")
-set4bn$states$V <- paste("k", 1:length(set4sim$v_ms.max), sep = "")
-set4bn$states$A <- paste("l", 1:length(set4sim$acclon_ms2.max), sep = "")
-set4bn$states$O <- c("dat4prob$obs", "nodat4prob$obs")
-
 
 
 

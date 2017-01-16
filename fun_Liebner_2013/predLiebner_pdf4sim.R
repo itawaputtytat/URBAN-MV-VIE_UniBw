@@ -1,6 +1,7 @@
 predLiebner_pdf4sim <- function (s, s.est, s.sd, v, v.est, v.sd) {
-  e = sqrt(  ( (s - s.est) / s.sd )^2 + ( (v - v.est) / v.sd )^2  )
-  y = 1 / ( 2* pi * s.sd * v.sd) * exp( -1/2 * e^2 )
+  e = ( (s - s.est) / s.sd )^2 + ( (v - v.est) / v.sd )^2
+  e = sqrt(e)
+  y = ( 1 / ( 2 * pi * s.sd * v.sd) ) * exp( -1/2 * e^2 )
   return(y)
 }
 

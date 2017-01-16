@@ -6,7 +6,7 @@ set4query <- c()
 set4query$src <- "t_adtf_dist_m_rnd1_full"
 #set4query$sxx   <- c(1:2, 4:18)
 #set4query$sxx   <- c(1:2, 5)
-set4query$sxx   <- c(5)
+set4query$sxx   <- c(4)
 set4query$round <- c("intro", "normal", "stress")
 set4query$subject <- c(1:31)
 set4query$distvar <- "dist_m_rnd1"
@@ -17,6 +17,7 @@ set4query$save2df_prefix <- "adtf"
 set4query$var_session <-
   c("subject_id",
     "round_txt",
+    "time_s",
     "gps_lat",
     "gps_lon")
 set4query$var_sxx <-
@@ -24,16 +25,17 @@ set4query$var_sxx <-
     "_dist_m_rnd1")
 set4query$var_data <-
   c("steerangle_deg",
-    "speed_kmh")
+    "speed_kmh",
+    "acclat_ms2")
 
 
 
 # Data processing ---------------------------------------------------------
 
 dbGetQuery_batch("dbconn_study1", set4query, rb = T)
-intrpldf_batch4rb(adtf_sxx_dist_m_rnd1_rb, suffix = ".intrpl", outputFlag = T)
-corrPosAnom_batch4rb(adtf_sxx_dist_m_rnd1_rb.intrpl)
-cut2dist_batch4rb(adtf_sxx_dist_m_rnd1_rb.intrpl, "sxx_dist_m_rnd1", set4query$dist1, set4query$dist2)
+intrpldf_batch4rb(t_adtf_dist_m_rnd1_full, suffix = ".intrpl", outputFlag = T)
+corrPosAnom_batch4rb(t_adtf_dist_m_rnd1_full.intrpl)
+cut2dist_batch4rb(t_adtf_dist_m_rnd1_full.intrpl, "sxx_dist_m_rnd1", set4query$dist1, set4query$dist2)
 
 #computeVar_dist2steermax("can", "dist_m_rnd1")
 

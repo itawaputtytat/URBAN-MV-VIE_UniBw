@@ -2,6 +2,9 @@
 # Preparatory settings ----------------------------------------------------
 
 set4proc$varname4speed <- "speed_ms.u.limit"
+set4proc$varname4dist_m <- "sxx_dist_m_rnd1" 
+#set4proc$varname4speed <- "speed_ms.u.limit"
+#set4proc$varname4speed <- "speed_ms"
 set4proc$varname4round <- "round_txt"
 set4proc$k <- 3
 set4proc$procedure = "kmeans"
@@ -12,14 +15,23 @@ set4proc$algorithm = "Hartigan-Wong"
 # Prepare data for processing ---------------------------------------------
 
 ## Get data
-#dat4clust <- t_adtf_dist_m_rnd1_full.intrpl %>% data.frame()
+#dat4clust <- t_adtf_dist_m_rnd1_full.intrpl.cut %>% data.frame()
+# stoppings <-
+#   t_adtf_dist_s_rnd1_full.intrpl.cut %>% 
+#   select(passing, stopping) %>% 
+#   group_by(passing) %>% 
+#   summarise(stopping = min(stopping))
 
 dat4clust <- dat4idm %>% data.frame()
-
-# dat4clust <-
-#   dat4clust %>%
-#   filter(stopping == "no_stopping") %>%
+# dat4clust <- 
+#   left_join(dat4idm,
+#             stoppings) %>% 
 #   data.frame()
+
+dat4clust <-
+  dat4clust %>%
+  filter(stopping == "no_stopping") %>%
+  data.frame()
 
 dat4clust <- 
   dat4clust %>% 
@@ -79,14 +91,14 @@ clustoutput$assignment$passing <-
   as.character(clustoutput$assignment$passing)
 
 ## Join data and cluster assignment
-datwclust <- left_join(dat4clust, clustoutput$assignment) %>% data.frame()
+dat4clust <- left_join(dat4clust, clustoutput$assignment) %>% data.frame()
 
 
 
 # Visualize clustered desired velocity profiles ---------------------------
 
 plotdat.clust <-
-  ggplot(datwclust) +
+  ggplot(dat4clust) +
   geom_line(aes_string(x = set4proc$varname4dist_m,
                        y = set4proc$varname4speed,
                        group = set4proc$varname4group,
@@ -101,27 +113,30 @@ plotdat.clust <-
   #              fun.y = "mean",
   #              colour = "black",
   #              size = 1) +
-  facet_grid(.~round_txt) + 
+  #facet_grid(.~round_txt) + 
   guides(colour = F) +
   coord_cartesian(xlim = c(-50, 25),
                   ylim = c(  0, 25)) + 
   scale_x_continuous(expand = c(0,0)) + 
   theme_bw()
 
-# plot(plotdat.clust)
+#plot(plotdat.clust)
 
 
 
 # Compute cluster centres -------------------------------------------------
 
 clustcentres <-
-  datwclust %>%
+  dat4clust %>%
   select_("clustgroup",
           speed_val = set4proc$varname4speed,
           set4proc$varname4dist,
           set4proc$varname4round) %>%
+  mutate(clustgroup = as.numeric(clustgroup)) %>% 
   #group_by_("clustgroup", set4proc$varname4dist) %>%
-  group_by_("clustgroup", set4proc$varname4dist, set4proc$varname4round) %>%
+  group_by_(.dots = lapply(c("clustgroup", set4proc$varname4dist
+                             #, set4proc$varname4round
+                             ), as.symbol)) %>%
   ## Variable name is temporary, see next step
   summarise(speed_val.avg = mean(speed_val))
 
@@ -131,18 +146,18 @@ colnames(clustcentres)[which(colnames(clustcentres) == "speed_val.avg")] <-
 
 
 
-# Visualise cluster centres -----------------------------------------------
+# Visualise general (ungrouped) cluster centres ---------------------------
 
 plotdat.clustcenters <-
   plotdat.clust +
   geom_line(data = clustcentres,
             aes_string(x = set4proc$varname4dist_m,
                        y = paste(set4proc$varname4speed, ".avg", sep = ""),
-                       colour = "clustgroup"),
+                       colour = "as.factor(clustgroup)"),
             size = 2) #+
   #scale_colour_manual(values = c("green3", "blue3", "red3", "orange3"))
 
-#plot(plotdat.clustcenters)
+plot(plotdat.clustcenters)
 
 # plot.centers <- ggplot() + 
 #   geom_line(data = clust.centers,
@@ -154,31 +169,31 @@ plotdat.clustcenters <-
 #   scale_linetype_manual(values = c("solid", "dashed", "dotted"))
 
 
-
-# Compute cluster distribution for each round -----------------------------
-
-datwclust.distr <- 
-  datwclust %>% 
-  filter(sxx_dist_m_rnd1 == 0) %>% 
-  group_by(round_txt, clustgroup) %>% 
-  summarise(count = n())
-
-
-
-# Visualise cluster distribution ------------------------------------------
-
-plot.clustdistr <-
-  ggplot() + 
-  geom_bar(data = datwclust.distr, 
-           aes(x = clustgroup, 
-               y = count, 
-               fill = clustgroup), 
-           stat = "identity") + 
-  facet_wrap(reformulate(set4proc$varname4round)) + 
-  coord_cartesian(ylim = c(0, 50)) + 
-  #scale_fill_manual(values = c("green3", "blue3", "red3", "orange3")) + 
-  guides(fill = FALSE) +
-  theme_bw()
-
-grid.arrange(plotdat.clustcenters, plot.clustdistr, nrow = 2)
-           
+# 
+# # Compute cluster distribution for each round -----------------------------
+# 
+# datwclust.distr <- 
+#   datwclust %>% 
+#   filter(sxx_dist_m_rnd1 == 0) %>% 
+#   group_by(round_txt, clustgroup) %>% 
+#   summarise(count = n())
+# 
+# 
+# 
+# # Visualise cluster distribution ------------------------------------------
+# 
+# plot.clustdistr <-
+#   ggplot() + 
+#   geom_bar(data = datwclust.distr, 
+#            aes(x = clustgroup, 
+#                y = count, 
+#                fill = clustgroup), 
+#            stat = "identity") + 
+#   facet_wrap(reformulate(set4proc$varname4round)) + 
+#   coord_cartesian(ylim = c(0, 50)) + 
+#   #scale_fill_manual(values = c("green3", "blue3", "red3", "orange3")) + 
+#   guides(fill = FALSE) +
+#   theme_bw()
+# 
+# grid.arrange(plotdat.clustcenters, plot.clustdistr, nrow = 2)
+#            

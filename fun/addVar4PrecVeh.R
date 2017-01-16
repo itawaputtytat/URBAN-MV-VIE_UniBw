@@ -14,14 +14,15 @@ addVar4PrecVeh <- function(dat2proc,
   
   ## .... and filter for unique situations
   colfinder <- grep(paste(sprintf("s%02d", sxx_unique), collapse = "|"), colnames(dat4prec))
-  varname4sxx <- colnames(dat4prec)[colfinder]
+  sxxcolfinder <- colnames(dat4prec)[colfinder]
   
   ## Select necessary variables
   ## ... and gather into single variable for each situation and value
   dat4prec <- 
     dat4prec %>% 
-    select_(.dots = c(varname4subject, varname4round, varname4sxx)) %>% 
-    gather_("situation_id", "preceded", varname4sxx)
+    select_(.dots = c(varname4subject, varname4round, sxxcolfinder)) %>% 
+    gather_("sxx", "preceded", sxxcolfinder) %>% 
+    mutate(sxx = as.numeric(sub("s", "", sxx)))
   
   ## Create additional filter
   dat4prec <- 
@@ -38,7 +39,7 @@ addVar4PrecVeh <- function(dat2proc,
   dat2proc <- 
     left_join(dat2proc,
               dat4prec,
-              by = c(varname4subject, varname4round))
+              by = c(varname4subject, varname4round, varname4sxx))
   
   return(dat2proc)
 }

@@ -2,7 +2,7 @@
 # Select data -------------------------------------------------------------
 
 dat4prob <- 
-  datwclust %>% 
+  dat4clust %>% 
   select(passing, round_txt, clustgroup)
 
 
@@ -11,7 +11,7 @@ dat4prob <-
 
 prob_Mk <- 
   predLiebner_compProb_Mk(dat4prob, 
-                          showplot = T)
+                          showplot = F)
 # prob_Mk <- 
 #   predLiebner_compProb_Mk(datwclust, 
 #                           varname4group = "round_txt", 
@@ -29,7 +29,7 @@ acclon_ms2.thresh <- c(1.5, 2, 2.5)
 prob_al_Mk <- predLiebner_compProb_al_Mk(dat4prob,
                                          dat4acclon_ms2.est.max,
                                          acclon_ms2.thresh,
-                                         showplot = T)
+                                         showplot = F)
 
 # prob_al_Mk <- predLiebner_compProb_al_Mk(dat4prob, 
 #                                          dat4acclon_ms2.est.max,

@@ -7,18 +7,32 @@ predLiebner_compProb_O_Hi <- function(set4sim, pos4carryout_m, dat4sim, P_O_Hi) 
     ## Get actual values
     dist_m.act <- set4sim_temp$dist2
     speed_ms.act <- set4sim_temp$speed1
+    #print(speed_ms.act)
     
     ## Get final values from IDM simulation
-    obs <- lapply(dat4sim, function(x) tail(x, 1))
-    obs <- as.data.frame(data.table::rbindlist(obs))
+    # obs <- lapply(dat4sim, function(x) {
+    #   if (is.null(x))
+    #     x <- data.frame(dist_m = NA, speed_ms = NA) else
+    #       x <- x
+    #   })
+    # #obs <- dat4sim
+    # obs <- lapply(obs, function(x) tail(x, 1))
+    obs <- lapply(dat4sim, function(x) 
+              lapply(x, function(y) 
+                #if (is.null(y)) NA else
+                tail(y, 1)) )
+    obs <- as.data.frame(data.table::rbindlist(obs, idcol = T, fill  = T))
+    #obs <- dat4sim[, lapply(.SD, last), hyp]
     
     ## Compute standard deviations for simulated distances and speed
     sigma_s_m <- sd(obs$dist_m)
     sigma_v_ms <- sd(obs$speed_ms)
-    coll4sd <<- data.table::rbindlist(list(coll4sd, data.frame(sigma_s_m, sigma_v_ms)))
-    # sigma_s_m <- 1.2
-    # sigma_v_ms <- 1.2
-    # sigma_s_m <- 0.6
+    #coll4sd <<- data.table::rbindlist(list(coll4sd, data.frame(sigma_s_m, sigma_v_ms)))
+    #sigma_s_m <- 1.2
+    #sigma_v_ms <- 1.2
+    #sigma_s_m <- 1
+    #sigma_v_ms <- 1
+    #sigma_s_m <- 0.6
     # sigma_v_ms <- 0.6
     # sigma_s_m <- 1.8
     # sigma_v_ms <- 1.8
@@ -26,13 +40,21 @@ predLiebner_compProb_O_Hi <- function(set4sim, pos4carryout_m, dat4sim, P_O_Hi) 
     # sigma_v_ms <- 2 * 0.8
     # sigma_s_m <- 1.5
     # sigma_v_ms <- 2
+    #sigma_s_m <- 1.2
+    #sigma_v_ms <- 1.7
 
-    for(i in 1:nrow(obs)) {
+    for(i in 1:length(obs$.id)) {
+    #for(i in 1:length(obs$hyp)) {
 
       ## Create name for current likelihood corresponding to:
       ## Hypothesis i _ Intent j _ Velocity model k _ Acceleration model l
-      suffix_temp <- names(dat4sim)[i]
+      #suffix_temp <- names(dat4sim)[i]
       #coll4names <- c(coll4names, suffix_temp)
+      
+      #print(obs$dist_m[i])
+      
+      if (is.na(obs$dist_m[i]))
+        y = 0 else
       
       y <- predLiebner_pdf4sim(dist_m.act,
                                obs$dist_m[i],
@@ -42,7 +64,8 @@ predLiebner_compProb_O_Hi <- function(set4sim, pos4carryout_m, dat4sim, P_O_Hi) 
                                sigma_v_ms)
       
       ## Collect probability of current observation
-      P_O_Hi[, which(colnames(P_O_Hi) == suffix_temp)] <- y
+      P_O_Hi[, obs$.id[i]] <- y
+      #P_O_Hi[, obs$hyp[i]] <- y
 
     }
     return(P_O_Hi)

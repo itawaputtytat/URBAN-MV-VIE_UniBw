@@ -3,156 +3,216 @@
 
 ## Load test data
 source("fun_Liebner_2013/settings/set4dat.R")
-set4dat$passing <- "s07_intro_subject03"
+set4dat$passing <- "s05_intro_subject04"
 source("analysis-study-1/prediction_dev/06-load-test-data.R")
 
-## Initialise Algorithm, DVM and BN
+## Initialise Algorithm, dsm and BN
 source("fun_Liebner_2013/settings/set4sim.R")
-set4sim$objpos <- c(0, -0.1, 0, 7)
+#set4sim$objpos <- c(0, -0.1, 0, 7)
 
 source("fun_Liebner_2013/settings/set4bn.R")
-source("fun_Liebner_2013/settings/set4dvm.R")
-set4dvm$objname4dvm <- "dat4dvm.spread_v2"
-source("analysis-study-1/prediction_dev/07-initialise-sim-dvm-pred.R")
+#set4bn$prior$V <- c(0.01, 0.98, 0.01)
+source("fun_Liebner_2013/settings/set4dsm.R")
+set4dsm$objname4dsm <- "dat4dsm.spread"
+#set4dsm$objname4dsm <- "dat4dsm.spread_v2"
+source("analysis-study-1/prediction_dev/07-initialise-sim-dsm-pred.R")
 
 source("fun_Liebner_2013/settings/set4algo.R")
 source("fun_Liebner_2013/settings/set4idm.R")
 
-set4sim$objpos[2] <- -10
+set4sim$objpos[2] <- 0
 set4sim$objpos[4] <- -10
-set4idm$d0 <- 2
+#set4idm$d0 <- 2
 set4idm$d0 <- 0
 
-## Create visualisation template
-# graphics::layout(matrix(c(1,1,1,2), nrow = 1, byrow = T))
-# par(xaxs = "i", yaxs = "i")
-# plot(dat4test$sxx_dist_m_rnd1, dat4test$speed_ms, 
-#      type = "l", col = "#3953A4", lwd = 2,
-#      xlim = c(-50, 25), ylim = c(0, 30))
-# title("Simulated driving behaviour corresponding to Hypothesis Hi",
-#       adj = 0)
-# #grid(lwd = 2) # grid only in y-direction
-# 
-# lines(dat4dvm$dist, dat4dvm$k1, col = "grey70")
-# lines(dat4dvm$dist, dat4dvm$k2, col = "grey70")
-# lines(dat4dvm$dist, dat4dvm$k3, col = "grey70")
-# abline(v = set4sim$objpos[2], col = "orange")
-# abline(v = set4sim$objpos[4], col = "#B9539F")
-#x <- recordPlot()
+set4vis <- c()
+set4vis$sim$xmin <- -50
+set4vis$sim$xmax <- 25
+set4vis$sim$ymin <- 0
+set4vis$sim$ymax <- 20
+
+## Template for visualisation
+source("analysis-study-1/prediction_dev/zz-vis-classic-template_single.R")
 
 
 
 # Run prediction for single position --------------------------------------
 
-set4sim$pos4carryout <- -3
+source("analysis-study-1/prediction_dev/zz-vis-classic-template_single.R")
+
+## Set position for carrying out simulation
+set4sim$pos4carryout <- 10
+
+## Compute starting values for simulation
+pos4carryout <- round(pos4carryout, 1)
 pos4carryout <- set4sim$pos4carryout
 set4sim_temp <- predLiebner_getStartVal4Sim(dat4test, set4dat, pos4carryout)
 set4sim_temp$time_s_diff <- rep(0.01, 1 / 0.01)
-# set4sim_temp$time_s_diff <- rep(0.01, 2 / 0.01)
-# set4sim_temp$time_s_diff <- rep(0.01, 5 / 0.01)
+pos4carryout <- set4sim_temp$dist2
 
+## Initialise collector for simulation tails
+## Compute number of hypothesis
+hypothesis_n <-
+  c(j = length(set4sim$computeI),
+    k = length(set4sim$v_ms.max),
+    l = length(set4sim$acclon_ms2.max))
+hypothesis_n_overall <- prod(hypothesis_n)
+## Initialise list with a component for each hypothesis
+coll4simtail <- vector("list", hypothesis_n_overall)
+## Rename list components
+names(coll4simtail) <-
+  names(idm_createSimDat(hypothesis_n, varnames = "", prefix = ""))
+
+## 
+set4sim$objpos[1] <- 9999
+set4sim$objpos[3] <- 9999
+ptm3 <- proc.time()
 source("analysis-study-1/prediction_dev/xx-pred.R")
+outputProcTime(ptm3)
 results4output <- data.frame(P_O_Hi = results)
-print(round(results4output * 100, 2))
+#print(round(results4output * 100, 2))
+
+## Visualisation
 #source("analysis-study-1/prediction_dev/xz-vis.R")
-source("analysis-study-1/prediction_dev/xz-vis-classic.R")
+coll4dat4sim <- c()
+coll4results <- c()
+source("analysis-study-1/prediction_dev/xz-vis-classic_single.R")
 
 
 
 # Run prediction for complete passing -------------------------------------
 
-## Initialise collector for results
-coll4results <- c()
+source("analysis-study-1/prediction_dev/zz-vis-classic-template_complete.R")
 
-dummy <- 
-  data.frame(dist_m = -40, 
-             speed_ms = dat4test$speed_ms[which(dat4test$sxx_dist_m_rnd1 == -40)])
+dist2start <- -35
+dist2end <- 20
+distint <- 1 # 0.1 # 0.5
+
+## Initialise collector for results
+#coll4results <- c()
+results <- set4bn$prior$I
+names(results) <- set4bn$states$I
+coll4results <- data.frame(pos4carryout = dist2start, t(results))
+
+dummy <-
+  data.frame(dist_m = dist2start,
+             speed_ms = dat4test$speed_ms[which(dat4test[, set4dat$varname4sxx_dist_m] == -40)])
 dummy_names <- names(idm_createSimDat(c(j = 4, k = 3, l = 3), varnames = "", prefix = ""))
 coll4dat4sim <- vector("list", length(dummy_names))
 names(coll4dat4sim) <- dummy_names
 coll4dat4sim <- lapply(coll4dat4sim, function(x)
   x <- dummy)
+#coll4prior <- c()
 
 ## Loop through passing
 ptm2 <- proc.time()
-# for(s in seq(-40,20,0.1)) {
-for(s in seq(-40,20,1)) {
-#for(s in seq(-10,20,1)) {
+
+
+# test <- lapply(dat4sim, function(x) lapply(x, function(y){
+#   tail(y, 1)
+#   print(y)
+# } ))
+
+## Real-time
+#s = 151; while (s < 721) {
+#for(s in seq(-40,20,0.1)) {
+#for(s in seq(-40,20,0.5)) {
+for(s in seq(dist2start,dist2end,distint)) {
+
   pos4carryout <- round(s, 1)
-  print(pos4carryout)
+  
+  ## Real-time
+  #pos4carryout <- round(dat4test$sxx_dist_m_rnd1[s], 1)
+  
+  #print(pos4carryout)
   ## Prepare data for simulation
+  #rm(dat4sim)
+  #gc()
   set4sim_temp <- predLiebner_getStartVal4Sim(dat4test, set4dat, pos4carryout)
+  pos4carryout <- set4sim_temp$dist2
   #print(set4sim_temp$dist1)
+  #print(time_s_diff)
+  #time_s_diff <- set4sim_temp$time_s_diff
   set4sim_temp$time_s_diff <- rep(0.01, 1 / 0.01)
   source("analysis-study-1/prediction_dev/xx-pred.R")
-  source("analysis-study-1/prediction_dev/xz-vis-classic.R")
-  
-  temp <- lapply(dat4sim, function(x) tail(x, 1))
-  
-  for(i in seq_along(temp)) {
-    finder <- which(names(coll4dat4sim) == names(temp[i]))
-    coll4dat4sim[[finder]] <- rbind(coll4dat4sim[[finder]], temp[[i]])
-  }
-  
-  rm(dat4sim)
-  gc()
-  
+
   ## Collect results
-  coll4results <- 
-    data.table::rbindlist(list(coll4results, 
-                               data.frame(s, t(results))))
+  # coll4results <- 
+  #   data.table::rbindlist(list(coll4results, 
+  #                              data.frame(s, t(results))))
+  coll4results <-
+    data.table::rbindlist(list(coll4results,
+                               data.frame(pos4carryout, t(results))))
+  
+  temp2 <- lapply(dat4sim, function(x) 
+    lapply(x, function(y) 
+      if (is.null(y)) NA else
+      tail(y, 1)) )
+  temp2 <- data.table::rbindlist(temp2, idcol = T, fill  = T)
+
+
+  # Collect tails of simulates speed profiles (history / trace)
+  temp <- lapply(dat4sim, function(x)
+    lapply(x, function(y)
+      tail(y, 1)) )
+  temp <- as.data.frame(data.table::rbindlist(temp, idcol = T, fill  = T))
+  for(i in seq_along(temp$.id)) {
+    finder <- temp$.id[i]
+    coll4dat4sim[[finder]] <- rbind(coll4dat4sim[[finder]], temp[i,2:3])
+  }
+
+  source("analysis-study-1/prediction_dev/xz-vis-classic_complete.R")
+  
+  ## Adjust plotting speed
+  # time_s_diff <- dat4test$time_s[s] - dat4test$time_s[s-7]
+  # Sys.sleep(time_s_diff)
+  # input <- 0
+  # while(input == 0) {
+  #   input <- readline("1 = forward | 2 = backward: >> ")
+  #   if (input == 1) {
+  #     input <- s - 7 
+  #     } else {
+  #       if (input == 2) {
+  #         input <- s + 7 
+  #       } else {
+  #         input <- 0
+  #       }
+  #     }
+  # }
+  # s <- s + input
+  # rm(input)
+  #s <- s + 7
+  
+  
+  #ani.record()
+  #x <- recordPlot()
+  # P_O_Hi <- idm_createSimDat(
+  #   list(j = length(set4bn$states$I),
+  #        k = length(set4bn$states$V),
+  #        l = length(set4bn$states$A)), "", prefix = "")
+  # P_O_Hi <- P_O_Hi[set4bn$idorder]
+  # #weight <- (as.numeric(results) / set4bn$prior$I) * (as.numeric(results) - set4bn$prior$I)
+  # #weight <- round(results, 2) - set4bn$prior$I#rep(0.25, 4) - as.numeric(results)
+  # #print(weight)
+  # #set4bn$prior$I <- set4bn$prior$I + weight * set4bn$prior$I
+  # #print(sum(set4bn$prior$I))
+  # weight <- results / set4bn$prior$I
+  # weigth <- weight / sum(weight)
+  # print(sum(weight))
+  # set4bn$prior$I <- set4bn$prior$I + weight * (as.numeric(results) - set4bn$prior$I)
+  # print(sum(set4bn$prior$I))
+  # bn <- predLiebner_initBN("V1", set4bn)
+  # coll4prior <- data.table::rbindlist(list(coll4prior, data.frame(s, t(set4bn$prior$I))))
+  
+
 }
 outputProcTime(ptm2)
 
-## Print result collection
-par(mfrow=c(1,1))
-coll4results <- as.data.frame(coll4results)
-rownames(coll4results) <- NULL
-plot(x = coll4results$s, y = coll4results$Intent1, type = "l", col = "blue", ylim = c(0,1))
-lines(x = coll4results$s, coll4results$Intent2, col = "orange")
-lines(x = coll4results$s, coll4results$Intent3, col = "red")
-lines(x = coll4results$s, coll4results$Intent4, col = "magenta")
 
 
+# Print evolution of prior ------------------------------------------------
 
-
-# Playground --------------------------------------------------------------
-
-coll4dat4sim <- lapply(coll4dat4sim, function(x){
-  x <- x[-1, ]
-})
-
-#replayPlot(x)
-
-par(mfrow = c(1,1))
-par(xaxs = "i", yaxs = "i")
-plot(dat4test$sxx_dist_m_rnd1, dat4test$speed_ms, 
-     type = "l", col = "#3953A4", lwd = 2,
-     xlim = c(-50, 25), ylim = c(0, 30))
-title("Simulated driving behaviour corresponding to Hypothesis Hi",
-      adj = 0)
-#grid(lwd = 2) # grid only in y-direction
-
-lines(dat4dvm$dist, dat4dvm$k1, col = "grey70")
-lines(dat4dvm$dist, dat4dvm$k2, col = "grey70")
-lines(dat4dvm$dist, dat4dvm$k3, col = "grey70")
-abline(v = set4sim$objpos[2], col = "#FFA500")
-abline(v = set4sim$objpos[4], col = "#B9539F")
-
-invisible(lapply(seq_along(coll4dat4sim), function(x) {
-  name <- names(coll4dat4sim)[[x]]
-  #print(name)
-  if (grepl("j1", name)) 
-  { col <- "#6FCDDD50"; shape = 17 } # cyan
-  if (grepl("j2", name)) 
-  { col <- "#FFA50050"; shape = 18 } # orange
-  if (grepl("j3", name)) 
-  { col <- "#ED212550"; shape = 16 } # red
-  if (grepl("j4", name)) 
-  { col <- "#B9539F50"; shape = 15 } # magenta
-  
-  lines(coll4dat4sim[[x]]$dist_m, y = coll4dat4sim[[x]]$speed_ms,
-        col = col, lwd = 1)
-  # points(coll4dat4sim[[x]]$dist_m, y = coll4dat4sim[[x]]$speed_ms,
-  #       col = col, cex = 0.5, pch = shape)
-}))
+# plot(x = coll4prior$s, y = coll4prior$X1, type = "l", col = "blue", ylim = c(0,1), main = "PriorDev")
+# lines(x = coll4prior$s, coll4prior$X2, col = "orange")
+# lines(x = coll4prior$s, coll4prior$X3, col = "red")
+# lines(x = coll4prior$s, coll4prior$X4, col = "magenta")

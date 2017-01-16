@@ -17,29 +17,28 @@ predLiebner_compProb_Mk <- function(dat2proc,
     data.frame()
   
   ## Visualisation
-  if (showplot) {
-    
-    plotdat <-
-      ggplot() +
-      geom_bar(data = prob,
-               aes(x = M,
-                   y = rate),
-               stat = "identity") +
-      scale_y_continuous(expand = c(0, 0)) + 
-      coord_cartesian(ylim = c(0,1)) + 
-      labs(title = "Distribution of model M",
-           subtitle = "Rate of passings in each cluster")
+  plotdat <-
+    ggplot() +
+    geom_bar(data = prob,
+             aes(x = M,
+                 y = rate,
+                 fill = M),
+             stat = "identity") +
+    scale_y_continuous(expand = c(0, 0)) + 
+    scale_fill_manual(values = c("#ED2124", "#6ABD45", "#3953A4")) +
+    coord_cartesian(ylim = c(0,1)) + 
+    labs(title = "Distribution of model M",
+         subtitle = "Rate of passings in each cluster") + 
+    theme_bw()
 
-    if (!is.null(varname4group))
-      plotdat <-
-        plotdat + 
-        facet_grid(as.formula(paste(".~", varname4group)))
-      
-    plot(plotdat)
+  if (!is.null(varname4group))
+    plotdat <-
+    plotdat + 
+    facet_grid(as.formula(paste(".~", varname4group)))
     
-    return(list(prob = prob,
-                plotdat = plotdat))
-  } else
-    ## If no visualisation
-    return(list(prob = prob))
+  if (showplot)  
+    plot(plotdat)
+  
+  return(list(prob = prob,
+              plotdat = plotdat))
 }

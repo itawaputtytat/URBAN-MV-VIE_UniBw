@@ -75,9 +75,10 @@ par(mfrow = c(1, 1))
 
 # Merge with data ---------------------------------------------------------
 
-row_first <- ceiling(set4proc$seqlength/2)
-row_last <- nrow(dat4curv) - floor(set4proc$seqlength/2)
-dat4curv_curv <- cbind(dat4curv[c(row_first:row_last), ], curv)
+# row_first <- ceiling(set4proc$seqlength/2)
+# row_last <- nrow(dat4curv) - floor(set4proc$seqlength/2)
+#dat4curv_curv <- cbind(dat4curv[c(row_first:row_last), ], curv)
+dat4curv_curv <- cbind(dat4curv, curv)
 
 yellowness <- ( curv - min(curv) ) / ( max(curv) - min(curv) )
 
@@ -105,27 +106,27 @@ plotcurv <-
                   ylim = set4proc$ylim) #+
  # ggtitle(paste("kwidth:", set4proc$kwidth, "+ treshold:", set4proc$thresh))
 
-#plot(plotcurv)
+plot(plotcurv)
 
-ggsave(paste(sprintf("s%02d", set4proc$sxx),
-             "_seg", set4proc$seglength,
-             "_xydist.smoothed.curv.pdf", sep = ""),
-       plotcurv,
-       path = "plots",
-       dpi = 300,
-       width = 20,
-       height = 10,
-       units = "cm")
-
-ggsave(paste(sprintf("s%02d", set4proc$sxx),
-             "_seg", set4proc$seglength,
-             "_xydist.smoothed.curv.svg", sep = ""),
-       plotcurv,
-       path = "plots",
-       dpi = 300,
-       width = 20,
-       height = 10,
-       units = "cm")
+# ggsave(paste(sprintf("s%02d", set4proc$sxx),
+#              "_seg", set4proc$seglength,
+#              "_xydist.smoothed.curv.pdf", sep = ""),
+#        plotcurv,
+#        path = "plots",
+#        dpi = 300,
+#        width = 20,
+#        height = 10,
+#        units = "cm")
+# 
+# ggsave(paste(sprintf("s%02d", set4proc$sxx),
+#              "_seg", set4proc$seglength,
+#              "_xydist.smoothed.curv.svg", sep = ""),
+#        plotcurv,
+#        path = "plots",
+#        dpi = 300,
+#        width = 20,
+#        height = 10,
+#        units = "cm")
 
 
 

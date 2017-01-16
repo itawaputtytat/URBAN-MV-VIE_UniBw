@@ -11,7 +11,7 @@ addVar4Stopping <- function(dat2proc,
     dat2proc %>% 
     select_(.dots = c("passing", 
                       speed = "speed_kmh", 
-                      dist = "sxx_dist_m_rnd1")) %>% 
+                      dist = varname4dist)) %>% 
     filter(dist > dist1 & dist < dist2) %>% 
     group_by_(.dots = lapply("passing", as.symbol)) %>% 
     mutate(stopping = ifelse(speed <= 5, "stopping", "no_stopping")) %>% 

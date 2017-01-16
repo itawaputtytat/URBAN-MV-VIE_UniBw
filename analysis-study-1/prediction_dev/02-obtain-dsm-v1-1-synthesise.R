@@ -10,6 +10,7 @@ set4proc$varname4dist <- "sxx_dist_m_rnd1"
 set4proc$varname4dist_m <- "sxx_dist_m_rnd1"
 set4proc$varname4time <- "time_s"
 set4proc$varname4group <- "passing"
+set4proc$sxx <- set4query$sxx
 set4proc$showplot <- F
 set4proc$showplot4subject_id <- 1
 
@@ -26,7 +27,10 @@ set4synth$distlimit <- 11 #for left turning
 
 # Subset data -------------------------------------------------------------
 
-dat <- get(set4proc$dfname) 
+dat <- 
+  get(set4proc$dfname) %>% 
+  filter(sxx %in% set4proc$sxx) %>% 
+  filter(stopping == "no_stopping")
 #dat <- dat %>% filter(subject_id == 2)
 #dat <- dat %>% filter(subject_id <= 11 & subject_id != 11)
   
@@ -82,14 +86,12 @@ dat <-
 
 plotdat.profiles <-
   ggplot() +
-  geom_line(data = 
-              dat %>% 
-              filter(subject_id %in% set4proc$showplot4subject_id),
+  geom_line(data = dat,
             aes_string(x = set4proc$varname4dist_m,
                        y = "speed_ms",
                        group = set4proc$varname4group),
-            size = 1
-            #,colour = "grey95"
+            size = 1,
+            colour = "grey85"
             ) +
   scale_x_continuous(expand = c(0, 0)) + 
   coord_cartesian(xlim = c(-50, 25),
@@ -204,7 +206,7 @@ dat4idm <-
 
 
 
-# Set desired velocity after distance limit -------------------------------
+# Set speed to maximum u after distance limit -----------------------------
 
 dat4idm <- 
   dat4idm %>% 

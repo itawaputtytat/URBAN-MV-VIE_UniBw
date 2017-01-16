@@ -78,41 +78,40 @@ predLiebner_compProb_al_Mk <- function(dat4prob,
            rate = ifelse(is.na(rate), 0, rate)) 
   
   ## Visualisation
-  if (showplot) {
-
-    txt4caption <- 
+  txt4caption <- 
+    paste(
       paste(
-        paste(
-          paste("l", c(1:length(acclon_ms2.thresh)), sep = ""),
-          "~",
-          acclon_ms2.thresh,
-          collapse = "; "),
-        "m/s²")
-    
+        paste("l", c(1:length(acclon_ms2.thresh)), sep = ""),
+        "~",
+        acclon_ms2.thresh,
+        collapse = "; "),
+      "m/s²")
+  
+  plotdat <-
+    ggplot() +
+    geom_bar(data = prob,
+             aes(x = a,
+                 y = rate,
+                 fill = M),
+             stat = "identity") +
+    facet_grid(.~M) +
+    scale_y_continuous(expand = c(0, 0)) + 
+    scale_fill_manual(values = c("#ED2124", "#6ABD45", "#3953A4")) + 
+    coord_cartesian(ylim = c(0,1)) +
+    labs(title = "Distribution of max. acc. parameter a",
+         subtitle = paste("Rate of passings in each model Mk"
+                          , " with \n", txt4caption, sep = "")) + 
+    theme_bw()
+  
+  if (!is.null(varname4group))
     plotdat <-
-      ggplot() +
-      geom_bar(data = prob,
-               aes(x = a,
-                   y = rate),
-               stat = "identity") +
-      facet_grid(.~M) +
-      scale_y_continuous(expand = c(0, 0)) + 
-      coord_cartesian(ylim = c(0,1)) +
-      labs(title = "Distribution of max. acc. parameter a",
-           subtitle = paste("Rate of passings in each model Mk"
-                            , " with \n", txt4caption, sep = ""))
-    
-    if (!is.null(varname4group))
-      plotdat <-
-        plotdat + 
-        facet_grid(as.formula(paste("M ~", varname4group)))
-    
+    plotdat + 
+    facet_grid(as.formula(paste("M ~", varname4group)))
+  
+  if (showplot) 
     plot(plotdat)
     
-    dat2return <- list(prob = prob, plotdat = plotdat)
-  } else {
-    dat2return <- list(prob = prob)
-  }
+  dat2return <- list(prob = prob, plotdat = plotdat)
       
   if (return_assignments)
     return(append(dat2return, list(prob.assignment = prob.assignment))) else

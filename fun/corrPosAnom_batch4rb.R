@@ -1,11 +1,13 @@
-corrPosAnom_batch4rb <- function (dat2proc,
-                                  colname4ref = "sxx_dist_m_rnd1",
-                                  dbconn = "dbconn_study1",
-                                  save2src = T) {
+outputFunProc(I, "corrPosAnom_batch4rb")
+
+corrPosAnom_batch4rb <- function(dat2proc,
+                                 colname4ref = "sxx_dist_m_rnd1",
+                                 dbconn = "dbconn_study1",
+                                 save2src = T) {
 
   outputFunProc(R)
   
-  objname <- deparse(substitute(dat2proc))
+  name4obj <- deparse(substitute(dat2proc))
   sxx_unique <- unique(dat2proc$sxx)
   dec_n <- getDecimalPlaces(dat2proc[1, colname4ref])
   
@@ -81,7 +83,7 @@ corrPosAnom_batch4rb <- function (dat2proc,
       }
       ## Assign changes to old dataname
       if (save2src == T) 
-        assign(objname, dat2proc, env = .GlobalEnv) else 
+        assign(name4obj, dat2proc, env = .GlobalEnv) else 
           return(dat2proc)
     }
 }

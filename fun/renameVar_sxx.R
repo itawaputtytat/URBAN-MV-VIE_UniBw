@@ -1,6 +1,10 @@
+outputFunProc(I, "renameVar_sxx")
+
+
 renameVar_sxx <- function (name4df) {
 
   outputFunProc(R)
+  outputString("* Renaming sxx related variables")
 
   ## Get data names in current workspace which containt pattern like "s01"
   pattern <- paste(sprintf("s%02d", 1:18), collapse = "|")
