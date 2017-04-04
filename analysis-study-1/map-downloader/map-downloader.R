@@ -2,11 +2,13 @@
 # Preparatory settings ----------------------------------------------------
 
 set4proc <- c()
-set4proc$sxx <- c(1:18,99)
+#set4proc$sxx <- c(1:18,99)
+set4proc$sxx <- c(24)
 #set4proc$sxx <- 1
 set4proc$dbconn <- "dbconn_study1"
-set4proc$name4src <- "t_sxx_gps2"
-set4proc$zoom <- 18
+#set4proc$name4src <- "t_sxx_gps2"
+set4proc$name4src <- "t_gpsref"
+set4proc$zoom <- 19
 set4proc$scale <- 2
 set4proc$maptype <- "satellite"
 set4proc$source <- "google"
@@ -24,12 +26,13 @@ assign(set4proc$name4src,
 
 # Get map images ----------------------------------------------------------
 
-for(sxx in set4proc$sxx) {
+for(sxx_temp in set4proc$sxx) {
   
   dat2proc <- get(set4proc$name4src)
-  dat2proc <- dat2proc %>% filter(situation == sxx)
-  lat <- dat2proc$situation_lat
-  lon <- dat2proc$situation_long
+  #dat2proc <- dat2proc %>% filter(situation == sxx)
+  dat2proc <- dat2proc %>% filter(sxx == sxx_temp)
+  lat <- dat2proc$lat
+  lon <- dat2proc$lon
   
   map <- get_map(location = c(lon, lat),
                  zoom = set4proc$zoom,
@@ -39,7 +42,7 @@ for(sxx in set4proc$sxx) {
   
   filepath <- file.path("ressources", "study1", "map-images")
   dir.create(filepath, recursive = T, showWarnings = F)
-  filename <- paste(sprintf("s%02d", sxx),
+  filename <- paste(sprintf("s%02d", sxx_temp),
                     set4proc$source,
                     set4proc$maptype,
                     paste("scale", set4proc$scale, sep = ""),

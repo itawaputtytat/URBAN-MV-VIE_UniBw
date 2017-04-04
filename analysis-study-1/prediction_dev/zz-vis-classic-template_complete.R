@@ -9,6 +9,14 @@ set4windows$right <- -7
 set4windows$width <- 7
 set4windows$height <- 4
 set4windows$pointsize <- 8
+
+## Dummy to avoid flickering
+windows(xpos = set4windows$right - (set4windows$width*96/2),
+        ypos = set4windows$top + set4windows$height*96/2,
+        width = 0.1,
+        height = 0.1)
+
+
 ## Simulation
 windows(xpos = set4windows$right, 
         ypos = set4windows$top, 
@@ -44,13 +52,13 @@ windows(xpos = set4windows$right - set4windows$width*96 - set4windows$width - 8,
 # Create templates --------------------------------------------------------
 
 ## Simulation
-dev.set(2)
+dev.set(3)
 source("analysis-study-1/prediction_dev/zz-vis-classic-template-simulation.R")
 
 ## Current probability
-dev.set(3)
+dev.set(4)
 source("analysis-study-1/prediction_dev/zz-vis-classic-template-current-prob.R")
 
 ## Probability history
-dev.set(4)
+dev.set(5)
 source("analysis-study-1/prediction_dev/zz-vis-classic-template-history-prob.R")

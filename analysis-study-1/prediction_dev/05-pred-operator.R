@@ -3,7 +3,7 @@
 
 ## Load test data
 source("fun_Liebner_2013/settings/set4dat.R")
-set4dat$passing <- "s05_intro_subject04"
+set4dat$passing <- "s15_intro_subject04"
 source("analysis-study-1/prediction_dev/06-load-test-data.R")
 
 ## Initialise Algorithm, dsm and BN
@@ -41,7 +41,7 @@ source("analysis-study-1/prediction_dev/zz-vis-classic-template_single.R")
 source("analysis-study-1/prediction_dev/zz-vis-classic-template_single.R")
 
 ## Set position for carrying out simulation
-set4sim$pos4carryout <- 10
+set4sim$pos4carryout <- -20
 
 ## Compute starting values for simulation
 pos4carryout <- round(pos4carryout, 1)
@@ -120,7 +120,6 @@ ptm2 <- proc.time()
 for(s in seq(dist2start,dist2end,distint)) {
 
   pos4carryout <- round(s, 1)
-  
   ## Real-time
   #pos4carryout <- round(dat4test$sxx_dist_m_rnd1[s], 1)
   
@@ -163,17 +162,17 @@ for(s in seq(dist2start,dist2end,distint)) {
 
   source("analysis-study-1/prediction_dev/xz-vis-classic_complete.R")
   
-  ## Adjust plotting speed
-  # time_s_diff <- dat4test$time_s[s] - dat4test$time_s[s-7]
-  # Sys.sleep(time_s_diff)
+  # Adjust plotting speed
+  #time_s_diff <- dat4test$time_s[s] - dat4test$time_s[s-7]
+  #Sys.sleep(time_s_diff)
   # input <- 0
   # while(input == 0) {
   #   input <- readline("1 = forward | 2 = backward: >> ")
   #   if (input == 1) {
-  #     input <- s - 7 
+  #     input <- s - 7
   #     } else {
   #       if (input == 2) {
-  #         input <- s + 7 
+  #         input <- s + 7
   #       } else {
   #         input <- 0
   #       }

@@ -5,7 +5,7 @@ writeSelfAsLog("set4query")
 set4query <- c()
 set4query$src <- "t_adtf_dist_m_rnd1_full"
 #set4query$sxx   <- c(1:2, 4:18)
-set4query$sxx   <- c(15)
+set4query$sxx   <- c(14)
 set4query$round <- c("intro", "normal", "stress")
 set4query$subject <- c(1:31)
 #set4query$subject <- c(1:17, 19:31)
