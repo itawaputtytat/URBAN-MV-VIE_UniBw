@@ -1,9 +1,9 @@
-
+## @knitr start
 
 # Version info ------------------------------------------------------------
 
 library(puttytat4R)
-outputSectionTitle("Project: URBAN-MV-VIE_UniBw", char4aes = "#", seplinechar = "=")
+outputSectionTitle("Project: URBAN-MV-VIE_UniBw")
 outputString("* Framework V3.1", type = "message")
 
 
@@ -16,7 +16,7 @@ library(RPostgreSQL)
 outputDone(step = T)
 
 outputString("* Initialise set4db")
-dbInit()
+dbInitSettings("settings", "set4db.R")
 outputDone(step = T)
 
 outputString("* Initialise set4idnames")

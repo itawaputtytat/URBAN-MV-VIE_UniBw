@@ -1,3 +1,5 @@
+## @knitr set4db
+library(RPostgreSQL)
 set4db <- c()
 set4db$dns  <- "URBAN-MV-VIE_UniBw_"
 set4db$host <- "localhost"

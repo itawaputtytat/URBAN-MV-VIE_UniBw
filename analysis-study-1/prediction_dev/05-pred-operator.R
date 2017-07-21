@@ -20,8 +20,8 @@ source("analysis-study-1/prediction_dev/07-initialise-sim-dsm-pred.R")
 source("fun_Liebner_2013/settings/set4algo.R")
 source("fun_Liebner_2013/settings/set4idm.R")
 
-set4sim$objpos[2] <- 0
-set4sim$objpos[4] <- -10
+set4sim$objpos[2] <- -10
+set4sim$objpos[4] <- -15
 #set4idm$d0 <- 2
 set4idm$d0 <- 0
 
@@ -44,7 +44,7 @@ source("analysis-study-1/prediction_dev/zz-vis-classic-template_single.R")
 set4sim$pos4carryout <- -20
 
 ## Compute starting values for simulation
-pos4carryout <- round(pos4carryout, 1)
+#pos4carryout <- round(pos4carryout, 1)
 pos4carryout <- set4sim$pos4carryout
 set4sim_temp <- predLiebner_getStartVal4Sim(dat4test, set4dat, pos4carryout)
 set4sim_temp$time_s_diff <- rep(0.01, 1 / 0.01)
