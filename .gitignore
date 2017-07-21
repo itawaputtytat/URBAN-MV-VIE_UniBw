@@ -7,3 +7,4 @@
 .svg
 *.png
 *.RData
+settings/set4db-pwd.R

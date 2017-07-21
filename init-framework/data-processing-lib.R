@@ -1,4 +1,3 @@
-outputString("* Attaching libraries ...")
 library(zoo) ## Interpolation, rollmean
 library(tripack) ## Compute path curvature
 library(geosphere) ## Computing gps-distances
@@ -10,5 +9,3 @@ library(LICORS) ## kmeanspp
 library(dtw) ## Hierarchical clustering distance measures
 library(TSclust) # Calculating different distances measures
 library(kml) ## Clustering of longitudinal data
-
-outputDone(step = T)

@@ -1,8 +1,7 @@
-## @knitr start
+library(puttytat4R)
 
 # Version info ------------------------------------------------------------
 
-library(puttytat4R)
 outputSectionTitle("Project: URBAN-MV-VIE_UniBw")
 outputString("* Framework V3.1", type = "message")
 
@@ -11,26 +10,22 @@ outputString("* Framework V3.1", type = "message")
 # Database ----------------------------------------------------------------
 
 outputSectionTitle("Database")
+
 outputString("* Attaching libraries ...")
-library(RPostgreSQL)
+source("init-framework/db-lib.R")
 outputDone(step = T)
 
-outputString("* Initialise set4db")
-dbInitSettings("settings", "set4db.R")
-outputDone(step = T)
-
-outputString("* Initialise set4idnames")
+outputString("* Initialise settings (db, idnames")
+source("init-framework/db-init-settings.R")
 source("settings/set4idnames.R")
 outputDone(step = T)
 
 outputString("* Attaching functions ...")
-source("fun/dbConnect_operator.R")
-source("fun/dbCreateQueryString.R")
-source("fun/dbGetQuery_batch.R") ## Can be renamed to study1 similar to next
+source("init-framework/db-fun.R")
 outputDone(step = T)
 
 outputString("* Connecting to database ...")
-dbConnect_operator()
+dbConnectOperator()
 outputDone(step = T)
 
 
@@ -38,35 +33,13 @@ outputDone(step = T)
 # Data manipulation -------------------------------------------------------
 
 outputSectionTitle("* Data manipulation")
+
 outputString("* Attaching libraries ...")
-library(dplyr)
-library(tidyr)
-library(reshape2) ## Still necessary?
+source("init-framework/data-manipulation-lib.R")
 outputDone(step = T)
 
 outputString("Attaching functions ...")
-source("fun/renameVar_sxx.R")
-source("fun/renameVar_sxx_V2.R")
-source("fun/intrpldf_batch.R")
-source("fun/intrpldf_batch4rb.R")
-source("fun/corrPosAnom.R")
-source("fun/corrPosAnom_batch4rb.R")
-source("fun/cut2dist.R")
-source("fun/cut2dist_batch4rb.R")
-source("fun/addVar4PrecVeh.R")
-source("fun/addVar4Stopping.R")
-source("fun/computeVar_dist2steermax.R")
-source("fun/rbindPassings.R")
-source("fun/computeSmoothGPSMedian.R")
-source("fun/convertGPS2XYDistances.R")
-source("fun/computeRadius_batch.R")
-source("fun/computeCurvature.R")
-source("fun/smoothWithLoess.R")
-source("fun/clust2groups.R")
-source("fun/clust2groups_hclust.R")
-source("fun/clust2groups_kmeans.R")
-source("fun/clust2groups_kmeanspp.R")
-
+source("init-framework/data-manipulation-fun.R")
 outputDone(step = T)
 
 
@@ -76,19 +49,11 @@ outputDone(step = T)
 outputSectionTitle("Visualisation")
 
 outputString("* Attaching libraries ...")
-library(ggplot2)
-library(gridExtra) # e.g. grid.arrange()
-require(googleVis) # e.g. mouse over plots in browser
-library(ggmap) # GPS-plots
-library(GGally) #for parallel coordinates
-library(plotly)
+source("init-framework/vis-lib.R")
+outputDone(step = T)
 
 outputString("* Attaching functions ...")
-source("fun/getMapImage.R")
-#source("fun/adjustGrid.R")
-#source("plotting/adjustMarginGtable.R")
-#source("fun/adjustPanel.R")
-
+source("init-framework/vis-fun.R")
 outputDone(step = T)
 
 
@@ -96,53 +61,17 @@ outputDone(step = T)
 # Processing --------------------------------------------------------------
 
 outputString("* Attaching libraries ...")
-library(zoo) ## Interpolation, rollmean
-library(tripack) ## Compute path curvature
-library(geosphere) ## Computing gps-distances
-library(TraMineR) # Sequence analysis
-library(TraMineRextras) # Sequence analysis
-#library(lazyeval) # Dynamic filter variables in dplyr
-## Cluster analysis
-library(LICORS) ## kmeanspp
-library(dtw) ## Hierarchical clustering distance measures
-library(TSclust) # Calculating different distances measures
-library(kml) ## Clustering of longitudinal data
-
+source("init-framework/data-processing-lib.R")
 outputDone(step = T)
 
 
 
 # Liebner et al. (2013) ---------------------------------------------------
 
-source("fun_Liebner_2013/idm_createSimDat.R")
-source("fun_Liebner_2013/idmGap.R")
-source("fun_Liebner_2013/idmGap_act.R")
-source("fun_Liebner_2013/idmGap_des.R")
-source("fun_Liebner_2013/idmSpeed.R")
-source("fun_Liebner_2013/idmDistance.R")
-source("fun_Liebner_2013/idmAcc.R")
+outputSectionTitle("Liebner et al. (2013)")
+source("init-framework/Liebner-lib.R")
+source("init-framework/Liebner-fun.R")
 
-source("fun_Liebner_2013/predLiebner_compProb_Mk.R")
-source("fun_Liebner_2013/predLiebner_compProb_al_Mk.R")
-source("fun_Liebner_2013/predLiebner_compProb_O_Hi.R")
-
-source("fun_Liebner_2013/predLiebner_initObj4Set.R")
-source("fun_Liebner_2013/predLiebner_initBN.R")
-source("fun_Liebner_2013/predLiebner_updateBN.R")
-source("fun_Liebner_2013/predLiebner_getStartVal4Sim.R")
-source("fun_Liebner_2013/predLiebner_modelDrivBehav.R")
-source("fun_Liebner_2013/predLiebner_modelDrivBehav_batch.R")
-source("fun_Liebner_2013/predLiebner_modelDrivBehav_batch_cpp.R")
-source("fun_Liebner_2013/predLiebner_getu.R")
-source("fun_Liebner_2013/predLiebner_pdf4sim.R")
-source("fun_Liebner_2013/predLiebner_pdf4comp.R")
-
-source("fun_Liebner_2013/predLiebner_visDVM.R")
-source("fun_Liebner_2013/predLiebner_visPassing.R")
-source("fun_Liebner_2013/predLiebner_visPos.R")
-source("fun_Liebner_2013/predLiebner_visProf.R")
-
-library(gRain)
 
 
 # Attaching functions -----------------------------------------------------
@@ -178,26 +107,10 @@ library(gRain)
 # Miscellaneous settings --------------------------------------------------
 
 outputSectionTitle("Miscellaneous settings")
-
-outputString("* Declare \"select\" as function of dplyr: dplyr::select")
-select <- dplyr::select
-
-# outputString("* Force R to use non-exponential notations (scipen)")
-# options("scipen" = 100, "digits" = 4)
-
-outputString("* Deactivate outputFunProc")
-.outputFunProc_status(F, print = T)
-#.outputFunProc_status(T, print = T)
+source("init-framework/misc-settings.R")
 
 
 
 # Loading data ------------------------------------------------------------
 
-outputSectionTitle("Pre-loading data ...")
-
-## Initialise t_sxx_critdist
-if (set4db$input == 1) {
-  outputString("* Loading t_sxx_critdist from database ...")
-  t_sxx_critdist <- dbGetSrc("dbconn_study1", "t_sxx_critdist")
-}
-outputDone(step = T)
+source("init-framework/preloading-data.R") # t_sxx_critdist

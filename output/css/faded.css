@@ -1,0 +1,38 @@
+h1{
+  font-color: rgb(31, 78, 121);
+  font-size: 14pt;
+  font-weight: bold;
+  color: white;
+  padding: 10px;
+/*  background-color: #3399ff    */
+  background-color: rgb(31, 78, 121);
+}
+
+h2{
+  font-size: 13pt;
+  font-weight: bold;
+  color: white;
+  padding: 5px;
+  background-color: rgb(50, 124, 192);
+}
+
+h3{
+  font-size: 12pt;
+  font-weight: bold;
+}
+
+p{
+	font-size: 10pt;
+	text-align: justify;
+}
+
+ul {
+  font-size: 10pt;
+  background-color: lightgrey;  
+  list-style-type: bullet;  
+}
+
+.MathJax_Display {
+  padding: 0.5em;
+  background-color: #eaeff3
+}

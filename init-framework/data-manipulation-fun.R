@@ -1,11 +1,3 @@
-outputSectionTitle("* Data manipulation")
-outputString("* Attaching libraries ...")
-library(dplyr)
-library(tidyr)
-library(reshape2) ## Still necessary?
-outputDone(step = T)
-
-outputString("Attaching functions ...")
 source("fun/renameVar_sxx.R")
 source("fun/renameVar_sxx_V2.R")
 source("fun/intrpldf_batch.R")
@@ -27,5 +19,3 @@ source("fun/clust2groups.R")
 source("fun/clust2groups_hclust.R")
 source("fun/clust2groups_kmeans.R")
 source("fun/clust2groups_kmeanspp.R")
-
-outputDone(step = T)

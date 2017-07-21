@@ -1,14 +1,13 @@
-## @knitr dbConnect_operator
-
-dbConnect_operator <- function(dbname = NULL) {
+dbConnectOperator <- function(dbname = NULL) {
   outputFunProc(R)
 
+  ## For Markdown processing
   if (!is.null(dbname) & !is.null(dbname)) {
     set4db$name <- paste0(set4db$dns, dbname)
     set4db$name_short <- tolower(dbname)
-    set4db$pwd <- "keines"
+    #set4db$pwd <- "WRITE-PASSWORD-HERE"
     set4db <<- set4db
-    dbConnect_set4db(set4db, set4db$name_short)
+    dbConnectBySettings(set4db, set4db$name_short)
   } else {
     ## Adjust settings
     outputString(paste("Select study ", "\n",
@@ -23,7 +22,7 @@ dbConnect_operator <- function(dbname = NULL) {
     set4db <<- set4db
 
     ## Connect to database
-    dbConnect_set4db(set4db, set4db$name_short)
+    dbConnectBySettings(set4db, set4db$name_short)
     outputDone()
   }
 }

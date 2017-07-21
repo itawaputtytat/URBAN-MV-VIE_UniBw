@@ -25,5 +25,3 @@ source("fun_Liebner_2013/predLiebner_visDVM.R")
 source("fun_Liebner_2013/predLiebner_visPassing.R")
 source("fun_Liebner_2013/predLiebner_visPos.R")
 source("fun_Liebner_2013/predLiebner_visProf.R")
-
-library(gRain)

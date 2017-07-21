@@ -1,5 +1,3 @@
-outputSectionTitle("Miscellaneous settings")
-
 outputString("* Declare \"select\" as function of dplyr: dplyr::select")
 select <- dplyr::select
 
