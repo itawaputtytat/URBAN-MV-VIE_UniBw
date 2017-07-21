@@ -1,6 +1,6 @@
 ---
 title: "BFI-10"
-output: html_document
+output: github_document
 ---
 
 **Preparatory settings**
