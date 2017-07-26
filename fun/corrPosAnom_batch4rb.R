@@ -1,5 +1,3 @@
-outputFunProc(I, "corrPosAnom_batch4rb")
-
 corrPosAnom_batch4rb <- function(dat2proc,
                                  colname4ref = "sxx_dist_m_rnd1",
                                  dbconn = "dbconn_study1",

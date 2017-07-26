@@ -4,13 +4,6 @@
 ## Use available algorithms for clustering
 
 
-
-# Output for initialising -------------------------------------------------
-
-cat("* Function initialised: clust2groups \n")
-
-
-
 # Function ----------------------------------------------------------------
 
 clust2groups <-

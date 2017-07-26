@@ -1,5 +1,3 @@
-outputFunProc(I, "renameVar_sxx2")
-
 renameVar_sxx2 <- function (dat2proc) {
 
   outputFunProc(R)

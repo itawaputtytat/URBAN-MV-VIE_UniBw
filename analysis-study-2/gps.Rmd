@@ -1,0 +1,51 @@
+---
+title: "R Notebook"
+output:
+  html_document: default
+  html_notebook: default
+---
+
+# Initialise framework
+```{r knitr options, include = F}
+knitr::opts_knit$set(root.dir='../')
+```
+
+```{r Read chunks}
+knitr::read_chunk("start_markdown.R")
+```
+
+```{r Initialise framework, include = F}
+<<start_markdown>>
+```
+
+# Analysis
+
+## Preparatory settings
+
+### Connect to database
+```{r DB-Connection, message = F}
+dbConnectOperator("Study2")
+```
+
+
+```{r}
+#writeSelfAsLog("set4query")
+set4query <- c()
+set4query$subid <- 1:40
+set4query$subid <- 1
+set4query$mdir <- c("left", "right", "straight")
+#set4query$mdir <- c("right")
+set4query$apprspeed <- c(50, 70)
+#set4query$apprspeed <- c(50)
+set4query$tx <- c("t1", "t2")
+#set4query$tx <- c("t1")
+set4query$dist1pre <- -150
+set4query$dist2pre <- 150
+
+```
+
+```{r}
+# Data processing ---------------------------------------------------------
+dbGetQuery_batch(dbconn_study2, set4query, rb = T)
+```
+

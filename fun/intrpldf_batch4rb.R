@@ -1,5 +1,3 @@
-outputFunProc(I, "intrpldf_batch4rb")
-
 intrpldf_batch4rb <- function(dat2proc,
                               colname4ref = "sxx_dist_m_rnd1",
                               stepsize = 0.1,

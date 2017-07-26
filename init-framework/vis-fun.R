@@ -1,4 +1,4 @@
-source("fun/getMapImage.R")
-#source("fun/adjustGrid.R")
+sourceWithEcho("fun/getMapImage.R")
+#sourceWithEcho("adjustGrid.R")
 #source("plotting/adjustMarginGtable.R")
-#source("fun/adjustPanel.R")
+#sourceWithEcho("adjustPanel.R")

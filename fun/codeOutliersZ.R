@@ -4,10 +4,6 @@
 ## Output meaningful process time
 ## see: https://gist.github.com/hauselin/35311bc9be789ee44d8f
 
-printFunctionProcess(I, "printSectionTitle")
-
-
-
 # Function ----------------------------------------------------------------
 
 codeOutliersZ <- function(dat,

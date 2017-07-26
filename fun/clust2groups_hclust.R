@@ -1,12 +1,3 @@
-
-# Output for initialising -------------------------------------------------
-
-cat("* Function initialised: clust2groups_hclust \n")
-
-
-
-# Function ----------------------------------------------------------------
-
 clust2groups_hclust <-
   function (dat2proc.wide,
             method4dist = "EUCL",

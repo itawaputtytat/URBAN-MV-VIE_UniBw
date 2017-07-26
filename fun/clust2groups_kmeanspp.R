@@ -1,12 +1,3 @@
-
-# Output for initialising -------------------------------------------------
-
-cat("* Function initialised: clust2groups_kmeanspp \n")
-
-
-
-# Function ----------------------------------------------------------------
-
 clust2groups_kmeanspp <-
   function (dat2proc.wide,
             k = 3,

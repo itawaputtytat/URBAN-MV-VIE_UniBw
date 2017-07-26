@@ -3,7 +3,7 @@ library(puttytat4R)
 # Version info ------------------------------------------------------------
 
 outputSectionTitle("Project: URBAN-MV-VIE_UniBw")
-outputString("* Framework V3.1", type = "message")
+outputString("* Framework V3.1")
 
 
 
@@ -16,7 +16,7 @@ source("init-framework/db-lib.R")
 outputDone(step = T)
 
 outputString("* Initialise settings (db, idnames")
-source("init-framework/db-init-settings.R")
+source("init-framework/db-init-settings.R") ## Requires dbInitSettings()
 source("settings/set4idnames.R")
 outputDone(step = T)
 
@@ -25,7 +25,8 @@ source("init-framework/db-fun.R")
 outputDone(step = T)
 
 outputString("* Connecting to database ...")
-dbConnectOperator()
+source("settings/test.R")
+dbConnectOperator(set4db, dbname = "Mendeley")
 outputDone(step = T)
 
 
@@ -113,4 +114,5 @@ source("init-framework/misc-settings.R")
 
 # Loading data ------------------------------------------------------------
 
+## DOES NOT WORK ANYMORE
 source("init-framework/preloading-data.R") # t_sxx_critdist

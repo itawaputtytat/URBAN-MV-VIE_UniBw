@@ -1,11 +1,4 @@
-
-# Objective ---------------------------------------------------------------
-
 ## Join all data from crossings
-outputFunProc(I, "rbindPassings")
-
-# Function ----------------------------------------------------------------
-
 rbindPassings <- function(prefix, 
                           suffix, 
                           txt2excl = NULL, 

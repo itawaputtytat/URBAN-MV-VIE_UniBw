@@ -1,6 +1,3 @@
-outputFunProc(I, "renameVar_sxx")
-
-
 renameVar_sxx <- function (name4df) {
 
   outputFunProc(R)

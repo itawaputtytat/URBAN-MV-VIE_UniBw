@@ -1,5 +1,3 @@
-outputFunProc(I, "dbCreateQueryString")
-
 dbCreateQueryString <- function(sxx) {
 
   outputFunProc(R)

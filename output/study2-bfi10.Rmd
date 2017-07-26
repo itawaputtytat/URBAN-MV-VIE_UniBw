@@ -4,7 +4,7 @@ title: "Study #2: BFI-10"
 output:
   html_document:
     theme: united
-    css: ../output/css/faded.css
+    css: css/faded.css
     number_sections: true
     toc: true
     toc_float:
@@ -31,7 +31,7 @@ knitr::read_chunk("start_markdown.R")
 
 ### Connect to database
 ```{r DB-Connection, message = F}
-dbConnectOperator("Study2")
+dbConnectOperator(set4db, dbname = "URBAN-MV-VIE_UniBw_Study2")
 ```
 
 ### Load libaries

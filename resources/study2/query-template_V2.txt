@@ -1,0 +1,37 @@
+SELECT
+t_can_format.subid,
+t_can_format.time_s,
+t_can_format.speed_kmh,
+t_can_format.acclat_ms2,
+t_can_format.acclon_ms2,
+t_can_format.yawrate_degs,
+t_can_format.brakepress_bar,
+t_can_format.brakepress_status,
+t_can_format.steerangle_deg,
+t_can_format.accpedalpos_perc,
+t_can_format.gps_lat,
+t_can_format.gps_lon,
+t_can_dist2gps.dist_m,
+t_can_dist2gps.dist2gps_s1_m,
+t_can_dist2gps.dist2gps_s2_m,
+t_can_dist2gps.dist2gps_s3_m,
+v_can_wrange_gps_sx_helper_6final.dist_m as dist_m_4gps_sx,
+v_can_wrange_gps_sx_helper_6final.runid
+
+FROM
+t_can_format
+INNER JOIN t_can_dist2gps ON t_can_format.subid = t_can_dist2gps.subid AND t_can_format.time_s = t_can_dist2gps.time_s
+INNER JOIN v_can_wrange_gps_sx_helper_6final ON t_can_dist2gps.subid = v_can_wrange_gps_sx_helper_6final.subid
+INNER JOIN v_condfinder ON v_can_wrange_gps_sx_helper_6final.subid = v_condfinder.subid
+
+WHERE
+t_can_format.subid = PLACEHOLDER-SUBID AND 
+v_can_wrange_gps_sx_helper_6final.runid = v_condfinder.runsPLACEHOLDER-SPEED_PLACEHOLDER-T_runid AND
+v_can_wrange_gps_sx_helper_6final.mdir = 'PLACEHOLDER-DIRECTION' AND
+v_can_wrange_gps_sx_helper_6final.mstart = 1 AND
+t_can_dist2gps.dist_m >= v_can_wrange_gps_sx_helper_6final.dist_m + PLACEHOLDER-DIST1PRE AND
+t_can_dist2gps.dist_m <= v_can_wrange_gps_sx_helper_6final.dist_m + PLACEHOLDER-DIST2PRE
+
+ORDER BY
+t_can_format.subid,
+t_can_format.rownr

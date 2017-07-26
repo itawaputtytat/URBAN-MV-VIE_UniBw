@@ -1,5 +1,3 @@
-outputFunProc(I, "dbQueryLoop_batch")
-
 dbGetQuery_batch <- function(dbconn, 
                              set4query, 
                              rb = T, ...) {
