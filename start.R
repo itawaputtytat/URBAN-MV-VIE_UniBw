@@ -17,7 +17,6 @@ outputDone(step = T)
 
 outputString("* Initialise settings (db, idnames")
 source("init-framework/db-init-settings.R") ## Requires dbInitSettings()
-source("settings/set4idnames.R")
 outputDone(step = T)
 
 outputString("* Attaching functions ...")
@@ -25,8 +24,7 @@ source("init-framework/db-fun.R")
 outputDone(step = T)
 
 outputString("* Connecting to database ...")
-source("settings/test.R")
-dbConnectOperator(set4db, dbname = "Mendeley")
+dbConnectOperator()
 outputDone(step = T)
 
 
@@ -115,4 +113,4 @@ source("init-framework/misc-settings.R")
 # Loading data ------------------------------------------------------------
 
 ## DOES NOT WORK ANYMORE
-source("init-framework/preloading-data.R") # t_sxx_critdist
+#source("init-framework/preloading-data.R") # t_sxx_critdist

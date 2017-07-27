@@ -4,36 +4,7 @@ dbConnectOperator <- function(settings = set4db,
                               disconnect_default = T) {
   outputFunProc(R)
 
-  # ## For Markdown processing
-  # if (!is.null(dbname) & !is.null(dbname)) {
-  #   print("Markdown")
-  #   set4db$name <- paste0(set4db$dns, dbname)
-  #   set4db$name_short <- tolower(dbname)
-  #   #set4db$pwd <- "WRITE-PASSWORD-HERE"
-  #   set4db <<- set4db
-  #   dbConnectBySettings(set4db, set4db$name_short)
-  # 
-  # } else { 
-  #   
-  #   ## Select database
-  #   outputString(paste("Select study ", "\n",
-  #                      paste(set4db$prompt, collapse = "\n"),
-  #                      sep = ""))
-  #   
-  #   set4db$input <- as.numeric(readline(">>> "))
-  #   set4db$name <- paste0(set4db$dns, set4db$select[set4db$input])
-  #   set4db$name_short <- tolower(set4db$select[set4db$input])
-  #   outputString(paste("* Connecting to:", set4db$name))
-  #   set4db$pwd <- readline(">>> Enter password: ")
-  #   #set4db <<- set4db
-  #   set4db <<- set4db
-  # 
-  #   ## Connect to database
-  #   dbConnectBySettings(set4db, set4db$name_short)
-  #   outputDone()
-  # }
-  
-    ## User selection of requires database
+  ## User selection of requires database
   if (is.null(dbname)) {
     
     ## Connect to standard database
@@ -81,13 +52,21 @@ dbConnectOperator <- function(settings = set4db,
     
     if (is.null(dbconn_name)) 
       dbconn_name <- paste0("dbconn_", input)
-  }
+  } ## End of user selection
 
-  if (is.null(dbconn_name))
-    dbconn_name <- dbname
+  ## Dynamic naming using numbers
+  if (is.null(dbconn_name)) {
+    dbconn_nr <- length(grep("dbconn", ls(envir = .GlobalEnv)))
+      dbconn_name <- paste0("dbconn_", dbconn_nr + 1)
+  }
     
+    
+  ## Password
+  if(settings$pwd == "WRITE-PASSWORD-HERE")
+    pwd <- readline(">>> Enter password: ") else
+      pwd <- set4db$pwd
+  
   ## Connect to target database
-  pwd <- readline(">>> Enter password: ")
   dbConnectBySettings(settings, 
                       dbname = dbname, 
                       dbconn_name = dbconn_name,

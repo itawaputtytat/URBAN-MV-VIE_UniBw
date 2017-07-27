@@ -31,13 +31,9 @@ knitr::read_chunk("start_markdown.R")
 
 ### Connect to database
 ```{r DB-Connection, message = F}
-dbConnectOperator(set4db, dbname = "URBAN-MV-VIE_UniBw_Study2")
-```
-
-### Load libaries
-```{r Libraries, message = F}
-library(psych)
-library(ggplot2)
+dbConnectOperator(set_db, 
+                  dbname = "URBAN_MV_VIE_UniBw_Study2", 
+                  dbconn_name = "dbconn_study2")
 ```
 
 ### Load data
