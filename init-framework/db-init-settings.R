@@ -1,2 +1,2 @@
-dbInitSettings("settings", "set_db.R")
-source("settings/set_id_names.R")
+dbInitSettings("settings", "sett_db_default.R")
+source("settings/sett_id_names.R")
