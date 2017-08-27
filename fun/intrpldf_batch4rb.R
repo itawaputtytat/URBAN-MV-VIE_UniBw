@@ -1,30 +1,39 @@
-intrpldf_batch4rb <- function(dat2proc,
-                              colname4ref = "sxx_dist_m_rnd1",
+intrpldf_batch4rb <- function(dat,
+                              colname4ref,
                               stepsize = 0.1,
-                              suffix = ".intrpl",
-                              outputFlag = F) {
+                              colnames2excl = NULL,
+                              binary_vars = NULL,
+                              outputFlag = F,
+                              suffix = "intrpld") {
 
   outputFunProc(R)
-  
-  dat2proc.intrpl <- invisible( lapply(unique(dat2proc$passing), function(p) {
+  colname4ref_finder <- grep(colname4ref, colnames(dat))
+  colname4ref <- colnames(dat)[colname4ref_finder]
+  dat_intrpld <- invisible( lapply(unique(dat$passing), function(p) {
 
     if (outputFlag) 
-      outputString(paste("* Interpolating:", p))
-
+      outputString(paste0("* Interpolating: ", p, " ... "), linebreak = F)
+    
     ## Get data and run inteprolation
-    dat_temp <- dat2proc %>% filter(passing == p)
-    dat.intrpl <- intrpldf(dat_temp, colname4ref, stepsize = stepsize)
+    dat_temp <- dat %>% filter(passing == p)
+
+    dat_intrpld <- 
+      intrpldf(dat_temp, 
+               colname4ref = colname4ref,
+               stepsize = stepsize,
+               colnames2excl = colnames2excl, 
+               binary_vars = binary_vars)
     
     if (outputFlag) 
-      outputString("* Done!")
+      outputDone(T)
     
-    return(dat.intrpl)
+    return(dat_intrpld)
 
   }) ## lapply
   ) %>% dplyr::bind_rows()
   
-  name4obj <- paste(deparse(substitute(dat2proc)), suffix, sep = "")
-  assign(name4obj, dat2proc.intrpl, env = .GlobalEnv)
+  name4obj <- paste(deparse(substitute(dat)), suffix, sep = "_")
+  assign(name4obj, dat_intrpld, env = .GlobalEnv)
   outputString(paste("* New object:", name4obj))
 
   outputDone(T)

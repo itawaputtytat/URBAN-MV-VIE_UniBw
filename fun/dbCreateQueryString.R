@@ -1,16 +1,17 @@
-dbCreateQueryString <- function(sxx,
+dbCreateQueryString <- function(pxx,
                                 sett_q = sett_query, 
                                 sett_i = sett_id_names) {
 
   outputFunProc(R)
 
-  ## Create sxx as character index (e.g. 1 as "s01")
-  sxx_txt <- sprintf("s%02d", sxx)
+  ## Create pxx as character index (e.g. 1 as "s01")
+  #pxx_txt <- sprintf("s%02d", pxx)
+  pxx_txt <- sprintf("p%02d", pxx)
   
   ## SELECT
   SELECT <-
     c(sett_q$var_session, 
-      paste0(sxx_txt, sett_q$var_sxx),
+      paste0(pxx_txt, sett_q$var_pxx),
       sett_q$var_data)
   SELECT <- paste(SELECT, collapse = ",\n")
   SELECT <- paste("SELECT", SELECT, sep = "\n")
@@ -18,7 +19,8 @@ dbCreateQueryString <- function(sxx,
   ## FROM
   #FROM <- paste("FROM", sett_q$src, sep = "\n")
   FROM <- 
-    paste("FROM", paste0(sett_q$src, "_", sxx_txt), 
+    paste("FROM", 
+          paste0(sett_q$src_prefix, "_", pxx_txt, "_", sett_q$var_dist), 
           sep = "\n")
 
   # ## WHERE
@@ -35,13 +37,13 @@ dbCreateQueryString <- function(sxx,
   dist1_temp <- sett_q$dist1 - sett_q$dist_buffer
   dist2_temp <- sett_q$dist2 + sett_q$dist_buffer
 
-  WHERE_dist2sxx <-
+  WHERE_dist2pxx <-
     paste(
-      paste0(sxx_txt, "_", sett_q$var_dist, " >= ", dist1_temp),
-      paste0(sxx_txt, "_", sett_q$var_dist, " <= ", dist2_temp),
+      paste0(pxx_txt, "_", sett_q$var_dist, " >= ", dist1_temp),
+      paste0(pxx_txt, "_", sett_q$var_dist, " <= ", dist2_temp),
       sep = " AND\n")
 
-  WHERE <- c(WHERE_subject_id, WHERE_round_txt, WHERE_dist2sxx)
+  WHERE <- c(WHERE_subject_id, WHERE_round_txt, WHERE_dist2pxx)
   WHERE <- paste0("(\n", WHERE, "\n)", collapse = " AND ")
   WHERE <- paste("WHERE", WHERE, sep = "\n")
   # WHERE <- c()
