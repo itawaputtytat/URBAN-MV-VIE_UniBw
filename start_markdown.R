@@ -21,4 +21,4 @@ filenames <- c(
 
 
 lapply(filenames, function(x) source(file.path(filepath, x)))
-set_db$pwd <- readLines("settings/db-pwd.txt", warn = F)
+sett_db_default$pwd <- readLines("settings/db-pwd.txt", warn = F)

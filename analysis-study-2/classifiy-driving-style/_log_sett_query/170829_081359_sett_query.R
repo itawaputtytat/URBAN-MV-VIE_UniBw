@@ -1,8 +1,7 @@
-## @knitr fetch-data
 
 # Log ---------------------------------------------------------------------
 
-#writeSelfAsLog("sett_query")
+writeSelfAsLog("sett_query")
 
 
 
@@ -11,14 +10,14 @@
 sett_query <- c()
 sett_query$db_name <- "URBAN_MV_VIE_UniBw_Study2"
 sett_query$src_prefix <- "t_adtf_full"
-sett_query$pxx   <- c(2,3)
+sett_query$pxx   <- c(1,2,3)
 #sett_query$run <- 1
 #sett_query$speed <- 50
 sett_query$round <- c("t1_50", "t2_50", "t1_70", "t2_70")
 sett_query$subject <- c(1:40)
-sett_query$var_dist <- "dist_s_rnd1"
-sett_query$dist1 <- -15
-sett_query$dist2 <- 2
+sett_query$var_dist <- "dist_m_rnd1"
+sett_query$dist1 <- -100
+sett_query$dist2 <- 15
 sett_query$dist_buffer <- 50
 sett_query$var_session <-
   c("subject_id",
@@ -52,9 +51,9 @@ sett_query$filter$bool_op_between <- c("AND")
 
 #dbFindConnObj(sett_query$db_name, output = T)
 dbGetQuery_pxxBatch(db_conn_9, sett_query, bind_rows = T)
-intrpldf_batch4rb(t_adtf_full_pxx_dist_s_rnd1, 
+intrpldf_batch4rb(t_adtf_full_pxx_dist_m_rnd1, 
                   colname4ref = sett_query$var_dist, 
                   binary_vars = "brakepress_status",
                   suffix = "intrpld", 
-                  outputFlag = F)
-cut2dist_batch4rb(t_adtf_full_pxx_dist_s_rnd1_intrpld , "pxx_dist_s_rnd1", sett_query$dist1, sett_query$dist2)
+                  outputFlag = T)
+cut2dist_batch4rb(t_adtf_full_pxx_dist_m_rnd1_intrpld , "pxx_dist_m_rnd1", sett_query$dist1, sett_query$dist2)

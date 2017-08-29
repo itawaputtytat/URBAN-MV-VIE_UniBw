@@ -1,8 +1,7 @@
-## @knitr fetch-data
 
 # Log ---------------------------------------------------------------------
 
-#writeSelfAsLog("sett_query")
+writeSelfAsLog("sett_query")
 
 
 
@@ -56,5 +55,5 @@ intrpldf_batch4rb(t_adtf_full_pxx_dist_s_rnd1,
                   colname4ref = sett_query$var_dist, 
                   binary_vars = "brakepress_status",
                   suffix = "intrpld", 
-                  outputFlag = F)
+                  outputFlag = T)
 cut2dist_batch4rb(t_adtf_full_pxx_dist_s_rnd1_intrpld , "pxx_dist_s_rnd1", sett_query$dist1, sett_query$dist2)

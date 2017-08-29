@@ -82,6 +82,7 @@ createSeqObj <- function(dat,
         linebreak = F)
       
       temp_order <- sorti(dat_seq_temp, start = "beg", sort.index = T)
+      temp_order <- rev(temp_order)
       id_ordered_temp <- 
         data.frame(key =  id[ temp_order ],
                    order = 1:length(temp_order))

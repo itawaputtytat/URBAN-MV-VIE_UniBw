@@ -1,0 +1,49 @@
+---
+title: "Study #2: Pedal activity"
+#output: github_document
+output:
+  html_document:
+    theme: united
+    css: css/faded.css
+    number_sections: true
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+---
+
+# Initialise framework
+```{r knitr options, include = F}
+knitr::opts_knit$set(root.dir='../')
+```
+
+```{r Read chunks}
+knitr::read_chunk("start_markdown.R")
+knitr::read_chunk("analysis-study-2/classifiy-driving-style/01-fetching-data-from-db_dist-s.R")
+knitr::read_chunk("analysis-study-2/classifiy-driving-style/pedal-activity.R")
+```
+
+```{r Initialise framework, include = F}
+<<start_markdown>>
+```
+
+# Analysis
+
+## Preparatory settings
+
+### Connect to database
+```{r DB-Connection, message = F}
+dbConnectOperator(sett_db_default, 
+                  db_name = "URBAN_MV_VIE_UniBw_Study2", 
+                  db_conn_name = "db_conn_9")
+```
+
+### Fetching data
+
+```{r Fetch data}
+<<fetch_data>>
+```
+
+```{r Explore}
+<<pedal-activity>>
+```
