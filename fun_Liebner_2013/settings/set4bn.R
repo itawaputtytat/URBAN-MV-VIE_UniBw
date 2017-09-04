@@ -5,7 +5,7 @@ set4bn <- c()
 
 set4bn$states$I <- paste("Intent", 1:4, sep = "")
 set4bn$states$V <- paste("k", 1:length(set4sim$v_ms.max), sep = "")
-set4bn$states$A <- paste("l", 1:length(set4sim$acclon_ms2.max), sep = "")
+set4bn$states$A <- paste("l", 1:length(set4sim$acc_lon_ms2.max), sep = "")
 set4bn$states$O <- c("dat4prob$obs", "nodat4prob$obs")
 
 

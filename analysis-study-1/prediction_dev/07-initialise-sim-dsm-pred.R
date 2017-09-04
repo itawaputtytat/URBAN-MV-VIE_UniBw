@@ -19,10 +19,10 @@ bn <- predLiebner_initBN("V1", set4bn)
 #dat4dsm <- read.csv(set4dsm$filepath, header = T)
 dat4dsm <- 
   clustcentres %>% 
-  group_by(clustgroup, sxx_dist_m_rnd1) %>% 
+  group_by(clustgroup, pxx_dist_m_rnd1) %>% 
   summarise(speed_ms.u.limit.avg = mean(speed_ms.u.limit.avg)) %>% 
   #filter(round_txt == "intro") %>% 
-  select_(k = "clustgroup", dist = "sxx_dist_m_rnd1",#set4dat$varname4dist_m, 
+  select_(k = "clustgroup", dist = "pxx_dist_m_rnd1",#set4dat$varname4dist_m, 
           speed = "speed_ms.u.limit.avg")
           #speed = "speed_ms.avg")
 

@@ -51,7 +51,7 @@ abline(v = set4sim$objpos[2], col = "orange")
 abline(v = set4sim$objpos[4], col = "#B9539F")
 
 ## Passing
-lines(x = dat4test[, set4dat$varname4sxx_dist_m], 
+lines(x = dat4test[, set4dat$varname4pxx_dist_m], 
       y = dat4test[, set4dat$varname4speed_ms],
       col = "#3953A4", lwd = 2)
 

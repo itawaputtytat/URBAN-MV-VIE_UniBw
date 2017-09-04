@@ -7,12 +7,16 @@ sett_query$db_name <- "URBAN_MV_VIE_UniBw_Study1"
 sett_query$src_prefix <- "t_adtf"
 sett_query$src_suffix <- "full"
 sett_query$df_name_prefix <- "study1"
-sett_query$pxx   <- 4
+sett_query$pxx   <-  6:8
+#sett_query$run <- 1
+#sett_query$speed <- 50
+#sett_query$round <- c("t1_50", "t2_50", "t1_70", "t2_70")
 sett_query$round <- c("intro", "normal", "stress")
-sett_query$subject <- c(1:31)
+sett_query$subject <- 1:31
 sett_query$var_dist <- "dist_m_rnd1"
-sett_query$dist1 <- -50
-sett_query$dist2 <- 50
+#sett_query$dist1 <- -150
+sett_query$dist1 <- -90
+sett_query$dist2 <- 10
 sett_query$dist_buffer <- 50
 sett_query$var_session <-
   c("subject_id",
@@ -37,34 +41,18 @@ sett_query$filter$sets <-
     list(sett_query$var_dist, sett_query$dist1 - sett_query$dist_buffer, ">="),
     list(sett_query$var_dist, sett_query$dist2 + sett_query$dist_buffer, "<=")
   )
-sett_query$filter$bool_op_between <- c("OR")
 sett_query$filter$bool_op_between <- c("AND")
 
 
 
-# Data processing ---------------------------------------------------------
+# Fetching data -----------------------------------------------------------
 
 #dbFindConnObj(sett_query$db_name, output = T)
 dbGetQuery_pxxBatch(db_conn_8, sett_query, bind_rows = T)
 
-intrpldf_batch4rb(study1_t_adtf_pxx_full_dist_m_rnd1, 
-                  col_name_ref = sett_query$var_dist, 
-                  binary_vars = "brake_status",
-                  suffix = "intrpld", 
-                  outputFlag = T)
-
-corrPosAnom_batch4rb(study1_t_adtf_pxx_full_dist_m_rnd1_intrpld, 
-                     colname4ref = "pxx_dist_m_rnd1",
-                     dbconn = "db_conn_8")
-
-cut2dist_batch4rb(study1_t_adtf_pxx_full_dist_m_rnd1_intrpld , 
-                  "pxx_dist_m_rnd1", 
-                  sett_query$dist1, 
-                  sett_query$dist2)
-
-study1_t_adtf_pxx_full_dist_m_rnd1_intrpld_cut <- 
-  addVar4PrecVeh(study1_t_adtf_pxx_full_dist_m_rnd1_intrpld_cut)
-
-study1_t_adtf_pxx_full_dist_m_rnd1_intrpld_cut <- 
-  addVar4Stopping(study1_t_adtf_pxx_full_dist_m_rnd1_intrpld_cut,
-                  varname4dist = "pxx_dist_m_rnd1")
+ggplot() + 
+  geom_line(data = get(sett_query$df_name),
+            aes(x = pxx_dist_m_rnd1,
+                y = speed_kmh,
+                group = passing)) +
+  facet_grid(round_txt~.)

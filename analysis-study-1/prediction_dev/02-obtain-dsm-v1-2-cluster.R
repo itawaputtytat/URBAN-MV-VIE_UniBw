@@ -1,14 +1,14 @@
 
 # Preparatory settings ----------------------------------------------------
 
-set4proc$varname4speed <- "speed_ms.u.limit"
-set4proc$varname4dist_m <- "sxx_dist_m_rnd1" 
-#set4proc$varname4speed <- "speed_ms.u.limit"
-#set4proc$varname4speed <- "speed_ms"
-set4proc$varname4round <- "round_txt"
-set4proc$k <- 3
-set4proc$procedure = "kmeans"
-set4proc$algorithm = "Hartigan-Wong"
+sett_proc$varname4speed <- "speed_ms.u.limit"
+sett_proc$col_name_dist_m <- "pxx_dist_m_rnd1" 
+#sett_proc$varname4speed <- "speed_ms.u.limit"
+#sett_proc$varname4speed <- "speed_ms"
+sett_proc$varname4round <- "round_txt"
+sett_proc$k <- 3
+sett_proc$procedure = "kmeans"
+sett_proc$algorithm = "Hartigan-Wong"
 
 
 
@@ -35,15 +35,15 @@ dat4clust <-
 
 dat4clust <- 
   dat4clust %>% 
-  filter_(paste( set4proc$varname4dist_m, ">= -50 & ", 
-                 set4proc$varname4dist_m, "<= 25" )) 
+  filter_(paste( sett_proc$col_name_dist_m, ">= -50 & ", 
+                 sett_proc$col_name_dist_m, "<= 25" )) 
  
 ## Select only necessary variables
 dat4clust.clean <-
   dat4clust %>%
-  select_(.dots = c(set4proc$varname4group, 
-                    set4proc$varname4dist,
-                    speed_val = set4proc$varname4speed)) #%>%
+  select_(.dots = c(sett_proc$col_name_group, 
+                    sett_proc$col_name_dist,
+                    speed_val = sett_proc$varname4speed)) #%>%
 # mutate(dist2sx_m_v2a_rnd1 = round(dist2sx_m_v2a_rnd1, 1)) %>%
 
 ## Create wide data format
@@ -52,15 +52,15 @@ dat4clust.clean.spread <-
   ## Create new rows for each speed variable
   gather(speed_varname, speed_val, speed_val) %>%
   mutate(speed_varname = NULL) %>%
-  spread_(set4proc$varname4dist , "speed_val")
+  spread_(sett_proc$col_name_dist , "speed_val")
 
 ## Clustering-algorithms require "clean" dataframes
 ## ... without additional variables
 ## ... so column passings has to be removed
 ## But: Information is backuped in rownames before deleting
 rownames(dat4clust.clean.spread) <- 
-  dat4clust.clean.spread[, set4proc$varname4group]
-dat4clust.clean.spread[, set4proc$varname4group] <- NULL
+  dat4clust.clean.spread[, sett_proc$col_name_group]
+dat4clust.clean.spread[, sett_proc$col_name_group] <- NULL
 
 
 
@@ -75,7 +75,7 @@ dat4clust.clean.spread[, set4proc$varname4group] <- NULL
 clustoutput <-
   #clust2groups(dat4clust.clean.spread.filtered[, min:max],
   clust2groups(dat4clust.clean.spread,
-               k = set4proc$k, 
+               k = sett_proc$k, 
                "kmeanspp", 
                algorithm = "Hartigan-Wong")
 
@@ -99,14 +99,14 @@ dat4clust <- left_join(dat4clust, clustoutput$assignment) %>% data.frame()
 
 plotdat.clust <-
   ggplot(dat4clust) +
-  geom_line(aes_string(x = set4proc$varname4dist_m,
-                       y = set4proc$varname4speed,
-                       group = set4proc$varname4group,
+  geom_line(aes_string(x = sett_proc$col_name_dist_m,
+                       y = sett_proc$varname4speed,
+                       group = sett_proc$col_name_group,
                        colour = "clustgroup"),
             size = 1
             ,alpha = 0.35
             ) +
-  geom_vline(xintercept = set4synth$distlimit, linetype = "dotted") +
+  geom_vline(xintercept = sett_synth$dist_limit, linetype = "dotted") +
   # stat_summary(aes_string(x = "dist2sx_m_v2a",
   #                         y = "speed_kmh"),
   #              geom = "line",
@@ -129,20 +129,20 @@ plotdat.clust <-
 clustcentres <-
   dat4clust %>%
   select_("clustgroup",
-          speed_val = set4proc$varname4speed,
-          set4proc$varname4dist,
-          set4proc$varname4round) %>%
+          speed_val = sett_proc$varname4speed,
+          sett_proc$col_name_dist,
+          sett_proc$varname4round) %>%
   mutate(clustgroup = as.numeric(clustgroup)) %>% 
-  #group_by_("clustgroup", set4proc$varname4dist) %>%
-  group_by_(.dots = lapply(c("clustgroup", set4proc$varname4dist
-                             #, set4proc$varname4round
+  #group_by_("clustgroup", sett_proc$col_name_dist) %>%
+  group_by_(.dots = lapply(c("clustgroup", sett_proc$col_name_dist
+                             #, sett_proc$varname4round
                              ), as.symbol)) %>%
   ## Variable name is temporary, see next step
   summarise(speed_val.avg = mean(speed_val))
 
 ## Rename columns
 colnames(clustcentres)[which(colnames(clustcentres) == "speed_val.avg")] <-
-  paste(set4proc$varname4speed, ".avg", sep = "")
+  paste(sett_proc$varname4speed, ".avg", sep = "")
 
 
 
@@ -151,8 +151,8 @@ colnames(clustcentres)[which(colnames(clustcentres) == "speed_val.avg")] <-
 plotdat.clustcenters <-
   plotdat.clust +
   geom_line(data = clustcentres,
-            aes_string(x = set4proc$varname4dist_m,
-                       y = paste(set4proc$varname4speed, ".avg", sep = ""),
+            aes_string(x = sett_proc$col_name_dist_m,
+                       y = paste(sett_proc$varname4speed, ".avg", sep = ""),
                        colour = "as.factor(clustgroup)"),
             size = 2) #+
   #scale_colour_manual(values = c("green3", "blue3", "red3", "orange3"))
@@ -161,9 +161,9 @@ plot(plotdat.clustcenters)
 
 # plot.centers <- ggplot() + 
 #   geom_line(data = clust.centers,
-#             aes_string(x = set4proc$varname4dist_m,
-#                        y = paste(set4proc$varname4speed, ".avg", sep = ""),
-#                        linetype = "clustgroup", colour = set4proc$varname4round),
+#             aes_string(x = sett_proc$col_name_dist_m,
+#                        y = paste(sett_proc$varname4speed, ".avg", sep = ""),
+#                        linetype = "clustgroup", colour = sett_proc$varname4round),
 #             size = 1) +
 #   scale_colour_manual(values = c("green3", "blue3", "red3")) +
 #   scale_linetype_manual(values = c("solid", "dashed", "dotted"))
@@ -174,7 +174,7 @@ plot(plotdat.clustcenters)
 # 
 # datwclust.distr <- 
 #   datwclust %>% 
-#   filter(sxx_dist_m_rnd1 == 0) %>% 
+#   filter(pxx_dist_m_rnd1 == 0) %>% 
 #   group_by(round_txt, clustgroup) %>% 
 #   summarise(count = n())
 # 
@@ -189,7 +189,7 @@ plot(plotdat.clustcenters)
 #                y = count, 
 #                fill = clustgroup), 
 #            stat = "identity") + 
-#   facet_wrap(reformulate(set4proc$varname4round)) + 
+#   facet_wrap(reformulate(sett_proc$varname4round)) + 
 #   coord_cartesian(ylim = c(0, 50)) + 
 #   #scale_fill_manual(values = c("green3", "blue3", "red3", "orange3")) + 
 #   guides(fill = FALSE) +

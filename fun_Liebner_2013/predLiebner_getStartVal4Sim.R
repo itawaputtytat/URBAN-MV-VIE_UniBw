@@ -1,16 +1,16 @@
 predLiebner_getStartVal4Sim <- function(dat2proc, set4dat, pos4carryout_m, timelag_s = -1, time4sim_s = NULL) {
 
-  #dat2proc[, set4dat$varname4sxx_dist_m] <- round(dat2proc[, set4dat$varname4sxx_dist_m], 1)
+  #dat2proc[, set4dat$varname4pxx_dist_m] <- round(dat2proc[, set4dat$varname4pxx_dist_m], 1)
   #dat2proc[, set4dat$varname4time_s] <- round(dat2proc[, set4dat$varname4time_s])
 
   ## Find distance value nearest to pos4carryout based on distance
   ## Round position for carry out as workaround
-  #rowf.dist <- which(round(dat2proc[, set4dat$varname4sxx_dist_m]) == round(pos4carryout_m))
+  #rowf.dist <- which(round(dat2proc[, set4dat$varname4pxx_dist_m]) == round(pos4carryout_m))
   ## In case of several rows take the one with minimum absolute deviation
-  # temp <- which( abs(dat2proc[rowf.dist, set4dat$varname4sxx_dist_m] - pos4carryout_m) ==
-  #                  min(abs(dat2proc[rowf.dist, set4dat$varname4sxx_dist_m] - pos4carryout_m)) )
-  rowf.dist <- which( abs(dat2proc[, set4dat$varname4sxx_dist_m] - pos4carryout_m) ==
-                  min(abs(dat2proc[, set4dat$varname4sxx_dist_m] - pos4carryout_m)) )
+  # temp <- which( abs(dat2proc[rowf.dist, set4dat$varname4pxx_dist_m] - pos4carryout_m) ==
+  #                  min(abs(dat2proc[rowf.dist, set4dat$varname4pxx_dist_m] - pos4carryout_m)) )
+  rowf.dist <- which( abs(dat2proc[, set4dat$varname4pxx_dist_m] - pos4carryout_m) ==
+                  min(abs(dat2proc[, set4dat$varname4pxx_dist_m] - pos4carryout_m)) )
   #rowf.dist <- rowf.dist[temp]
 
   ## SIMULATION START
@@ -26,20 +26,20 @@ predLiebner_getStartVal4Sim <- function(dat2proc, set4dat, pos4carryout_m, timel
     rowf.time <- rowf.time[temp]
     ## Find row with corresponding time and distance
     time1 <- dat2proc[rowf.time, set4dat$varname4time_s]
-    dist1 <- dat2proc[rowf.time, set4dat$varname4sxx_dist_m]
+    dist1 <- dat2proc[rowf.time, set4dat$varname4pxx_dist_m]
   } else {
     #stop("ERROR")
     rowf.time <- which( abs(dat2proc[, set4dat$varname4time_s] - time1) == 
                      min(abs(dat2proc[, set4dat$varname4time_s] - time1)) )
     time1 <- dat2proc[rowf.time, set4dat$varname4time_s]
-    dist1 <- dat2proc[rowf.time, set4dat$varname4sxx_dist_m]
+    dist1 <- dat2proc[rowf.time, set4dat$varname4pxx_dist_m]
   }
   
   ## SIMULATION END
   if (is.null(time4sim_s)) {
     ## Find row with corresponding time and distance for pos4carryout
     time2 <- dat2proc[rowf.dist, set4dat$varname4time_s]
-    dist2 <- dat2proc[rowf.dist, set4dat$varname4sxx_dist_m]
+    dist2 <- dat2proc[rowf.dist, set4dat$varname4pxx_dist_m]
   } else {
     ## Find row with corresponding time nearest to pos4carryout plus time4sim_s
     ## ... approximately with round
@@ -51,7 +51,7 @@ predLiebner_getStartVal4Sim <- function(dat2proc, set4dat, pos4carryout_m, timel
     rowf.time <- rowf.time[temp]
     ## Find row with corresponding time and distance
     time2 <- dat2proc[rowf.time, set4dat$varname4time_s]
-    dist2 <- dat2proc[rowf.time, set4dat$varname4sxx_dist_m]
+    dist2 <- dat2proc[rowf.time, set4dat$varname4pxx_dist_m]
   }
 
   rowfinder1 <- which(dat2proc[, set4dat$varname4time_s] >= time1)

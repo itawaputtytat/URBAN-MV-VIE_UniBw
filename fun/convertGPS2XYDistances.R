@@ -39,7 +39,7 @@ convertGPS2XYDistances <- function(gps_lon, gps_lat, row4origin, showplot = F) {
     data.frame()
   
   if (showplot == T) {
-    catWSepLine("Visualising: GPS path in metres")
+    catWithSepLine("Visualising: GPS path in metres")
     
     plot(dat$gps_lon_conv,
          dat$gps_lat_conv,

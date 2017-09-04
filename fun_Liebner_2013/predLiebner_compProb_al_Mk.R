@@ -17,18 +17,18 @@ predLiebner_compProb_al_Mk <- function(dat4prob,
     
     prob.assignment <-
       prob.assignment %>%
-      mutate(a_rnd05 = round(acclon_ms2.max / 0.5) * 0.5) %>% 
-      mutate(a = ifelse(#acclon_ms2.max <= acclon_ms2.thresh[1], 
+      mutate(a_rnd05 = round(acc_lon_ms2.max / 0.5) * 0.5) %>% 
+      mutate(a = ifelse(#acc_lon_ms2.max <= acclon_ms2.thresh[1], 
                         a_rnd05 <= acclon_ms2.thresh[1],
                         paste("l", 1, sep = ""),
                         a) ) %>% 
       mutate(a = ifelse(x != 1 & a == 0 & 
-                          #acclon_ms2.max <= acclon_ms2.thresh[x + 1],
+                          #acc_lon_ms2.max <= acclon_ms2.thresh[x + 1],
                           a_rnd05 <= acclon_ms2.thresh[x + 1],
                         paste("l", x, sep = ""),
                         a) ) %>% 
       mutate(a = ifelse(x == length(acclon_ms2.thresh) & 
-                          #acclon_ms2.max > 
+                          #acc_lon_ms2.max > 
                           a_rnd05 >=
                             acclon_ms2.thresh[length(acclon_ms2.thresh)],
                         paste("l", x, sep = ""),

@@ -1,6 +1,6 @@
 # Adjust values for accelaration pedal position by value
 correctAccPedalPos <- function(dat, 
-                               varname = "accpedalpos_perc",
+                               varname = "acc_pedal_pos_perc",
                                varname_suffix = "_corr",
                                correction = 14.901961) {
   

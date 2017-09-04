@@ -1,12 +1,12 @@
 cut2dist_batch4rb <- function(dat,
-                              colname4ref = "pxx_dist_m_rnd1",
+                              col_name_ref = "pxx_dist_m_rnd1",
                               dist1 = "ind",
                               dist2,
                               distpuffer = 50,
                               suffix = "_cut") {
 
   outputFunProc(R)
-  outputString(paste("* Distance variable:", colname4ref))
+  outputString(paste("* Distance variable:", col_name_ref))
 
   unique_pxx <- unique(dat$pxx)
   
@@ -30,12 +30,12 @@ cut2dist_batch4rb <- function(dat,
     dat <- dat[rowfinder, ]
 
     ## Remember old distance values for Output
-    dist1_old <- min(dat[, colname4ref])
-    dist2_old <- max(dat[, colname4ref])
+    dist1_old <- min(dat[, col_name_ref])
+    dist2_old <- max(dat[, col_name_ref])
 
     ## Identify rows
     rowfinder <- 
-      which(dat[, colname4ref] >= dist1 & dat[, colname4ref] <= dist2)
+      which(dat[, col_name_ref] >= dist1 & dat[, col_name_ref] <= dist2)
     dat <- dat[rowfinder, ]
 
     outputString(paste("** before:", dist1_old, "-", dist2_old))

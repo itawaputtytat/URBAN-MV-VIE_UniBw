@@ -5,7 +5,6 @@ dbCreateQueryString <- function(pxx,
   outputFunProc(R)
 
   ## Create pxx as character index (e.g. 1 as "s01")
-  #pxx_txt <- sprintf("s%02d", pxx)
   pxx_txt <- sprintf("p%02d", pxx)
   
   ## SELECT
@@ -18,10 +17,11 @@ dbCreateQueryString <- function(pxx,
 
   ## FROM
   #FROM <- paste("FROM", sett_q$src, sep = "\n")
-  FROM <- 
-    paste("FROM", 
-          paste0(sett_q$src_prefix, "_", pxx_txt, "_", sett_q$var_dist), 
-          sep = "\n")
+  FROM <- paste("FROM", paste0(sett_q$src_prefix, "_", pxx_txt), sep = "\n")
+  if (!is.null(sett_query$src_suffix))
+    FROM <- paste(FROM,sett_q$src_suffix, sep = "_")
+  if (!is.null(sett_q$var_dist))
+    FROM <- paste(FROM,sett_q$var_dist, sep = "_")
 
   # ## WHERE
   WHERE_subject_id <-

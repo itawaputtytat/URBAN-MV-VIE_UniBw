@@ -3,7 +3,7 @@
 
 ## Load test data
 source("fun_Liebner_2013/settings/set4dat.R")
-set4dat$passing <- "s15_intro_subject04"
+set4dat$passing <- "p15_intro_s03"
 source("analysis-study-1/prediction_dev/06-load-test-data.R")
 
 ## Initialise Algorithm, dsm and BN
@@ -55,7 +55,7 @@ pos4carryout <- set4sim_temp$dist2
 hypothesis_n <-
   c(j = length(set4sim$computeI),
     k = length(set4sim$v_ms.max),
-    l = length(set4sim$acclon_ms2.max))
+    l = length(set4sim$acc_lon_ms2.max))
 hypothesis_n_overall <- prod(hypothesis_n)
 ## Initialise list with a component for each hypothesis
 coll4simtail <- vector("list", hypothesis_n_overall)
@@ -68,7 +68,7 @@ set4sim$objpos[1] <- 9999
 set4sim$objpos[3] <- 9999
 ptm3 <- proc.time()
 source("analysis-study-1/prediction_dev/xx-pred.R")
-outputProcTime(ptm3)
+#outputProcTime(ptm3)
 results4output <- data.frame(P_O_Hi = results)
 #print(round(results4output * 100, 2))
 
@@ -96,7 +96,7 @@ coll4results <- data.frame(pos4carryout = dist2start, t(results))
 
 dummy <-
   data.frame(dist_m = dist2start,
-             speed_ms = dat4test$speed_ms[which(dat4test[, set4dat$varname4sxx_dist_m] == -40)])
+             speed_ms = dat4test$speed_ms[which(dat4test[, set4dat$varname4pxx_dist_m] == -40)])
 dummy_names <- names(idm_createSimDat(c(j = 4, k = 3, l = 3), varnames = "", prefix = ""))
 coll4dat4sim <- vector("list", length(dummy_names))
 names(coll4dat4sim) <- dummy_names
@@ -121,7 +121,7 @@ for(s in seq(dist2start,dist2end,distint)) {
 
   pos4carryout <- round(s, 1)
   ## Real-time
-  #pos4carryout <- round(dat4test$sxx_dist_m_rnd1[s], 1)
+  #pos4carryout <- round(dat4test$pxx_dist_m_rnd1[s], 1)
   
   #print(pos4carryout)
   ## Prepare data for simulation

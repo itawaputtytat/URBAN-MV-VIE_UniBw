@@ -2,34 +2,32 @@
 # Preparatory settings ----------------------------------------------------
 
 ## Settings for data
-set4proc <- c()
-set4proc$dfname <- "t_adtf_dist_m_rnd1_full.intrpl.cut"
-#set4proc$dfname <- "t_adtf_full.cut"
-set4proc$varname4dist <- "sxx_dist_m_rnd1"
-#set4proc$varname4dist <- "sxx_dist_s"
-set4proc$varname4dist_m <- "sxx_dist_m_rnd1"
-set4proc$varname4time <- "time_s"
-set4proc$varname4group <- "passing"
-set4proc$sxx <- set4query$sxx
-set4proc$showplot <- F
-set4proc$showplot4subject_id <- 1
+sett_proc <- c()
+sett_proc$df_name <- "study1_t_adtf_full_pxx_dist_m_rnd1_intrpld_cut"
+sett_proc$col_name_dist <- "pxx_dist_m_rnd1"
+sett_proc$col_name_dist_m <- "pxx_dist_m_rnd1"
+sett_proc$col_name_time <- "time_s"
+sett_proc$col_name_group <- "passing"
+sett_proc$pxx <- c(1:15)
+sett_proc$show_plot <- F
+sett_proc$show_plot_by_subject <- 1
 
 ## Parameters for IDM
 source("fun_Liebner_2013/settings/set4idm.R")
 
 ## Additional parameters necesseray fpr IDM-splitting
 ## (e.g. section for pedestrian)
-set4synth <- c()
-set4synth$distlimit <- 11 #old: 12; 11 shows better empirical desired velocites
-set4synth$distlimit <- 11 #for left turning
+sett_synth <- c()
+sett_synth$dist_limit <- 11 #old: 12; 11 shows better empirical desired velocites
+sett_synth$dist_limit <- 11 #for left turning
 
 
 
 # Subset data -------------------------------------------------------------
 
 dat <- 
-  get(set4proc$dfname) %>% 
-  filter(sxx %in% set4proc$sxx) %>% 
+  get(sett_proc$df_name) %>% 
+  filter(pxx %in% sett_proc$pxx) %>% 
   filter(stopping == "no_stopping")
 #dat <- dat %>% filter(subject_id == 2)
 #dat <- dat %>% filter(subject_id <= 11 & subject_id != 11)
@@ -40,7 +38,7 @@ dat <-
 
 dat <- 
   dat %>% 
-  group_by_(set4proc$varname4group) %>%
+  group_by_(sett_proc$col_name_group) %>%
   mutate(speed_ms = speed_kmh / 3.6) %>% 
   data.frame()
 
@@ -50,35 +48,35 @@ dat <-
 
 # dat <-
 #   dat %>%
-#   mutate(acclon_ms2 =
+#   mutate(acc_lon_ms2 =
 #            (speed_ms - lag(speed_ms)) /
 #            (time_s - lag(time_s)) )
 # ## For plotting (see below)
-# mutate(acclon_ms2.comp = 
+# mutate(acc_lon_ms2.comp = 
 #          (speed_ms - lag(speed_ms)) / 
 #          (time_s - lag(time_s)) ) %>%
 
 ## Compare recorded and re-computed acceleration values
 # ggplot() +
-#   geom_line(data = dat, aes(x = sxx_dist_m, y = acclon_ms2, group = passing), col = "green") +
-#   geom_line(data = dat, aes(x = sxx_dist_m, y = acclon_ms2.comp, group = passing), col = "red")
+#   geom_line(data = dat, aes(x = pxx_dist_m, y = acc_lon_ms2, group = passing), col = "green") +
+#   geom_line(data = dat, aes(x = pxx_dist_m, y = acc_lon_ms2.comp, group = passing), col = "red")
 
 ## Compare recorded and re-computed speed values
 # dat <-
 #   dat %>% 
-#   group_by_(set4proc$varname4group) %>% 
+#   group_by_(sett_proc$col_name_group) %>% 
 #   mutate(speed_ms.comp = speed_ms) %>% 
-#   mutate(speed_ms.comp = acclon_ms2.comp * (time_s - lag(time_s)) + lag(speed_ms.comp))
+#   mutate(speed_ms.comp = acc_lon_ms2.comp * (time_s - lag(time_s)) + lag(speed_ms.comp))
 #   # mutate(speed_ms.comp2 = speed_ms.comp + lag(speed_ms.comp))
 # ggplot() + 
-#   geom_line(data = dat, aes(x = sxx_dist_m, y = speed_ms, group = passing), col = "green") + 
-#   geom_line(data = dat, aes(x = sxx_dist_m, y = speed_ms.comp, group = passing), col = "red")
+#   geom_line(data = dat, aes(x = pxx_dist_m, y = speed_ms, group = passing), col = "green") + 
+#   geom_line(data = dat, aes(x = pxx_dist_m, y = speed_ms.comp, group = passing), col = "red")
 
 ## Smooth acceleration values
 dat <- 
   dat %>% 
   group_by(passing) %>% 
-  mutate(acclon_ms2 = smoothWithLoess(acclon_ms2, 1/10, 2, T))
+  mutate(acc_lon_ms2 = smoothWithLoess(acc_lon_ms2, 1/10, 2, T))
 
 
 
@@ -87,44 +85,44 @@ dat <-
 plotdat.profiles <-
   ggplot() +
   geom_line(data = dat,
-            aes_string(x = set4proc$varname4dist_m,
+            aes_string(x = sett_proc$col_name_dist_m,
                        y = "speed_ms",
-                       group = set4proc$varname4group),
+                       group = sett_proc$col_name_group),
             size = 1,
             colour = "grey85"
             ) +
   scale_x_continuous(expand = c(0, 0)) + 
-  coord_cartesian(xlim = c(-50, 25),
-                 ylim = c(  0, 25)) + 
+  # coord_cartesian(xlim = c(-50, 25),
+  #                ylim = c(  0, 25)) + 
   theme_bw()
 
-if (set4proc$showplot) plot(plotdat.profiles)
+if (sett_proc$show_plot) plot(plotdat.profiles)
 
 
 
 # Estimate maximum acceleration after turning -----------------------------
 
-dat4acclon_ms2.est.max <- 
+dat4acc_lon_ms2.est.max <- 
     dat %>%
-    filter_(paste(set4proc$varname4dist_m, ">=", set4synth$distlimit)) %>%
-    group_by_(set4proc$varname4group) %>%
+    filter_(paste(sett_proc$col_name_dist_m, ">=", sett_synth$dist_limit)) %>%
+    group_by_(sett_proc$col_name_group) %>%
     
     ## Using maximum values
-    mutate(acclon_ms2.max = max(acclon_ms2)) %>% 
+    mutate(acc_lon_ms2.max = max(acc_lon_ms2)) %>% 
     
     ## Using denominator from formula 3 (Liebner et al., 2013)
-    mutate(acclon_ms2.est = 
-            acclon_ms2 / 
+    mutate(acc_lon_ms2.est = 
+            acc_lon_ms2 / 
              (-(speed_ms / set4idm$u.max)^set4idm$delta + 1)
            ) %>%
     
     ## Summarise for each passing
-  group_by_(set4proc$varname4group) %>%
-  summarise(acclon_ms2.max = max(acclon_ms2.max),
-            acclon_ms2.est.max = max(acclon_ms2.est))
+  group_by_(sett_proc$col_name_group) %>%
+  summarise(acc_lon_ms2.max = max(acc_lon_ms2.max),
+            acc_lon_ms2.est.max = max(acc_lon_ms2.est))
 
 ## Merge data and maximum acceleration
-dat4idm <- left_join(dat, dat4acclon_ms2.est.max)
+dat4idm <- left_join(dat, dat4acc_lon_ms2.est.max)
 
 
 
@@ -134,9 +132,9 @@ dat4idm <-
   dat4idm %>%
   ## As in formula 3 in Liebner et al. (2003)
   mutate(speed_ms.u = 
-           ifelse(acclon_ms2.est.max > acclon_ms2,
+           ifelse(acc_lon_ms2.est.max > acc_lon_ms2,
                   speed_ms / 
-                    ( 1 - acclon_ms2 / acclon_ms2.est.max )^
+                    ( 1 - acc_lon_ms2 / acc_lon_ms2.est.max )^
                     (1 / (set4idm$delta )),
          ## Workaround: 
          ## In case of max. acceleration is greater before distance limit
@@ -145,9 +143,9 @@ dat4idm <-
          ## Alternative 2: Use speed_ms / ( 1 - 1 )^(1 / (set4idm$delta ))
          ## ... which will give linear values similar to alternative 1
          ## Alternative 3: Move distance limit 
-         speed_ms / abs( 1 - acclon_ms2 / acclon_ms2.est.max )^(1 / (set4idm$delta )))
+         speed_ms / abs( 1 - acc_lon_ms2 / acc_lon_ms2.est.max )^(1 / (set4idm$delta )))
          ## Compare with actual maximum acceleration
-         #( 1 - acclon_ms2 / acclon_ms2.max )^(1 / set4idm$delta)
+         #( 1 - acc_lon_ms2 / acc_lon_ms2.max )^(1 / set4idm$delta)
   ) %>% 
   data.frame()
 
@@ -162,12 +160,12 @@ dat4idm <-
 # 
 # plot(ggplot() + 
 #        geom_line(data = dat4idm, 
-#                  aes(x = sxx_dist_m_rnd1, 
+#                  aes(x = pxx_dist_m_rnd1, 
 #                      y = speed_ms.u, 
 #                      group = passing),
 #                  size = 1) + 
 #        geom_line(data = dat4idm2, 
-#                  aes(x = sxx_dist_m_rnd1, 
+#                  aes(x = pxx_dist_m_rnd1, 
 #                      y = speed_ms.u, 
 #                      group = passing),
 #                  col = "red",
@@ -185,7 +183,7 @@ dat4idm <-
 ## Assuming u = umax (see Liebner et al., 2013)
 dat4idm <-
   dat4idm %>%
-  group_by_(set4proc$varname4group, set4proc$varname4dist) %>%
+  group_by_(sett_proc$col_name_group, sett_proc$col_name_dist) %>%
   mutate(speed_ms.u.limit = min(speed_ms.u, set4idm$u.max, na.rm = T))
 
 
@@ -194,14 +192,14 @@ dat4idm <-
 
 dat4idm <- 
   dat4idm %>%
-  #arrange_(set4proc$varname4group, set4proc$varname4time) %>% 
-  #mutate_(sxx_dist_m.u = paste(set4proc$varname4dist_m)) %>% 
-  #mutate_(sxx_dist_m.u = -50) %>% 
-  group_by_(set4proc$varname4group) %>% 
-  mutate(sxx_dist_m.u = speed_ms.u.limit * (time_s - lag(time_s))) %>% 
+  #arrange_(sett_proc$col_name_group, sett_proc$col_name_time) %>% 
+  #mutate_(pxx_dist_m.u = paste(sett_proc$col_name_dist_m)) %>% 
+  #mutate_(pxx_dist_m.u = -50) %>% 
+  group_by_(sett_proc$col_name_group) %>% 
+  mutate(pxx_dist_m.u = speed_ms.u.limit * (time_s - lag(time_s))) %>% 
   ## To avoid NA when computing cumsum
-  mutate(sxx_dist_m.u = ifelse(is.na(sxx_dist_m.u), 0 , sxx_dist_m.u)) %>% 
-  mutate(sxx_dist_m.u = cumsum(sxx_dist_m.u) - 55) %>% 
+  mutate(pxx_dist_m.u = ifelse(is.na(pxx_dist_m.u), 0 , pxx_dist_m.u)) %>% 
+  mutate(pxx_dist_m.u = cumsum(pxx_dist_m.u) - 55) %>% 
   data.frame()
 
 
@@ -210,11 +208,11 @@ dat4idm <-
 
 dat4idm <- 
   dat4idm %>% 
-  group_by_(set4proc$varname4group) %>% 
+  group_by_(sett_proc$col_name_group) %>% 
   ## Add desired velocity for section after turning
   mutate_(speed_ms.u.limit =
-           paste("ifelse(", set4proc$varname4dist_m, ">=", set4synth$distlimit, ",",
-           #ifelse(sxx_dist_m.u >= set4synth$distlimit,
+           paste("ifelse(", sett_proc$col_name_dist_m, ">=", sett_synth$dist_limit, ",",
+           #ifelse(pxx_dist_m.u >= sett_synth$dist_limit,
                   set4idm$u.max, ",",
                   "speed_ms.u.limit", ")")) 
 
@@ -228,13 +226,13 @@ plotdat.profiles.synth <-
   geom_path(data = 
               dat4idm, #%>% 
               #filter(round_txt == "normal") %>% 
-              #filter(subject_id %in% set4proc$showplot4subject_id),
+              #filter(subject_id %in% sett_proc$show_plot_by_subject),
             aes_string(
-              x = set4proc$varname4dist_m,
-              #x = "sxx_dist_m.u",
+              x = sett_proc$col_name_dist_m,
+              #x = "pxx_dist_m.u",
               #y = "speed_ms.u",
               y = "speed_ms.u.limit",
-              group = set4proc$varname4group),
+              group = sett_proc$col_name_group),
             size = 1,
             colour = "green3") #+ 
    # scale_x_continuous(expand = c(0, 0)) +
@@ -242,4 +240,4 @@ plotdat.profiles.synth <-
    #                 ylim = c(  0, 25)) +
    # theme_bw()
  
-if (set4proc$showplot) plot(plotdat.profiles.synth)
+if (sett_proc$show_plot) plot(plotdat.profiles.synth)

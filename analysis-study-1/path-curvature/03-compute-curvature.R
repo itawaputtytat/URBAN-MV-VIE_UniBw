@@ -2,8 +2,8 @@
 # Preparatory settings ----------------------------------------------------
 
 set4proc$objname <- "dat4med"
-set4proc$colname4gps_lon_conv <- "gps_lon_med_smooth_xyconv"
-set4proc$colname4gps_lat_conv <- "gps_lat_med_smooth_xyconv"
+set4proc$colname4gps_lon_conv <- "gps_lon_smooth_xyconv"
+set4proc$colname4gps_lat_conv <- "gps_lat_smooth_xyconv"
 set4proc$seqlength <- 3 ## Must be uneven
 ## Info: Resulting number of radius values will be nrow(data) - seglength
 set4proc$rfilter <- 100

@@ -27,7 +27,7 @@ prob_Mk <- prob_Mk$prob$rate
 acclon_ms2.thresh <- c(1.5, 2, 2.5)
 
 prob_al_Mk <- predLiebner_compProb_al_Mk(dat4prob,
-                                         dat4acclon_ms2.est.max,
+                                         dat4acc_lon_ms2.est.max,
                                          acclon_ms2.thresh,
                                          showplot = F)
 

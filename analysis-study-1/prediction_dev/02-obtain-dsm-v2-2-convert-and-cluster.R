@@ -24,12 +24,12 @@ dat4test$model1_gradient_ms <- dat4test$v1
 dat4test$model2_gradient_ms <- dat4test$v2
 dat4test$model3_gradient_ms <- dat4test$v3
 
-dat4test$sxx_dist_m_rnd1 <- round(dat4test$sxx_dist_m_rnd1, 1)
+dat4test$pxx_dist_m_rnd1 <- round(dat4test$pxx_dist_m_rnd1, 1)
 
 dat4test <-
   dat4test %>%
   mutate(time_s_diff = time_s - lag(time_s),
-         dist_m_diff = sxx_dist_m_rnd1 - lag(sxx_dist_m_rnd1)) %>%
+         dist_m_diff = pxx_dist_m_rnd1 - lag(pxx_dist_m_rnd1)) %>%
   mutate(time_s_diff.synth1 = dist_m_diff / v1,
          time_s_diff.synth2 = dist_m_diff / v2,
          time_s_diff.synth3 = dist_m_diff / v3) %>%
@@ -91,7 +91,7 @@ lines(dat4test$model3_gradient_ms, col = "red")
 clustoutput <-
   #clust2groups(dat4clust.clean.spread.filtered[, min:max],
   kmeanspp(dat4clust.clean.spread,
-               k = set4proc$k, 
+               k = sett_proc$k, 
                start = centretest,
                iter.max = 1,
                nstart = 1)

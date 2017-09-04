@@ -1,7 +1,7 @@
 corrPosAnom <- function (prefix,
                             suffix,
                             sxx2corr = NA,
-                            colname4ref = "sxx_dist_m_rnd1",
+                            colname4ref = "pxx_dist_m_rnd1",
                             dbconn = "dbconn_study1",
                             save2src = T) {
   

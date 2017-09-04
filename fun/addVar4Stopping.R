@@ -1,10 +1,13 @@
 addVar4Stopping <- function(dat2proc,
-                            varname4dist = "sxx_dist_m_rnd1",
+                            varname4dist = "pxx_dist_m_rnd1",
                             dist1 = -50,
                             dist2 = 25,
                             varname4subject = "subject_id",
                             varname4round = "round_txt",
                             varname4group = "passing") {
+  
+  if ("stopping" %in% colnames(dat2proc))
+    dat2proc[, "stopping"] <- NULL
   
   ## Find stopping drivers
   stopfinder <-

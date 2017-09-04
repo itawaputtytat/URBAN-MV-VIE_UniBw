@@ -38,11 +38,11 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
           u <- dat4dsm[dat4dsm$dist == pos4carryout_m, paste("k", k, sep = "")]
         
         ## For each acceleration model
-        for(l in 1:length(set4sim$acclon_ms2.max)) {
+        for(l in 1:length(set4sim$acc_lon_ms2.max)) {
           
           ## Get acceleration
-          acclon_ms2.max <- set4sim$acclon_ms2.max[l]
-          #a <- acclon_ms2.max * 0.01
+          acc_lon_ms2.max <- set4sim$acc_lon_ms2.max[l]
+          #a <- acc_lon_ms2.max * 0.01
           
           ## Initialise previous simulation values
           ## (Values from position of carrying out the simulation)
@@ -66,14 +66,14 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
           #lapply(set4sim_temp$time_s_diff, function(dt) {
           # for(dt in set4sim_temp$time_s_diff) {
             ## When using individual timesteps
-            #a <- acclon_ms2.max * dt
+            #a <- acc_lon_ms2.max * dt
 
             # ## Compute current gap values
             # if (j %in% c(2, 4)) {
             # #   gap_des <- 0
             # #   gap_act <- 1
             # # } else {
-            #   gap_des <- idmGap_des(set4idm$d0, v_sim, acclon_ms2.max, set4idm$b)
+            #   gap_des <- idmGap_des(set4idm$d0, v_sim, acc_lon_ms2.max, set4idm$b)
             #   gap_act <- idmGap_act(s_sim, objpos)
             # }
              
@@ -96,13 +96,13 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
                             set4idm$delta, 
                             set4sim_temp$dist1, 
                             set4idm$d0, 
-                            acclon_ms2.max, 
+                            acc_lon_ms2.max, 
                             set4idm$b, 
                             objpos, 
                             j,
                             pos4carryout_m,
                             set4sim_temp$time_s_diff)
-                            #set4sim$acclon_ms2.max)
+                            #set4sim$acc_lon_ms2.max)
 
           #}
           #else {
@@ -195,10 +195,10 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
 #dat4sim_temp <- dat4sim
 
 #     ## For each acceleration model
-#     for(l in 1:length(set4sim$acclon_ms2.max)) {
+#     for(l in 1:length(set4sim$acc_lon_ms2.max)) {
 #       
 #       ## Get acceleration
-#       acclon_ms2.max <- set4sim$acclon_ms2.max[l]
+#       acc_lon_ms2.max <- set4sim$acc_lon_ms2.max[l]
 #       
 #       ## Create variable names
 #       suffix <- paste(c("j", "k", "l"), c(j, k, l), collapse = "_", sep = "")
@@ -217,7 +217,7 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
 #         ## Adjust parameters to each time step
 #         #time_s_diff <- dat4sim[i, set4dat$varname4time] - dat4sim[i-1, set4dat$varname4time]
 #         #b <- set4idm$b * time_s_diff
-#         a <- acclon_ms2.max * dat4sim$time_s_diff[i]
+#         a <- acc_lon_ms2.max * dat4sim$time_s_diff[i]
 # 
 #         v_sim.prev <- dat4sim[i-1, varname4speed_sim]
 #         s_sim.prev <- dat4sim[i-1, varname4dist_sim]
@@ -239,7 +239,7 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
 #           gap_des <- 0
 #           gap_act <- 1
 #         } else {
-#           gap_des <- idmGap_des(set4idm$d0, v_sim.prev, acclon_ms2.max, set4idm$b)
+#           gap_des <- idmGap_des(set4idm$d0, v_sim.prev, acc_lon_ms2.max, set4idm$b)
 #           #gap_act <- idmGap_act(s_sim.prev, objpos)
 #           gap_act <- idmGap_act(s_sim.prev, objpos)
 #         }
@@ -294,7 +294,7 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
 # 
 #       dat4sim_temp <- dat4sim
 #       dat4sim_temp$dist2 <- 0
-#       acclon_ms2.max <- set4sim$acclon_ms2.max[l]
+#       acc_lon_ms2.max <- set4sim$acc_lon_ms2.max[l]
 # 
 #       for(i in 2:nrow(dat4sim)) {
 # 
@@ -304,13 +304,13 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
 # 
 #         time_s_diff <- dat4sim[i, set4dat$varname4time] - dat4sim[i-1, set4dat$varname4time]
 #         b <- set4idm$b * time_s_diff
-#         a <- acclon_ms2.max * time_s_diff
+#         a <- acc_lon_ms2.max * time_s_diff
 # 
 #         if (j %in% c(1, 3)) {
 #           gap_des <- 0
 #           gap_act <- 1
 #         } else {
-#           gap_des <- idmGap_desired(set4idm$d0, v_prev, a, b)#acclon_ms2.max,set4idm$b)
+#           gap_des <- idmGap_desired(set4idm$d0, v_prev, a, b)#acc_lon_ms2.max,set4idm$b)
 #           gap_act <- idmGap_actual(s_prev, objpos)
 #         }
 # 

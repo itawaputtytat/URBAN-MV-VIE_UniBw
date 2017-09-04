@@ -37,7 +37,7 @@ dat4prob <- predLiebner_compProb_O_Hi(set4sim, pos4carryout, dat4sim, P_O_Hi)
 # dat4prob_temp <- as.vector(t(dat4prob_temp))
 dat4prob_temp <- as.vector(t(dat4prob))
 dat4prob_temp <- rbind(dat4prob_temp, 1 - dat4prob_temp)
-# dat4prob_temp <- 
+  # dat4prob_temp <- 
 #   data.table::rbindlist(list(dat4prob, 1-dat4prob)) %>% 
 #   data.frame()
 

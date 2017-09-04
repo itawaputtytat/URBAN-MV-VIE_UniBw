@@ -1,14 +1,15 @@
 intrpldf_batch4rb <- function(dat,
-                              colname4ref,
+                              col_name_ref,
                               stepsize = 0.1,
                               colnames2excl = NULL,
                               binary_vars = NULL,
                               outputFlag = F,
-                              suffix = "intrpld") {
+                              suffix = "intrpld",
+                              replace_preceding = T) {
 
   outputFunProc(R)
-  colname4ref_finder <- grep(colname4ref, colnames(dat))
-  colname4ref <- colnames(dat)[colname4ref_finder]
+  col_name_ref_finder <- grep(col_name_ref, colnames(dat))
+  col_name_ref <- colnames(dat)[col_name_ref_finder]
   dat_intrpld <- invisible( lapply(unique(dat$passing), function(p) {
 
     if (outputFlag) 
@@ -19,10 +20,11 @@ intrpldf_batch4rb <- function(dat,
 
     dat_intrpld <- 
       intrpldf(dat_temp, 
-               colname4ref = colname4ref,
+               colname4ref = col_name_ref,
                stepsize = stepsize,
                colnames2excl = colnames2excl, 
-               binary_vars = binary_vars)
+               binary_vars = binary_vars,
+               replace_preceding = replace_preceding)
     
     if (outputFlag) 
       outputDone(T)
