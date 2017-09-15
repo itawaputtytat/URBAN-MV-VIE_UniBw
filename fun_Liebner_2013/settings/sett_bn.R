@@ -6,7 +6,7 @@ sett_bn <- c()
 sett_bn$states$I <- paste("Intent", 1:4, sep = "")
 sett_bn$states$V <- paste("k", 1:length(sett_sim$v_ms.max), sep = "")
 sett_bn$states$A <- paste("l", 1:length(sett_sim$acc_lon_ms2.max), sep = "")
-sett_bn$states$O <- c("dat4prob$obs", "nodat4prob$obs")
+sett_bn$states$O <- c("dat_prob$obs", "nodat_prob$obs")
 
 
 
@@ -17,14 +17,14 @@ sett_bn$states$O <- c("dat4prob$obs", "nodat4prob$obs")
 sett_bn$prior$I <- rep(1 / sum(sett_sim$computeI), sum(sett_sim$computeI))
 
 ## Special cases for Prior: In case of already passed obstacles
-if(sett_sim$pos4carryout >= sett_sim$objpos[2]) {
+if(sett_proc$carryout_am1 >= sett_sim$objpos[2]) {
   sett_bn$prior$I <- c(1/3, 0, 1/3, 1/3)
   sett_bn$prior$I <- array(sett_bn$prior$I, 
                           dim = 4, 
                           dimnames = list(sett_bn$states$I))
 }
 
-if(sett_sim$pos4carryout >= sett_sim$objpos[4]) {
+if(sett_proc$carryout_am1 >= sett_sim$objpos[4]) {
   sett_bn$prior$I <- c(1/2, 0, 1/2, 0)
   sett_bn$prior$I <- array(sett_bn$prior$I, 
                           dim = 4, 
@@ -85,4 +85,13 @@ sett_bn$idorder <-
 
 
 
+# Initialise probability collector ----------------------------------------
 
+P_O_Hi <- idm_createSimDat(
+  list(j = length(sett_bn$states$I),
+       k = length(sett_bn$states$V), 
+       l = length(sett_bn$states$A)), "", prefix = "")
+
+P_O_Hi <- P_O_Hi[sett_bn$idorder]
+
+bn <- predLiebner_initBN("V1", sett_bn)

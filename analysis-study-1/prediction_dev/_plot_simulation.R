@@ -4,10 +4,10 @@ replayPlot(plot_template4sim)
 
 # History of simulated speed profiles
 if (sett_vis$plot_simulation_history) {
-  invisible(lapply(seq_along(coll4dat4sim), function(x) {
-    dat <- coll4dat4sim[[x]][-1, ]
+  invisible(lapply(seq_along(dat_sim_tails_coll), function(x) {
+    dat <- dat_sim_tails_coll[[x]][-1, ]
     #dat <- tail(coll4dat4sim[[x]], 2)
-    name <- names(coll4dat4sim)[[x]]
+    name <- names(dat_sim_tails_coll)[[x]]
     if (grepl("j1", name))
     { col <- "#6FCDDD65"; shape = 17 } # cyan
     if (grepl("j2", name))
@@ -16,12 +16,9 @@ if (sett_vis$plot_simulation_history) {
     { col <- "#ED212565"; shape = 16 } # red
     if (grepl("j4", name))
     { col <- "#B9539F65"; shape = 15 } # magenta
-    # lines(x = coll4dat4sim[[x]]$dist_m[-1], 
-    #       y = coll4dat4sim[[x]]$speed_ms[-1],
     lines(lwd = 0.75,
           #points(pch = ".",
           x = dat$dist_m, 
-          
           y = dat$speed_ms,
           col = col)
   }))

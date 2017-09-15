@@ -1,5 +1,7 @@
-predLiebner_getStartVal4Sim <- function(dat2proc, set4dat, pos4carryout_m, timelag_s = -1, time4sim_s = NULL) {
+predLiebner_getStartVal4Sim <- function(dat2proc, set4dat, set4sim_temp, timelag_s = -1, time4sim_s = NULL) {
 
+  pos4carryout_m <- set4sim_temp$dist2
+  
   #dat2proc[, set4dat$col_name_am] <- round(dat2proc[, set4dat$col_name_am], 1)
   #dat2proc[, set4dat$col_name_time] <- round(dat2proc[, set4dat$col_name_time])
 
@@ -63,6 +65,9 @@ predLiebner_getStartVal4Sim <- function(dat2proc, set4dat, pos4carryout_m, timel
   ## Actual driven distance
   dist_diff = dist2 - dist1
   
+  ## Actual driven distance
+  time_diff = time2 - time1
+  
   ## Get time differences for each timestamp
   time_s_diff <- dat2proc[intersect(rowfinder1, rowfinder2), set4dat$col_name_time]
   #time_s_diff <- c(0, diff(time_s_diff))
@@ -70,6 +75,7 @@ predLiebner_getStartVal4Sim <- function(dat2proc, set4dat, pos4carryout_m, timel
 
   return(list(time1 = time1,
               time2 = time2,
+              time_diff = time_diff,
               dist1 = dist1,
               dist2 = dist2,
               dist_diff = dist_diff,

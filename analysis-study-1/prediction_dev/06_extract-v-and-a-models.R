@@ -3,6 +3,7 @@
 
 sett_prob <- c()
 sett_prob$acc_thresholds <- c(1.5, 2, 2.5)
+sett_prob$show_plot <- T
 
 
 
@@ -42,5 +43,7 @@ prob_al_Mk <- prob_al_Mk$prob$rate
 
 # Visualise P(Mk) and P(al|Mk) --------------------------------------------
 
-plot_prob <- arrangeGrob(plot_prob_Mk, plot_prob_al_Mk, nrow = 1)
-plot(plot_prob)
+if (sett_prob$show_plot) {
+  plot_prob <- arrangeGrob(plot_prob_Mk, plot_prob_al_Mk, nrow = 1)
+  plot(plot_prob)
+}

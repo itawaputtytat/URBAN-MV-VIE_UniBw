@@ -5,6 +5,7 @@ outputSectionTitle("Loading test data")
 outputString(paste("* Source:", sett_dat$df_name))
 outputString(paste("* Variable for position:", sett_dat$col_name_am))
 outputString(paste("* Variable for spatial distance:", sett_dat$col_name_dist))
+outputString("")
 
 dat_test <-
   get(sett_dat$df_name) %>%

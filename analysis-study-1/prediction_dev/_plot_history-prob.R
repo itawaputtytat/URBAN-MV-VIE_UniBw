@@ -1,6 +1,6 @@
 
-coll4results2 <- as.data.frame(coll4results)
-rownames(coll4results2) <- NULL
+#coll4results2 <- as.data.frame(coll4results)
+#rownames(coll4results2) <- NULL
 
 #par(xaxs = "i", yaxs = "i")
 # plot(x = coll4results2$s, y = coll4results2$Intent1, type = "l", col = "blue", xlim = c(sett_vis$sim$xmin, sett_vis$sim$xmax), ylim = c(0,1))
@@ -47,8 +47,8 @@ rownames(coll4results2) <- NULL
 #      ann = F,
 #      axes = F)
 
-if(!is.na(am_1st))
-  abline(v = am_1st)
+if (!is.na(sett_sim_temp$am_1st))
+  abline(v = sett_sim_temp$am_1st, col = "grey")
 ## Text for current position
 rect(xleft = sett_vis$sim$xmax -7, xright = sett_vis$sim$xmax -1,
      ybottom = 0.925, ytop =  0.975,
@@ -57,16 +57,18 @@ text(x = sett_vis$sim$xmax - 4,
      y =  0.95,
      labels = paste(round(sett_proc$carryout_am1, 1), "m"))
 
-row_finder <- which(coll4results2$pos4carryout >= dist2_prev & 
-                      coll4results2$pos4carryout <= sett_sim_temp$dist2)
-testy <- coll4results2[row_finder, ]
+row_finder <- which(dat_pred_results_coll[,get(sett_dat$col_name_am)] >= sett_sim_temp$dist2_prev & 
+                      dat_pred_results_coll[,get(sett_dat$col_name_am)] <= sett_sim_temp$dist2)
+if (length(row_finder) == 0)
+  row_finder <- max(row_finder, 1)
+testy <- dat_pred_results_coll[row_finder, ]
 
-lines(x = testy$pos4carryout, testy$Intent1, col = "#6FCDDD")
-lines(x = testy$pos4carryout, testy$Intent2, col = "orange")
-lines(x = testy$pos4carryout, testy$Intent3, col = "#ED2125")
-lines(x = testy$pos4carryout, testy$Intent4, col = "#B9539F")
+lines(x = testy[, get(sett_dat$col_name_am)], testy$Intent1, col = "#6FCDDD")
+lines(x = testy[, get(sett_dat$col_name_am)], testy$Intent2, col = "orange")
+lines(x = testy[, get(sett_dat$col_name_am)], testy$Intent3, col = "#ED2125")
+lines(x = testy[, get(sett_dat$col_name_am)], testy$Intent4, col = "#B9539F")
 
-lines(x = testy$pos4carryout, testy$Intent3 + testy$Intent4, col = "#ED212550", lty = "dashed")
+lines(x = testy[, get(sett_dat$col_name_am)], testy$Intent3 + testy$Intent4, col = "#ED212550", lty = "dashed")
 #par(new = TRUE)
 #abline(v = pos4carryout, col = "green4")
 # z <- recordPlot()

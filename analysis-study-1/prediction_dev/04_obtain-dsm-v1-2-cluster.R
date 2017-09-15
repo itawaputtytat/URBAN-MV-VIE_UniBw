@@ -13,6 +13,7 @@ sett_clust$procedure = "kmeanspp" #kmeans, kmeanspp, hclust
 sett_clust$algorithm = "Hartigan-Wong"
 sett_clust$diss_method <- "DTWARP"
 sett_clust$am_limit <- sett_synth$am_limit
+sett_clust$show_plot <- T
 
 
 
@@ -105,7 +106,8 @@ plot_clust <-
                 sett_clust$algorithm))+ 
   theme_bw()
 
-plot(plot_clust)
+if (sett_clust$show_plot)
+  plot(plot_clust)
 
 
 
@@ -140,7 +142,8 @@ plot_clustcenters <-
                        colour = "factor(cluster_group)"),
             size = 2) 
 
-plot(plot_clustcenters)
+if (sett_clust$show_plot)
+  plot(plot_clustcenters)
 
 
 
@@ -200,5 +203,6 @@ plot_clustcenters_ordered <-
   ggtitle(paste(sett_clust$procedure,
                 sett_clust$algorithm))+ 
   theme_bw()
-  
-plot(plot_clustcenters_ordered)
+
+if (sett_clust$show_plot)
+  plot(plot_clustcenters_ordered)

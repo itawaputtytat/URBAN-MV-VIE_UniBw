@@ -4,7 +4,8 @@
 sett_dsm <- c()
 sett_dsm$am_limit <- sett_synth$am_limit
 sett_dsm$v_kmh_max <- c(48, 54, 60)
-sett_dsm$v_ms_max <- sett_dsm$v_kmh_max/ 3.6
+sett_dsm$v_ms_max <- sett_dsm$v_kmh_max / 3.6
+sett_dsm$show_plot <- T
 
 
 
@@ -32,4 +33,5 @@ plot_clustcenters_adjusted <-
             size = 2) #+
 #scale_colour_manual(values = c("green3", "blue3", "red3", "orange3"))
 
-plot(plot_clustcenters_adjusted)
+if (sett_dsm$show_plot)
+  plot(plot_clustcenters_adjusted)

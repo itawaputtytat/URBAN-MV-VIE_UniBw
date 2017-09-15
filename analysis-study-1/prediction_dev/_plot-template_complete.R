@@ -60,12 +60,12 @@ windows(xpos = sett_windows$right - sett_windows$width*96 - sett_windows$width -
 
 ## Simulation
 dev.set(3)
-source("analysis-study-1/prediction_dev/zz-vis-classic-template-simulation.R")
+source("analysis-study-1/prediction_dev/_plot_simulation_template.R")
 
 ## Current probability
 dev.set(4)
-source("analysis-study-1/prediction_dev/zz-vis-classic-template-current-prob.R")
+source("analysis-study-1/prediction_dev/_plot_current-prob_template.R")
 
 ## Probability history
 dev.set(5)
-source("analysis-study-1/prediction_dev/zz-vis-classic-template-history-prob.R")
+source("analysis-study-1/prediction_dev/_plot_history-prob_template.R")

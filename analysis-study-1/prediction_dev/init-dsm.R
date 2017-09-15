@@ -1,18 +1,4 @@
 
-# Initialise bayesian network ---------------------------------------------
-
-## Initialise probability collector
-P_O_Hi <- idm_createSimDat(
-  list(j = length(sett_bn$states$I),
-       k = length(sett_bn$states$V), 
-       l = length(sett_bn$states$A)), "", prefix = "")
-
-P_O_Hi <- P_O_Hi[sett_bn$idorder]
-
-bn <- predLiebner_initBN("V1", sett_bn)
-
-
-
 # Load desired velocity models --------------------------------------------
 
 ## Load data

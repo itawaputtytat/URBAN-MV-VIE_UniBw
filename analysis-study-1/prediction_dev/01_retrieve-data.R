@@ -8,7 +8,7 @@ sett_query$db_conn_name <- dbFindConnObj(sett_query$db_name, output = F)
 sett_query$src_name_prefix <- "t_adtf"
 sett_query$src_name_suffix <- "full_dti_rnd1"
 sett_query$df_name_prefix <- "study1"
-sett_query$pxx   <- 4
+sett_query$pxx   <- 17
 sett_query$round <- c("intro", "normal", "stress")
 sett_query$subject <- c(1:31)
 sett_query$col_name_am_suffix <- "dti_m_rnd1"

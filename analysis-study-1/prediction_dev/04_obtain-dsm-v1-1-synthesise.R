@@ -26,6 +26,7 @@ sett_synth$am_limit <- 15 # p04
 # sett_synth$am_limit <- 25 # p06
 # sett_synth$am_limit <- 20 # p07
 # sett_synth$am_limit <- 40 # p15
+sett_synth$am_limit <- 35 # p17
 
 
 
@@ -37,7 +38,7 @@ dat_synth <-
   filter_(paste(sett_synth$col_name_am, ">=", sett_query$am_limit1, "&",
             sett_synth$col_name_am, "<=", sett_query$am_limit2)) %>% 
   filter(stopping == "no_stopping") %>% 
-  filter(preceded == 0) %>% 
+  #filter(preceded == 0) %>% 
   select_(sett_synth$col_name_am,
           sett_synth$col_name_group,
           sett_synth$col_name_round,
