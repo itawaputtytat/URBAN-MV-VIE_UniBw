@@ -1,4 +1,4 @@
-convertGPS2XYDistances <- function(gps_lon, gps_lat, row4origin, showplot = F) {
+convertGPS2XYDistances <- function(gps_lon, gps_lat, row4origin, showplot = F, lim_x = c(-100, 100), lim_y = c(-100, 100)) {
   
   outputFunProc(R)
   
@@ -44,8 +44,8 @@ convertGPS2XYDistances <- function(gps_lon, gps_lat, row4origin, showplot = F) {
     plot(dat$gps_lon_conv,
          dat$gps_lat_conv,
          type = "l", 
-         xlim = set4proc$xlim, 
-         ylim = set4proc$ylim)
+         xlim = lim_x, 
+         ylim = lim_y)
   }
   return(dat)
 }

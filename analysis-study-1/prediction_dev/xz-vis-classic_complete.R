@@ -60,6 +60,7 @@ barplot(height = unlist(temp2$speed_ms),
         ylim = c(0, 20),
         col = c(rep("#6FCDDD", 9), rep("orange", 9), rep("#ED2125", 9), rep("#B9539F", 9)),
         ylab = "Speed (m/s)")
+abline(h = sett_sim_temp$speed2, col = "green4")
 #font.lab = 2)
 #axis(side = 2)
 
@@ -69,14 +70,16 @@ title("Simulated speed",
 
 dev.set(7)
 ## Draw plot for distance values
-barplot(height = abs(pos4carryout - unlist(temp2$dist_m)),
+barplot(#height = abs(pos4carryout - unlist(temp2$dist_m)),
+        height = abs(sett_sim_temp$dist1 - unlist(temp2$dist_m)),
         names.arg = temp2$.id,
         xaxt = "n",
         #yaxt = "n",
         #ylim = c(-4, 4),
-        ylim = c(0, 5),
+        ylim = c(0, 20),
         col = c(rep("#6FCDDD", 9), rep("orange", 9), rep("#ED2125", 9), rep("#B9539F", 9)),
         ylab = "Distance (m)")
+abline(h = sett_sim_temp$dist_diff, col = "green4")
 #font.lab = 2)
 #axis(side = 2)
 

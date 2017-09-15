@@ -3,13 +3,13 @@ coll4results2 <- as.data.frame(coll4results)
 rownames(coll4results2) <- NULL
 
 #par(xaxs = "i", yaxs = "i")
-# plot(x = coll4results2$s, y = coll4results2$Intent1, type = "l", col = "blue", xlim = c(set4vis$sim$xmin, set4vis$sim$xmax), ylim = c(0,1))
+# plot(x = coll4results2$s, y = coll4results2$Intent1, type = "l", col = "blue", xlim = c(sett_vis$sim$xmin, sett_vis$sim$xmax), ylim = c(0,1))
 # lines(x = coll4results2$s, coll4results2$Intent2, col = "orange")
 # lines(x = coll4results2$s, coll4results2$Intent3, col = "red")
 # lines(x = coll4results2$s, coll4results2$Intent4, col = "magenta")
-# plot(0, xlim = c(set4vis$sim$xmin, set4vis$sim$xmax), ylim = c(0,1))
-# abline(v = set4sim$objpos[2], col = "orange")
-# abline(v = set4sim$objpos[4], col = "#B9539F")
+# plot(0, xlim = c(sett_vis$sim$xmin, sett_vis$sim$xmax), ylim = c(0,1))
+# abline(v = sett_sim$objpos[2], col = "orange")
+# abline(v = sett_sim$objpos[4], col = "#B9539F")
 # 
 # y <- recordPlot()
 # replayPlot(plot_template4probhist)
@@ -18,7 +18,7 @@ rownames(coll4results2) <- NULL
 #      y = coll4results2$Intent1,
 #      type = "l", 
 #      col = "blue", 
-#      xlim = c(set4vis$sim$xmin, set4vis$sim$xmax), 
+#      xlim = c(sett_vis$sim$xmin, sett_vis$sim$xmax), 
 #      ylim = c(0,1),
 #      ann = F,
 #      axes = F)
@@ -26,7 +26,7 @@ rownames(coll4results2) <- NULL
 # par(new = TRUE)
 # plot(x = coll4results2$pos4carryout, 
 #      y = coll4results2$Intent2, type = "l", 
-#      col = "orange", xlim = c(set4vis$sim$xmin, set4vis$sim$xmax), 
+#      col = "orange", xlim = c(sett_vis$sim$xmin, sett_vis$sim$xmax), 
 #      ylim = c(0,1),
 #      ann = F,
 #      axes = F)
@@ -34,7 +34,7 @@ rownames(coll4results2) <- NULL
 # par(new = TRUE)
 # plot(x = coll4results2$pos4carryout, 
 #      y = coll4results2$Intent3, type = "l", 
-#      col = "red", xlim = c(set4vis$sim$xmin, set4vis$sim$xmax), 
+#      col = "red", xlim = c(sett_vis$sim$xmin, sett_vis$sim$xmax), 
 #      ylim = c(0,1),
 #      ann = F,
 #      axes = F)
@@ -42,23 +42,31 @@ rownames(coll4results2) <- NULL
 # par(new = TRUE)
 # plot(x = coll4results2$pos4carryout, 
 #      y = coll4results2$Intent4, type = "l", 
-#      col = "magenta", xlim = c(set4vis$sim$xmin, set4vis$sim$xmax), 
+#      col = "magenta", xlim = c(sett_vis$sim$xmin, sett_vis$sim$xmax), 
 #      ylim = c(0,1),
 #      ann = F,
 #      axes = F)
 
+if(!is.na(am_1st))
+  abline(v = am_1st)
 ## Text for current position
-rect(xleft = set4vis$sim$xmax -5, xright = set4vis$sim$xmax - 1,
+rect(xleft = sett_vis$sim$xmax -7, xright = sett_vis$sim$xmax -1,
      ybottom = 0.925, ytop =  0.975,
      col = "white")
-text(x = set4vis$sim$xmax - 3,
+text(x = sett_vis$sim$xmax - 4,
      y =  0.95,
-     labels = paste(round(pos4carryout, 1), "m"))
+     labels = paste(round(sett_proc$carryout_am1, 1), "m"))
 
-lines(x = coll4results2$pos4carryout, coll4results2$Intent1, col = "#6FCDDD")
-lines(x = coll4results2$pos4carryout, coll4results2$Intent2, col = "orange")
-lines(x = coll4results2$pos4carryout, coll4results2$Intent3, col = "#ED2125")
-lines(x = coll4results2$pos4carryout, coll4results2$Intent4, col = "#B9539F")
+row_finder <- which(coll4results2$pos4carryout >= dist2_prev & 
+                      coll4results2$pos4carryout <= sett_sim_temp$dist2)
+testy <- coll4results2[row_finder, ]
+
+lines(x = testy$pos4carryout, testy$Intent1, col = "#6FCDDD")
+lines(x = testy$pos4carryout, testy$Intent2, col = "orange")
+lines(x = testy$pos4carryout, testy$Intent3, col = "#ED2125")
+lines(x = testy$pos4carryout, testy$Intent4, col = "#B9539F")
+
+lines(x = testy$pos4carryout, testy$Intent3 + testy$Intent4, col = "#ED212550", lty = "dashed")
 #par(new = TRUE)
 #abline(v = pos4carryout, col = "green4")
 # z <- recordPlot()

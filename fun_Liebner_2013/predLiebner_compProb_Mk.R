@@ -1,6 +1,6 @@
 predLiebner_compProb_Mk <- function(dat2proc,
                                     varname4id = "passing",
-                                    varname4clustgroup = "clustgroup", 
+                                    varname4clustgroup = "cluster_group", 
                                     varname4group = NULL,
                                     showplot = F) {
   
@@ -25,10 +25,12 @@ predLiebner_compProb_Mk <- function(dat2proc,
                  fill = M),
              stat = "identity") +
     scale_y_continuous(expand = c(0, 0)) + 
-    scale_fill_manual(values = c("#ED2124", "#6ABD45", "#3953A4")) +
+    #scale_fill_manual(values = c("#ED2124", "#6ABD45", "#3953A4")) +
     coord_cartesian(ylim = c(0,1)) + 
     labs(title = "Distribution of model M",
-         subtitle = "Rate of passings in each cluster") + 
+         subtitle = "Rate of passings in each cluster",
+         x = "Model",
+         y = "P(Model)") + 
     theme_bw()
 
   if (!is.null(varname4group))

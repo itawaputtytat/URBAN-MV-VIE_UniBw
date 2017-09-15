@@ -1,25 +1,26 @@
 predLiebner_modelDrivBehav_batch <- function(algo4hypscore, 
                                              pos4carryout_m,
-                                             set4sim,
-                                             set4sim_temp,
-                                             set4dat,
-                                             dat4dsm,
+                                             sett_sim,
+                                             sett_sim_temp,
+                                             sett_dat,
+                                             dat_dsm,
                                              coll4simtail) {
   
-  #dat4sim2 <- list()
+  
+  #dat_sim2 <- list()
   #name4listobj <- c()
-  #dummy <- rep(0, length(set4sim_temp$time_s_diff))
-  #dummy_v <- c(set4sim_temp$speed1, dummy)
-  #dummy_s <- c(set4sim_temp$dist1, dummy)
+  #dummy <- rep(0, length(sett_sim_temp$time_s_diff))
+  #dummy_v <- c(sett_sim_temp$speed1, dummy)
+  #dummy_s <- c(sett_sim_temp$dist1, dummy)
   
   ## Use i as list id for each hypothesis
   #i = 1
 
   ## For each hypothesis
-  for(j in 1:length(set4sim$computeI)) {
+  for(j in 1:length(sett_sim$computeI)) {
     
     ## Get object position corresponding to intention
-    objpos <- set4sim$objpos[j]
+    objpos <- sett_sim$objpos[j]
     
     ## Check if driver did not already passed corresponding objects
     ## Otherwise do not simulate driver behaviour
@@ -27,27 +28,27 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
     #if (pos4carryout <= objpos) {
       
       ## For each speed model
-      for(k in 1:length(set4sim$v_ms.max)) {
+      for(k in 1:length(sett_sim$v_ms.max)) {
         
         ## Get data from dsm for u
         ## For intention 1 and 2 this will be constant maximum u
         ## For intention 3 and 4 synthesised models will be used
         if (j %in% c(1, 2))
-          #u <- set4sim$v_ms.max[k] else 
-          u <- tail(dat4dsm[, paste("k", k, sep = "")], 1) else
-          u <- dat4dsm[dat4dsm$dist == pos4carryout_m, paste("k", k, sep = "")]
+          #u <- sett_sim$v_ms.max[k] else 
+          u <- tail(dat_dsm[, paste0("k", k)], 1) else
+          u <- dat_dsm[dat_dsm$dist == sett_sim_temp$pos4carryout_precise, paste0("k", k)]
         
         ## For each acceleration model
-        for(l in 1:length(set4sim$acc_lon_ms2.max)) {
+        for(l in 1:length(sett_sim$acc_lon_ms2.max)) {
           
           ## Get acceleration
-          acc_lon_ms2.max <- set4sim$acc_lon_ms2.max[l]
+          acc_lon_ms2.max <- sett_sim$acc_lon_ms2.max[l]
           #a <- acc_lon_ms2.max * 0.01
           
           ## Initialise previous simulation values
           ## (Values from position of carrying out the simulation)
-          #v_sim <- set4sim_temp$speed1
-          #s_sim <- set4sim_temp$dist1
+          #v_sim <- sett_sim_temp$speed1
+          #s_sim <- sett_sim_temp$dist1
           
           #v_sim <- dummy_v
           #s_sim <- dummy_s
@@ -60,11 +61,11 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
           # gap_des <- 0 ## Desired gap
           # gap_act <- 1 ## Actual gap
           
-          # v_sim.prev <- set4sim_temp$speed1
-          # s_sim.prev <- set4sim_temp$dist1
+          # v_sim.prev <- sett_sim_temp$speed1
+          # s_sim.prev <- sett_sim_temp$dist1
           
-          #lapply(set4sim_temp$time_s_diff, function(dt) {
-          # for(dt in set4sim_temp$time_s_diff) {
+          #lapply(sett_sim_temp$time_s_diff, function(dt) {
+          # for(dt in sett_sim_temp$time_s_diff) {
             ## When using individual timesteps
             #a <- acc_lon_ms2.max * dt
 
@@ -73,15 +74,15 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
             # #   gap_des <- 0
             # #   gap_act <- 1
             # # } else {
-            #   gap_des <- idmGap_des(set4idm$d0, v_sim, acc_lon_ms2.max, set4idm$b)
+            #   gap_des <- idmGap_des(sett_idm$d0, v_sim, acc_lon_ms2.max, sett_idm$b)
             #   gap_act <- idmGap_act(s_sim, objpos)
             # }
              
             ## Compute new longitudinal behaviour
-            # a_sim <- a * ( (1 - ( v_sim.prev / u)^set4idm$delta ) - ( gap_des / gap_act)^2 )
+            # a_sim <- a * ( (1 - ( v_sim.prev / u)^sett_idm$delta ) - ( gap_des / gap_act)^2 )
             # v_sim.prev <<- v_sim.prev + a_sim
             # s_sim.prev <<- s_sim.prev + v_sim.prev * dt
-            # a_sim <- a * ( (1 - ( v_sim / u)^set4idm$delta ) - ( gap_des / gap_act)^2 )
+            # a_sim <- a * ( (1 - ( v_sim / u)^sett_idm$delta ) - ( gap_des / gap_act)^2 )
             
             ## When using lapply
             #v_sim <<- v_sim + a_sim
@@ -91,18 +92,18 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
             # s_sim <- s_sim + v_sim * dt
             #temp <- c()
           #if(j %in% c(1,3) | pos4carryout_m <= objpos) {
-            temp <- sim_asv(set4sim_temp$speed1, 
+            temp <- sim_asv(sett_sim_temp$speed1, 
                             u, 
-                            set4idm$delta, 
-                            set4sim_temp$dist1, 
-                            set4idm$d0, 
+                            sett_idm$delta, 
+                            sett_sim_temp$dist1, 
+                            sett_idm$d0, 
                             acc_lon_ms2.max, 
-                            set4idm$b, 
+                            sett_idm$b, 
                             objpos, 
                             j,
-                            pos4carryout_m,
-                            set4sim_temp$time_s_diff)
-                            #set4sim$acc_lon_ms2.max)
+                            sett_sim_temp$pos4carryout_precise,
+                            sett_sim_temp$time_s_diff)
+                            #sett_sim$acc_lon_ms2.max)
 
           #}
           #else {
@@ -120,22 +121,22 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
           #})
           # }
           
-          #dat4sim2 <- append(dat4sim2, list(data.frame(dist_m = s_sim.coll, speed_ms = v_sim.coll)))
-            #dat4sim2 <- append(dat4sim2, list(data.frame(dist_m = s_sim, speed_ms = v_sim)))
-            current <- paste(c("j", "k", "l"), c(j, k, l), collapse = "_", sep = "")
+          #dat_sim2 <- append(dat_sim2, list(data.frame(dist_m = s_sim.coll, speed_ms = v_sim.coll)))
+            #dat_sim2 <- append(dat_sim2, list(data.frame(dist_m = s_sim, speed_ms = v_sim)))
+            current <- paste0(c("j", "k", "l"), c(j, k, l), collapse = "_")
             #print(current)
             #print(u)
-            #dat4sim2 <- append(dat4sim2, list(data.frame(dist_m = temp$s_sim, speed_ms = temp$v_sim)))
+            #dat_sim2 <- append(dat_sim2, list(data.frame(dist_m = temp$s_sim, speed_ms = temp$v_sim)))
             #coll4simtail[[current]] <- data.frame(dist_m = temp$s_sim, speed_ms = temp$v_sim)
             #coll4simtail[[current]] <- c(temp$s_sim, temp$v_sim)
             coll4simtail[[current]] <- temp
             #temp$hyp <- paste(c("j", "k", "l"), c(j, k, l), collapse = "_", sep = "")
-            #dat4sim2 <- data.table::rbindlist(list(dat4sim2, temp))
+            #dat_sim2 <- data.table::rbindlist(list(dat_sim2, temp))
           # 
              # name4listobj <-
              #   c(name4listobj,
              #     paste(c("j", "k", "l"), c(j, k, l), collapse = "_", sep = ""))
-          # names(dat4sim2) <- name4listobj
+          # names(dat_sim2) <- name4listobj
           ## Save values for each hypothesis in list
           ## Create name
           #name <- paste(c("j", "k", "l"), c(j, k, l), collapse = "_", sep = "")
@@ -157,79 +158,79 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
     #}
   } ## Intent
   
-  #names(dat4sim2) <- name4listobj
-  #return(dat4sim2)
+  #names(dat_sim2) <- name4listobj
+  #return(dat_sim2)
   return(coll4simtail)
 }
 
 # ## For each hypothesis
-# for(j in 1:length(set4sim$computeI)) { 
+# for(j in 1:length(sett_sim$computeI)) { 
 
 # ## For each speed model
-# for(k in 1:length(set4sim$v_ms.max)) { 
+# for(k in 1:length(sett_sim$v_ms.max)) { 
 #   
 #   ## Initialise u
 #   if (j %in% c(1, 2)) {
-#     dat4u <- rep(set4sim$v_ms.max[k], nrow(dat4sim))
-#     u <- dat4u[1]
+#     dat_u <- rep(sett_sim$v_ms.max[k], nrow(dat_sim))
+#     u <- dat_u[1]
 #   } else {
-#     dat4u <- 
-#       #dat4dsm.spread %>% 
-#       # dat4dsm.spread_v2 %>% 
-#       dat4dsm %>% 
-#       #filter(dist %in% dat4sim$sxx_dist_m_rnd1) %>% 
-#       filter(dist == set4sim$pos4carryout) %>% 
+#     dat_u <- 
+#       #dat_dsm.spread %>% 
+#       # dat_dsm.spread_v2 %>% 
+#       dat_dsm %>% 
+#       #filter(dist %in% dat_sim$sxx_dist_m_rnd1) %>% 
+#       filter(dist == sett_sim$pos4carryout) %>% 
 #       data.frame()
-#     dat4u <- dat4u[, paste("k", k, sep = "")]
-#     dat4u <- as.numeric(dat4u)
-#     dat4u <- as.vector(dat4u)
+#     dat_u <- dat_u[, paste("k", k, sep = "")]
+#     dat_u <- as.numeric(dat_u)
+#     dat_u <- as.vector(dat_u)
 #     
 #     # ## Choose u as desired velocity at position of carry-out
-#     rowfinder <- which(dat4dsm.spread$dist == set4sim$pos4carryout)
-#     u <- dat4dsm.spread[rowfinder, paste("k", k, sep = "")]
+#     rowfinder <- which(dat_dsm.spread$dist == sett_sim$pos4carryout)
+#     u <- dat_dsm.spread[rowfinder, paste("k", k, sep = "")]
 #     u <- as.numeric(u)
 #   }
 #   # print(u)
 
 ## Initialise data
-#dat4sim_temp <- dat4sim
+#dat_sim_temp <- dat_sim
 
 #     ## For each acceleration model
-#     for(l in 1:length(set4sim$acc_lon_ms2.max)) {
+#     for(l in 1:length(sett_sim$acc_lon_ms2.max)) {
 #       
 #       ## Get acceleration
-#       acc_lon_ms2.max <- set4sim$acc_lon_ms2.max[l]
+#       acc_lon_ms2.max <- sett_sim$acc_lon_ms2.max[l]
 #       
 #       ## Create variable names
 #       suffix <- paste(c("j", "k", "l"), c(j, k, l), collapse = "_", sep = "")
 #       suffix <- paste("_sim", suffix, sep = "_")
-#       varname4speed_sim <- paste(set4dat$varname4speed, suffix, sep = "")
-#       varname4dist_sim <- paste(set4dat$varname4dist_m, suffix, sep = "")
+#       varname4speed_sim <- paste(sett_dat$varname4speed, suffix, sep = "")
+#       varname4dist_sim <- paste(sett_dat$varname4dist_m, suffix, sep = "")
 # 
 #       ## For each row in data (excluding first row)
-#       for(i in 2:nrow(dat4sim)) { 
+#       for(i in 2:nrow(dat_sim)) { 
 #       
-#         objpos <- set4sim$objpos[j]
+#         objpos <- sett_sim$objpos[j]
 #         ## Intention 1 and 3 will always be computed
-#         if(j %in% c(1,3) | set4sim$pos4carryout <= set4sim$objpos[j]) {
+#         if(j %in% c(1,3) | sett_sim$pos4carryout <= sett_sim$objpos[j]) {
 #         
 #         
 #         ## Adjust parameters to each time step
-#         #time_s_diff <- dat4sim[i, set4dat$varname4time] - dat4sim[i-1, set4dat$varname4time]
-#         #b <- set4idm$b * time_s_diff
-#         a <- acc_lon_ms2.max * dat4sim$time_s_diff[i]
+#         #time_s_diff <- dat_sim[i, sett_dat$varname4time] - dat_sim[i-1, sett_dat$varname4time]
+#         #b <- sett_idm$b * time_s_diff
+#         a <- acc_lon_ms2.max * dat_sim$time_s_diff[i]
 # 
-#         v_sim.prev <- dat4sim[i-1, varname4speed_sim]
-#         s_sim.prev <- dat4sim[i-1, varname4dist_sim]
+#         v_sim.prev <- dat_sim[i-1, varname4speed_sim]
+#         s_sim.prev <- dat_sim[i-1, varname4dist_sim]
 #         
 #         ## Choose u as desired velocity from the current new position
-#         # u <- dat4u[i]
+#         # u <- dat_u[i]
 #          # if(s_sim.prev <= 5)
 #          #   u <- 
-#          #  dat4dsm.spread %>% 
+#          #  dat_dsm.spread %>% 
 #          #  filter(dist %in% round(s_sim.prev, 1))  else
 #          #    u <- 
-#          #  dat4dsm.spread %>% 
+#          #  dat_dsm.spread %>% 
 #          #  filter(dist == 5)  
 #               
 #       
@@ -239,30 +240,30 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
 #           gap_des <- 0
 #           gap_act <- 1
 #         } else {
-#           gap_des <- idmGap_des(set4idm$d0, v_sim.prev, acc_lon_ms2.max, set4idm$b)
+#           gap_des <- idmGap_des(sett_idm$d0, v_sim.prev, acc_lon_ms2.max, sett_idm$b)
 #           #gap_act <- idmGap_act(s_sim.prev, objpos)
 #           gap_act <- idmGap_act(s_sim.prev, objpos)
 #         }
 #         
 #         ## Compute new speed and distance
-#         a_sim <- a * ( (1 - ( v_sim.prev / u)^set4idm$delta ) - ( gap_des / gap_act)^2 )
+#         a_sim <- a * ( (1 - ( v_sim.prev / u)^sett_idm$delta ) - ( gap_des / gap_act)^2 )
 #         v_sim <- v_sim.prev + a_sim
-#         s_sim <- s_sim.prev + v_sim * dat4sim$time_s_diff[i]
+#         s_sim <- s_sim.prev + v_sim * dat_sim$time_s_diff[i]
 #       
-#         dat4sim[i, varname4speed_sim] <- v_sim
-#         dat4sim[i, varname4dist_sim] <- s_sim
+#         dat_sim[i, varname4speed_sim] <- v_sim
+#         dat_sim[i, varname4dist_sim] <- s_sim
 #         
 #         } else {
-#           dat4sim[i, varname4speed_sim] <- 0
-#           dat4sim[i, varname4dist_sim] <- objpos
+#           dat_sim[i, varname4speed_sim] <- 0
+#           dat_sim[i, varname4dist_sim] <- objpos
 #         }
 #           
 #           
 #       } ## Row
 #       
 #       
-#       #dat4sim[, varname4speed_sim] <- dat4sim_temp[, set4dat$varname4speed]
-#       #dat4sim[, varname4dist_sim] <- dat4sim_temp[, set4dat$varname4dist_m]
+#       #dat_sim[, varname4speed_sim] <- dat_sim_temp[, sett_dat$varname4speed]
+#       #dat_sim[, varname4dist_sim] <- dat_sim_temp[, sett_dat$varname4dist_m]
 #       
 #     } ## Acc
 #   } ## Speed
@@ -270,8 +271,8 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
 #   } ## Simulation-based approach
 # 
 #   ## else comparison based TBD
-#   #return(dat4sim)
-#   return(dat4sim2)
+#   #return(dat_sim)
+#   return(dat_sim2)
 # }
 
 
@@ -279,47 +280,47 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
 
 # ALT ---------------------------------------------------------------------
 # 
-# dat4sim <- dat4sim
-# dat4sim <- left_join(dat4sim,
-#                      dat4dsm.spread %>% filter(dist %in% dat4sim$sxx_dist_m_rnd1),
-#                      by = setNames("dist", set4dat$varname4dist_m))
+# dat_sim <- dat_sim
+# dat_sim <- left_join(dat_sim,
+#                      dat_dsm.spread %>% filter(dist %in% dat_sim$sxx_dist_m_rnd1),
+#                      by = setNames("dist", sett_dat$varname4dist_m))
 # 
 # plotdat <-
 #   ggplot() +
-#   geom_line(data = dat4sim, aes(x = sxx_dist_m_rnd1, y = speed_ms))
+#   geom_line(data = dat_sim, aes(x = sxx_dist_m_rnd1, y = speed_ms))
 # 
 # for(j in 1:4) {
 #   for(k in 1:3) {
 #     for(l in 1:3) {
 # 
-#       dat4sim_temp <- dat4sim
-#       dat4sim_temp$dist2 <- 0
-#       acc_lon_ms2.max <- set4sim$acc_lon_ms2.max[l]
+#       dat_sim_temp <- dat_sim
+#       dat_sim_temp$dist2 <- 0
+#       acc_lon_ms2.max <- sett_sim$acc_lon_ms2.max[l]
 # 
-#       for(i in 2:nrow(dat4sim)) {
+#       for(i in 2:nrow(dat_sim)) {
 # 
-#         s_prev <- dat4sim[i-1, "dist2"]
-#         u <- predLiebner_getu(j, k, dat4dsm.spread, s_prev)
-#         v_prev <- dat4sim_temp[i-1, set4dat$varname4speed]
+#         s_prev <- dat_sim[i-1, "dist2"]
+#         u <- predLiebner_getu(j, k, dat_dsm.spread, s_prev)
+#         v_prev <- dat_sim_temp[i-1, sett_dat$varname4speed]
 # 
-#         time_s_diff <- dat4sim[i, set4dat$varname4time] - dat4sim[i-1, set4dat$varname4time]
-#         b <- set4idm$b * time_s_diff
+#         time_s_diff <- dat_sim[i, sett_dat$varname4time] - dat_sim[i-1, sett_dat$varname4time]
+#         b <- sett_idm$b * time_s_diff
 #         a <- acc_lon_ms2.max * time_s_diff
 # 
 #         if (j %in% c(1, 3)) {
 #           gap_des <- 0
 #           gap_act <- 1
 #         } else {
-#           gap_des <- idmGap_desired(set4idm$d0, v_prev, a, b)#acc_lon_ms2.max,set4idm$b)
+#           gap_des <- idmGap_desired(sett_idm$d0, v_prev, a, b)#acc_lon_ms2.max,sett_idm$b)
 #           gap_act <- idmGap_actual(s_prev, objpos)
 #         }
 # 
-#         a_sim <- idmAcc(a, v_prev, u, set4idm$delta, gap_des, gap_act)
+#         a_sim <- idmAcc(a, v_prev, u, sett_idm$delta, gap_des, gap_act)
 #         v_sim <- v_prev + a_sim
 #         s_sim <- s_prev + v_sim * time_s_diff
 # 
-#         dat4sim_temp[i, set4dat$varname4speed] <- v_sim
-#         dat4sim_temp[i, "dist2"] <- s_sim
+#         dat_sim_temp[i, sett_dat$varname4speed] <- v_sim
+#         dat_sim_temp[i, "dist2"] <- s_sim
 #       }
 # 
 #       if (j == 1) c = "blue"
@@ -329,7 +330,7 @@ predLiebner_modelDrivBehav_batch <- function(algo4hypscore,
 # 
 #       plotdat <-
 #         plotdat +
-#         geom_line(data = dat4sim_temp, aes(x = sxx_dist_m_rnd1, y = speed_ms), col = c)
+#         geom_line(data = dat_sim_temp, aes(x = sxx_dist_m_rnd1, y = speed_ms), col = c)
 # 
 #     }
 #   }

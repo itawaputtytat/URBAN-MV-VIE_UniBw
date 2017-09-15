@@ -8,4 +8,4 @@
 *.png
 *.RData
 settings/db-pwd.txt
-**/_log*
+_log*/

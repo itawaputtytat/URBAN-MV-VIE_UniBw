@@ -2,36 +2,37 @@
 # Start timer -------------------------------------------------------------
 
 # outputSectionTitle("Start of prediction")
-# outputString(paste("* Approach:", set4algo$hypscore))
-# outputString(paste("* Carried out at:", set4sim$pos4carryout, "m"))
-# outputString(paste("* Time lag:", set4sim$timelag_s, "s"))
+# outputString(paste("* Approach:", sett_algo$hypscore))
+# outputString(paste("* Carried out at:", sett_sim$pos4carryout, "m"))
+# outputString(paste("* Time lag:", sett_sim$timelag_s, "s"))
 
-#ptm <- proc.time()
+if (sett_proc$stepwise_proc_time)
+  ptm_step <- proc.time()
 
 # Simulate trajectories ---------------------------------------------------
 
-#rm(dat4sim); invisible(gc())
-dat4sim <-
+#rm(dat_sim); invisible(gc())
+dat_sim <-
   predLiebner_modelDrivBehav_batch("simulation-based",
-                                   pos4carryout,
-                                   set4sim,
-                                   set4sim_temp,
-                                   set4dat,
-                                   dat4dsm,
+                                   sett_sim_temp$pos4carryout_precise,
+                                   sett_sim,
+                                   sett_sim_temp,
+                                   sett_dat,
+                                   dat_dsm,
                                    coll4simtail)
 
 
 
 # Compute P(O|Hi) ---------------------------------------------------------
 
-dat4prob <- predLiebner_compProb_O_Hi(set4sim, pos4carryout, dat4sim, P_O_Hi)
+dat4prob <- predLiebner_compProb_O_Hi(sett_sim, sett_sim_temp$pos4carryout_precise, dat_sim, P_O_Hi)
 
 
 
 # Re-order P(O|Hi) --------------------------------------------------------
 
-# dat4prob_temp <- data.frame(dat4prob[set4bn$idorder],
-#                             1 - dat4prob[set4bn$idorder])
+# dat4prob_temp <- data.frame(dat4prob[sett_bn$idorder],
+#                             1 - dat4prob[sett_bn$idorder])
 # dat4prob_temp <- as.vector(t(dat4prob_temp))
 # dat4prob_temp <- data.frame(as.vector(dat4prob), 1 - as.vector(dat4prob))
 # dat4prob_temp <- as.vector(t(dat4prob_temp))
@@ -45,15 +46,15 @@ dat4prob_temp <- rbind(dat4prob_temp, 1 - dat4prob_temp)
 # Set evidence and query results ------------------------------------------
 
 ## Prepare CPT for node O
-set4bn$O <-
+sett_bn$O <-
   array(dat4prob_temp,
         dim = c(2, 4, 3, 3),
-        dimnames = list(O = set4bn$states$O,
-                        I = set4bn$states$I,
-                        V = set4bn$states$V,
-                        A = set4bn$states$A))
+        dimnames = list(O = sett_bn$states$O,
+                        I = sett_bn$states$I,
+                        V = sett_bn$states$V,
+                        A = sett_bn$states$A))
 
-bn <- predLiebner_updateBN(bn, set4bn$O, set4bn)
+bn <- predLiebner_updateBN(bn, sett_bn$O, sett_bn)
 bn.evidence <- setEvidence(bn, nodes = c("O"), states = c("dat4prob$obs"))
 results <- querygrain(bn.evidence, nodes = "I")$I
 
@@ -61,4 +62,5 @@ results <- querygrain(bn.evidence, nodes = "I")$I
 
 # Stop timer --------------------------------------------------------------
 
-#outputProcTime(ptm)
+if (sett_proc$stepwise_proc_time)
+  outputProcTime(ptm_step)

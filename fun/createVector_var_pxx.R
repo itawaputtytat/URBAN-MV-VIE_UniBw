@@ -2,5 +2,5 @@
 createVector_var_pxx <- function(var_dist) {
   paste0("_", 
          c(var_dist, 
-           ifelse(grepl("dist_m", var_dist), "dist_s", "dist_m")))
+           ifelse(grepl("dti_m", var_dist), "tti_s", "dti_m")))
 }

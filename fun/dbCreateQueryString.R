@@ -3,25 +3,26 @@ dbCreateQueryString <- function(pxx,
                                 sett_i = sett_id_names) {
 
   outputFunProc(R)
-
+  
   ## Create pxx as character index (e.g. 1 as "s01")
   pxx_txt <- sprintf("p%02d", pxx)
   
   ## SELECT
   SELECT <-
-    c(sett_q$var_session, 
-      paste0(pxx_txt, sett_q$var_pxx),
-      sett_q$var_data)
+    c(sett_q$col_names_session, 
+      paste0(pxx_txt, 
+             createVector_var_pxx(sett_q$col_name_am_suffix)),
+      sett_q$col_names_data)
   SELECT <- paste(SELECT, collapse = ",\n")
   SELECT <- paste("SELECT", SELECT, sep = "\n")
 
   ## FROM
   #FROM <- paste("FROM", sett_q$src, sep = "\n")
-  FROM <- paste("FROM", paste0(sett_q$src_prefix, "_", pxx_txt), sep = "\n")
-  if (!is.null(sett_query$src_suffix))
-    FROM <- paste(FROM,sett_q$src_suffix, sep = "_")
-  if (!is.null(sett_q$var_dist))
-    FROM <- paste(FROM,sett_q$var_dist, sep = "_")
+  FROM <- paste("FROM", paste_(sett_q$src_name_prefix, pxx_txt), sep = "\n")
+  if (!is.null(sett_query$src_name_suffix))
+    FROM <- paste_(FROM, sett_q$src_name_suffix)
+  # if (!is.null(sett_q$col_name_am_suffix))
+  #   FROM <- paste(FROM,sett_q$col_name_am_suffix, sep = "_")
 
   # ## WHERE
   WHERE_subject_id <-
@@ -34,16 +35,16 @@ dbCreateQueryString <- function(pxx,
   ## Add buffer for selected distance criteria
   ## ... to enable correct adjustments
   ## (e.g. flawed DTI or TTI due to GPS anomalies)
-  dist1_temp <- sett_q$dist1 - sett_q$dist_buffer
-  dist2_temp <- sett_q$dist2 + sett_q$dist_buffer
+  am_limit1_temp <- sett_q$am_limit1 - sett_q$am_buffer
+  am_limit2_temp <- sett_q$am_limit2 + sett_q$am_buffer
 
-  WHERE_dist2pxx <-
+  WHERE_am2pxx <-
     paste(
-      paste0(pxx_txt, "_", sett_q$var_dist, " >= ", dist1_temp),
-      paste0(pxx_txt, "_", sett_q$var_dist, " <= ", dist2_temp),
+      paste0(pxx_txt, "_", sett_q$col_name_am_suffix, " >= ", am_limit1_temp),
+      paste0(pxx_txt, "_", sett_q$col_name_am_suffix, " <= ", am_limit2_temp),
       sep = " AND\n")
 
-  WHERE <- c(WHERE_subject_id, WHERE_round_txt, WHERE_dist2pxx)
+  WHERE <- c(WHERE_subject_id, WHERE_round_txt, WHERE_am2pxx)
   WHERE <- paste0("(\n", WHERE, "\n)", collapse = " AND ")
   WHERE <- paste("WHERE", WHERE, sep = "\n")
   # WHERE <- c()

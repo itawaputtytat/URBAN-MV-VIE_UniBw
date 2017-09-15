@@ -1,9 +1,9 @@
 
 predLiebner_compProb_al_Mk <- function(dat4prob, 
                                        dat4accmax, 
-                                       acclon_ms2.thresh,
+                                       acc_lon_thresholds,
                                        varname4id = "passing",
-                                       varname4clustgroup = "clustgroup", 
+                                       varname4clustgroup = "cluster_group", 
                                        varname4group = NULL,
                                        return_assignments = F,
                                        showplot = F) {
@@ -13,24 +13,24 @@ predLiebner_compProb_al_Mk <- function(dat4prob,
   
   ## Assign groups by acceleration thresholds
   prob.assignment$a <- 0
-  for(x in 1:length(acclon_ms2.thresh) )  {
+  for(x in 1:length(acc_lon_thresholds) )  {
     
     prob.assignment <-
       prob.assignment %>%
-      mutate(a_rnd05 = round(acc_lon_ms2.max / 0.5) * 0.5) %>% 
-      mutate(a = ifelse(#acc_lon_ms2.max <= acclon_ms2.thresh[1], 
-                        a_rnd05 <= acclon_ms2.thresh[1],
+      mutate(a_rnd05 = round(acc_lon_ms2_max / 0.5) * 0.5) %>% 
+      mutate(a = ifelse(#acc_lon_ms2_max <= acc_lon_thresholds[1], 
+                        a_rnd05 <= acc_lon_thresholds[1],
                         paste("l", 1, sep = ""),
                         a) ) %>% 
       mutate(a = ifelse(x != 1 & a == 0 & 
-                          #acc_lon_ms2.max <= acclon_ms2.thresh[x + 1],
-                          a_rnd05 <= acclon_ms2.thresh[x + 1],
+                          #acc_lon_ms2_max <= acc_lon_thresholds[x + 1],
+                          a_rnd05 <= acc_lon_thresholds[x + 1],
                         paste("l", x, sep = ""),
                         a) ) %>% 
-      mutate(a = ifelse(x == length(acclon_ms2.thresh) & 
-                          #acc_lon_ms2.max > 
+      mutate(a = ifelse(x == length(acc_lon_thresholds) & 
+                          #acc_lon_ms2_max > 
                           a_rnd05 >=
-                            acclon_ms2.thresh[length(acclon_ms2.thresh)],
+                            acc_lon_thresholds[length(acc_lon_thresholds)],
                         paste("l", x, sep = ""),
                         a) ) 
   }
@@ -45,7 +45,7 @@ predLiebner_compProb_al_Mk <- function(dat4prob,
   
   ## Create complete combinations to join
   k_unique <- unique(prob$M)
-  l_unique <- paste("l", 1:length(acclon_ms2.thresh), sep = "")
+  l_unique <- paste("l", 1:length(acc_lon_thresholds), sep = "")
   
   ## MUST BE EXTENDED TO VIP!!!
   if (!is.null(varname4group)) {
@@ -81,9 +81,9 @@ predLiebner_compProb_al_Mk <- function(dat4prob,
   txt4caption <- 
     paste(
       paste(
-        paste("l", c(1:length(acclon_ms2.thresh)), sep = ""),
+        paste("l", c(1:length(acc_lon_thresholds)), sep = ""),
         "~",
-        acclon_ms2.thresh,
+        acc_lon_thresholds,
         collapse = "; "),
       "m/s²")
   
@@ -96,11 +96,13 @@ predLiebner_compProb_al_Mk <- function(dat4prob,
              stat = "identity") +
     facet_grid(.~M) +
     scale_y_continuous(expand = c(0, 0)) + 
-    scale_fill_manual(values = c("#ED2124", "#6ABD45", "#3953A4")) + 
+    #scale_fill_manual(values = c("#ED2124", "#6ABD45", "#3953A4")) + 
     coord_cartesian(ylim = c(0,1)) +
     labs(title = "Distribution of max. acc. parameter a",
          subtitle = paste("Rate of passings in each model Mk"
-                          , " with \n", txt4caption, sep = "")) + 
+                          , " with \n", txt4caption, sep = ""),
+         x = "a (m/s²)",
+         y = "P(a | Model k)") + 
     theme_bw()
   
   if (!is.null(varname4group))

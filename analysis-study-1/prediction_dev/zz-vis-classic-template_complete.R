@@ -1,51 +1,58 @@
-
 # Windows configuration ---------------------------------------------------
 
 graphics.off()
 ## Settings
-set4windows <- c()
-set4windows$top <- 0
-set4windows$right <- -7
-set4windows$width <- 7
-set4windows$height <- 4
-set4windows$pointsize <- 8
+sett_windows <- c()
+sett_windows$top <- 0
+sett_windows$right <- -7
+#sett_windows$width <- 7
+sett_windows$width <- 6.7
+#sett_windows$height <- 4
+sett_windows$height <- 4.825
+sett_windows$pointsize <- 8
 
 ## Dummy to avoid flickering
-windows(xpos = set4windows$right - (set4windows$width*96/2),
-        ypos = set4windows$top + set4windows$height*96/2,
+windows(xpos = sett_windows$right - (sett_windows$width*96/2),
+        ypos = sett_windows$top + sett_windows$height*96/2,
         width = 0.1,
         height = 0.1)
 
 
 ## Simulation
-windows(xpos = set4windows$right, 
-        ypos = set4windows$top, 
-        width = set4windows$width, 
-        height = set4windows$height,
-        pointsize = set4windows$pointsize)
+windows(xpos = sett_windows$right, 
+        ypos = sett_windows$top, 
+        width = sett_windows$width, 
+        height = sett_windows$height,
+        pointsize = sett_windows$pointsize)
+
 ## Current intent probability
-windows(xpos = set4windows$right - set4windows$width*96 - set4windows$width - 8, 
-        ypos = set4windows$top, 
+#windows(xpos = sett_windows$right - sett_windows$width*96 - sett_windows$width - 8, 
+windows(xpos = sett_windows$right - sett_windows$width*96 - sett_windows$width - 9, 
+        ypos = sett_windows$height*96 + 65,
         width = 3, 
-        height = set4windows$height,
-        pointsize = set4windows$pointsize)
+        height = sett_windows$height,
+        pointsize = sett_windows$pointsize)
 ## Probability history
-windows(xpos = set4windows$right, 
-        ypos = set4windows$height*96 + 65, 
-        width = set4windows$width, 
-        height = set4windows$height,
-        pointsize = set4windows$pointsize)
+windows(xpos = sett_windows$right, 
+        ypos = sett_windows$height*96 + 65, 
+        width = sett_windows$width, 
+        height = sett_windows$height,
+        pointsize = sett_windows$pointsize)
+
 # ## Simulation parameter: Speed
-windows(xpos = set4windows$right - set4windows$width*96 - set4windows$width - 8,
-        ypos = set4windows$height*96 + 65,
+#windows(xpos = sett_windows$right - sett_windows$width*96 - sett_windows$width - 8,
+windows(xpos = sett_windows$right - sett_windows$width*96 - sett_windows$width - 9,
+        ypos = sett_windows$top, 
         width = 3,
-        height = set4windows$height/2 - (65/2)/96 + 4/96,
-        pointsize = set4windows$pointsize)
-windows(xpos = set4windows$right - set4windows$width*96 - set4windows$width - 8,
-        ypos = set4windows$height*96 + 65 + set4windows$height/2*96 + 65/2 - 4,
+        height = sett_windows$height/2 - (65/2)/96 + 4/96,
+        pointsize = sett_windows$pointsize)
+#windows(xpos = sett_windows$right - sett_windows$width*96 - sett_windows$width - 8,
+windows(xpos = sett_windows$right - sett_windows$width*96 - sett_windows$width - 9,
+        #ypos = sett_windows$height*96 + 65 + sett_windows$height/2*96 + 65/2 - 3.4,
+        ypos = sett_windows$top + sett_windows$height*96/2 + 37,
         width = 3,
-        height = set4windows$height/2 - (65/2)/96 + 4/96,
-        pointsize = set4windows$pointsize)
+        height = sett_windows$height/2 - (65/2)/96 + 4/96,
+        pointsize = sett_windows$pointsize)
 
 
 

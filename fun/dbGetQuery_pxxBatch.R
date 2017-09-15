@@ -1,4 +1,4 @@
-dbGetQuery_pxxBatch <- function(db_conn,
+dbGetQuery_pxxBatch <- function(db_conn_name,
                                 sett_q = sett_query, 
                                 sett_i = sett_id_names,
                                 bind_rows = T, 
@@ -10,6 +10,8 @@ dbGetQuery_pxxBatch <- function(db_conn,
   outputFunProc(R)
   ptm <- proc.time()
 
+  db_conn <- get(db_conn_name)
+  
   ## Remember argument for settings for saving df_name
   sett_name <- deparse(substitute(sett_q))
   
@@ -29,7 +31,8 @@ dbGetQuery_pxxBatch <- function(db_conn,
         messageWithSepLine(query)
       
       ## Query data
-      dat <- dbGetQuery(db_conn, query, stringsAsFactors = F)
+      dat <- 
+        dbGetQuery(db_conn, query, stringsAsFactors = F)
       outputDone(T)
       
       ## Add query settings to dat attributes
@@ -47,24 +50,21 @@ dbGetQuery_pxxBatch <- function(db_conn,
         passing <-  
           paste(sprintf("p%02d", pxx), 
                 dat$round_txt, 
-                sprintf("s%02d", dat[, sett_i$active$subject]),
-                sep = "_")
+                sprintf("s%02d", dat[, sett_i$active$subject]), sep = "_")
         dat <- cbind(passing, pxx, dat, stringsAsFactors = F)
         dat <- renameVar_pxx(dat)
-        dat_coll <<- rbind(dat_coll, dat, stringsAsFactors = F)
+        dat_coll <<- rbind(dat_coll, dat, stringsAsFactors = F) 
         
       } else {
         
         ## Create object name for final data
         if (ceate_df_name_by_pxx)
           df_name <- 
-            paste(sett_q$src_prefix, 
-                  sprintf("p%02d", pxx), 
-                  sett_q$var_dist, 
-                  sep = "_")
+            paste_(sett_q$src_name_prefix, 
+                  sprintf("p%02d", pxx))
         
         if (!is.null(sett_q$df_name_prefix))
-          df_name <- paste(sett_q$df_name_prefix, df_name, sep = "_")
+          df_name <- paste_(sett_q$df_name_prefix, df_name)
         
         assign(df_name, dat, envir = .GlobalEnv)
         outputString(paste("* New object:", df_name))
@@ -77,15 +77,13 @@ dbGetQuery_pxxBatch <- function(db_conn,
   if (bind_rows) {
     
     ## Create df name
-    df_name <- paste(sett_q$src_prefix, "pxx", sep = "_")
+    df_name <- paste_(sett_q$src_name_prefix, "pxx")
     
-    if (!is.null(sett_q$src_suffix))
-      df_name <- paste(df_name, sett_q$src_suffix, sep = "_")
-    
-    df_name <- paste(df_name, sett_q$var_dist, sep = "_")
+    if (!is.null(sett_q$src_name_suffix))
+      df_name <- paste_(df_name, sett_q$src_name_suffix)
         
     if (!is.null(sett_q$df_name_prefix))
-      df_name <- paste(sett_q$df_name_prefix, df_name, sep = "_")
+      df_name <- paste_(sett_q$df_name_prefix, df_name)
 
     sett_q$df_name <- df_name
     assign(sett_name, sett_q, envir = .GlobalEnv)

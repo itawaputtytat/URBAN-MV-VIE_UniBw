@@ -1,6 +1,7 @@
 
 # Preparatory settings ----------------------------------------------------
 
+set4proc <- c()
 set4proc$objname <- "dat4med"
 set4proc$colname4gps_lon_conv <- "gps_lon_smooth_xyconv"
 set4proc$colname4gps_lat_conv <- "gps_lat_smooth_xyconv"
@@ -27,6 +28,14 @@ radius <- computeRadius_batch(dat4curv[, set4proc$colname4gps_lon_conv],
                               set4proc$seqlength,
                               output = F)
 
+radius_alt <- radius
+
+radius <- computeRadius_batch(dat4curv[, "gps_lon_med"], 
+                               dat4curv[, "gps_lat_med"], 
+                               set4proc$seqlength,
+                               output = F)
+
+dat4curv_curv_alt <- dat4curv_curv
 
 
 # Smooth and plot radius values -------------------------------------------

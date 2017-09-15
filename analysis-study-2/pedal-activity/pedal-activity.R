@@ -4,12 +4,12 @@
 
 sett_proc <- c()
 sett_proc$df_name <- "study1_t_adtf_pxx_full_dist_m_rnd1_intrpld_cut"
-sett_proc$pxx <- 6
+sett_proc$pxx <- 1
 sett_proc$colname_arr_meas <- grep("pxx_dist", colnames(get(sett_proc$df_name)), value = T)[1]
 sett_proc$colname_arr_meas_start <- paste0(sett_proc$colname_arr_meas, "_start")
 sett_proc$colname_arr_meas_end <-   paste0(sett_proc$colname_arr_meas, "_end")
 sett_proc$colname_id    <- "passing"
-sett_proc$colname_group <- "pxx_round_txt"
+sett_proc$colname_group <- "pxx_round_txt_preceded"
 sett_proc$crit_arr_means <- 0
 sett_proc$crit_arr_means_last_acc_before_braking <- 0
 
@@ -22,7 +22,8 @@ sett_plot$xlim_min <- sett_query$dist1
 sett_plot$xlim_max <- sett_query$dist2
 sett_plot$fill <- c("red2", "white", "green2")
 sett_plot$file_path <- 
-  createFilePath(c("plot", "study1", "pedal-activity"))
+  createFilePath(c("plot", "study1", "pedal-activity", 
+                   paste0("group-by_", sett_proc$colname_group)))
 sett_plot$file_name_prefix <- 
   paste("study1", sprintf("p%02d", sett_proc$pxx), sep = "_")
 
@@ -33,6 +34,7 @@ sett_plot$file_name_prefix <-
 
 ## Initialise data
 dat_pedal_act <- get(sett_proc$df_name)
+dat_pedal_act <- dat_pedal_act %>% filter(round_txt %in% c("normal", "stress"))
 
 ## Filter data for situations of interest
 #dat_pedal <- filter(dat_pedal, pxx %in% c(2,3)) 
@@ -50,6 +52,11 @@ if (sett_proc$pxx == 1) {
 dat_pedal_act$pxx_round_txt <- 
   paste(sprintf("p%02d", dat_pedal_act$pxx), 
         dat_pedal_act$round_txt, sep = "_")
+
+dat_pedal_act <-
+  dat_pedal_act %>% 
+  mutate(pxx_round_txt_preceded = 
+           paste(pxx_round_txt, as.character(filter_preceded), sep = "_"))
 
 ## Correct acceleration pedal position
 correctAccPedalPos(dat_pedal_act)
@@ -125,12 +132,13 @@ plot_pedalActSeq <- function(dat,
     guides(fill = FALSE, 
            alpha = FALSE) + 
     scale_x_continuous(expand = c(0, 0)) +
-    scale_y_discrete(expand = c(0, 0)) +
-    #scale_y_discrete(expand = c(0, 0), breaks = NULL) +
+    #scale_y_discrete(expand = c(0, 0)) +
+    scale_y_discrete(expand = c(0, 0), breaks = NULL) +
     coord_cartesian(xlim = c(sett_pl$arr_meas_min, 
                              sett_pl$arr_meas_max)) + 
     theme_bw() + 
-    theme(panel.grid = element_blank())
+    theme(panel.grid = element_blank()) + 
+    theme(strip.text.y = element_text(angle=0)) 
   
 }
 
@@ -428,12 +436,16 @@ plot_pedal_act_acc_last_before_brake_end_evo <-
             aes_string(x = sett_proc$colname_arr_meas_end,
                        y = "percentage",
                        colour = sett_proc$colname_group)) + 
+  facet_grid(as.formula(paste(sett_proc$colname_group, "~.")), 
+             scales = "free", 
+             space = "free") +
   scale_x_continuous(expand = c(0, 0)) +
   coord_cartesian(xlim = c(sett_plot$xlim_min, sett_plot$xlim_max),
                   ylim = c(0, 100)) + 
-  theme_bw() + 
   ggtitle(paste(paste0(sett_plot$file_name_prefix, ": "),
-                "Evolution of releasing acceleration pedal"))
+                "Evolution of releasing acceleration pedal")) + 
+  theme_bw() + 
+  theme(strip.text.y = element_text(angle=0))
 
 
 filename <- 
@@ -530,7 +542,7 @@ ggsave(file.path(sett_plot$file_path, filename),
 dat_pedal_act_break_first_evo <-
   dat_pedal_act_break_first %>%
   group_by_(sett_proc$colname_group) %>%
-  arrange_("pxx_round_txt", sett_proc$colname_arr_meas_start) %>%
+  arrange_(sett_proc$colname_group, sett_proc$colname_arr_meas_start) %>%
   select_(sett_proc$colname_id, 
           sett_proc$colname_group, 
           sett_proc$colname_arr_meas_start) %>% 
@@ -569,12 +581,17 @@ plot_pedal_act_break_first_evo <-
             aes_string(x = sett_proc$colname_arr_meas_start,
                        y = "percentage",
                        colour = sett_proc$colname_group)) + 
+  facet_grid(as.formula(paste(sett_proc$colname_group, "~.")), 
+             scales = "free", 
+             space = "free") +
   scale_x_continuous(expand = c(0, 0)) +
   coord_cartesian(xlim = c(sett_plot$xlim_min, sett_plot$xlim_max),
                   ylim = c(0, 100)) + 
-  theme_bw() + 
   ggtitle(paste(paste0(sett_plot$file_name_prefix, ": "),
-                "Evolution of first brake press"))
+                "Evolution of first brake press")) + 
+  theme_bw() + 
+  theme(strip.text.y = element_text(angle=0)) 
+
 
 
 filename <- 
@@ -598,12 +615,16 @@ plot_pedal_act_evo <-
             aes_string(x = sett_proc$colname_arr_meas_start,
                        y = "percentage",
                        colour = sett_proc$colname_group)) +
+  facet_grid(as.formula(paste(sett_proc$colname_group, "~.")), 
+             scales = "free", 
+             space = "free") +
   scale_x_continuous(expand = c(0, 0)) +
   coord_cartesian(xlim = c(sett_plot$xlim_min, sett_plot$xlim_max),
                   ylim = c(0, 100)) + 
-  theme_bw() + 
   ggtitle(paste(paste0(sett_plot$file_name_prefix, ": "),
-                "Evolution of pedal activity"))
+                "Evolution of pedal activity")) + 
+  theme_bw() + 
+  theme(strip.text.y = element_text(angle=0)) 
 
 
 filename <- 

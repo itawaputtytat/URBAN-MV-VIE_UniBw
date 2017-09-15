@@ -1,6 +1,13 @@
+
+# Heyho -------------------------------------------------------------------
+
+
+
 ptm99 <- proc.time()
 
-source("analysis-study-1/prediction_dev/01-load-data-for-modeling_dist-m.R")
+source("analysis-study-1/prediction_dev/01_retrieve-data.R")
+source("analysis-study-1/prediction_dev/02_preprocess-data.R")
+source("analysis-study-1/prediction_dev/03_feature-enrichment.R")
 source("analysis-study-1/prediction_dev/02-obtain-dsm-v1-1-synthesise.R")
 source("analysis-study-1/prediction_dev/02-obtain-dsm-v1-2-cluster.R")
 source("analysis-study-1/prediction_dev/03-adjust-dsm-to-u-after-turning.R")

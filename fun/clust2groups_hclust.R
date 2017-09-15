@@ -40,7 +40,7 @@ clust2groups_hclust <-
     #new table for subids and corresponding cluster-nr
     assignment <-
       data.frame(passing = rownames(dat2proc.wide),
-                 clustgroup   = factor(cutree(output, k = k)),
+                 cluster_group   = cutree(output, k = k),
                  row.names  = NULL)
 
   return (list(output = output,

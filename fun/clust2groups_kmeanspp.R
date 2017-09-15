@@ -36,7 +36,7 @@ clust2groups_kmeanspp <-
     ## ... and corresponding cluster-nr found using algorithm
     assignment <-
       data.frame(passing = rownames(dat2proc.wide),
-                 clustgroup = factor(result$cluster),
+                 cluster_group = result$cluster,
                  row.names  = NULL)
 
     return (list(result = result,

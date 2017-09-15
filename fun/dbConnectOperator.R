@@ -1,4 +1,4 @@
-dbConnectOperator <- function(settings = set4db, 
+dbConnectOperator <- function(settings = sett_db_default, 
                               dbname = NULL,
                               dbconn_name = NULL,
                               disconnect_default = T) {
@@ -20,7 +20,9 @@ dbConnectOperator <- function(settings = set4db,
     ## List available databases
     dblist <- 
       dbGetQuery(get(settings$dns), 
-                 "SELECT datname FROM pg_database WHERE datistemplate = FALSE")
+                 "SELECT datname 
+                 FROM pg_database 
+                 WHERE datistemplate = FALSE")
     dblist <- unlist(dblist, use.names = F)
     dblist_string <- paste(paste("[", 1:length(dblist), "]", sep = ""),  dblist)
     

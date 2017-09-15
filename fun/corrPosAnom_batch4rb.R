@@ -5,7 +5,8 @@ corrPosAnom_batch4rb <- function(dat2proc,
 
   outputFunProc(R)
   
-  name4obj <- deparse(substitute(dat2proc))
+  name4obj <- deparseDataFunArg(dat2proc, return_dat = F)
+  dat2proc <- deparseDataFunArg(dat2proc)
   sxx_unique <- unique(dat2proc$sxx)
   dec_n <- getDecimalPlaces(dat2proc[1, colname4ref])
   

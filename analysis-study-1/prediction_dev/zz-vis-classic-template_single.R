@@ -3,36 +3,36 @@
 
 graphics.off()
 ## Settings
-set4windows <- c()
-set4windows$top <- 0
-set4windows$right <- -7
-set4windows$width <- 7
-set4windows$height <- 4
-set4windows$pointsize <- 8
+sett_windows <- c()
+sett_windows$top <- 0
+sett_windows$right <- -7
+sett_windows$width <- 6.7
+sett_windows$height <- 4.825
+sett_windows$pointsize <- 8
 ## Simulation
-windows(xpos = set4windows$right, 
-        ypos = set4windows$top, 
-        width = set4windows$width, 
-        height = set4windows$height,
-        pointsize = set4windows$pointsize)
+windows(xpos = sett_windows$right, 
+        ypos = sett_windows$top, 
+        width = sett_windows$width, 
+        height = sett_windows$height,
+        pointsize = sett_windows$pointsize)
 ## Current intent probability
-windows(xpos = set4windows$right - set4windows$width*96 - set4windows$width - 8, 
-        ypos = set4windows$top, 
+windows(xpos = sett_windows$right - sett_windows$width*96 - sett_windows$width - 8, 
+        ypos = sett_windows$top, 
         width = 3, 
-        height = set4windows$height,
-        pointsize = set4windows$pointsize)
+        height = sett_windows$height,
+        pointsize = sett_windows$pointsize)
 # ## Probability history
-# windows(xpos = set4windows$right, 
-#         ypos = set4windows$height*96 + 65, 
-#         width = set4windows$width, 
-#         height = set4windows$height,
-#         pointsize = set4windows$pointsize)
+# windows(xpos = sett_windows$right, 
+#         ypos = sett_windows$height*96 + 65, 
+#         width = sett_windows$width, 
+#         height = sett_windows$height,
+#         pointsize = sett_windows$pointsize)
 # ## Simulation parameter
-# windows(xpos = set4windows$right - set4windows$width*96 - set4windows$width - 8, 
-#         ypos = set4windows$height*96 + 65, 
+# windows(xpos = sett_windows$right - sett_windows$width*96 - sett_windows$width - 8, 
+#         ypos = sett_windows$height*96 + 65, 
 #         width = 3, 
-#         height = set4windows$height,
-#         pointsize = set4windows$pointsize)
+#         height = sett_windows$height,
+#         pointsize = sett_windows$pointsize)
 
 
 
@@ -49,3 +49,5 @@ source("analysis-study-1/prediction_dev/zz-vis-classic-template-current-prob.R")
 # ## Probability history
 # dev.set(4)
 # source("analysis-study-1/prediction_dev/zz-vis-classic-template-history-prob.R")
+
+#lapply(dev.list(), dev.off)

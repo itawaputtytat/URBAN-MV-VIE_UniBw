@@ -8,33 +8,37 @@ intrpldf_batch4rb <- function(dat,
                               replace_preceding = T) {
 
   outputFunProc(R)
+  
+  name4obj <- deparseDataFunArg(dat, return_dat = F)
+  name4obj <- paste(name4obj, suffix, sep = "_")
+  dat <- deparseDataFunArg(dat)
+
   col_name_ref_finder <- grep(col_name_ref, colnames(dat))
   col_name_ref <- colnames(dat)[col_name_ref_finder]
   dat_intrpld <- invisible( lapply(unique(dat$passing), function(p) {
 
-    if (outputFlag) 
+    if (outputFlag)
       outputString(paste0("* Interpolating: ", p, " ... "), linebreak = F)
-    
+
     ## Get data and run inteprolation
     dat_temp <- dat %>% filter(passing == p)
 
-    dat_intrpld <- 
-      intrpldf(dat_temp, 
+    dat_intrpld <-
+      intrpldf(dat_temp,
                colname4ref = col_name_ref,
                stepsize = stepsize,
-               colnames2excl = colnames2excl, 
+               colnames2excl = colnames2excl,
                binary_vars = binary_vars,
                replace_preceding = replace_preceding)
-    
-    if (outputFlag) 
+
+    if (outputFlag)
       outputDone(T)
-    
+
     return(dat_intrpld)
 
   }) ## lapply
   ) %>% dplyr::bind_rows()
-  
-  name4obj <- paste(deparse(substitute(dat)), suffix, sep = "_")
+
   assign(name4obj, dat_intrpld, env = .GlobalEnv)
   outputString(paste("* New object:", name4obj))
 

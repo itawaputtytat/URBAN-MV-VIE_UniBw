@@ -6,6 +6,9 @@ addVar4Stopping <- function(dat2proc,
                             varname4round = "round_txt",
                             varname4group = "passing") {
   
+  name4obj <- deparseDataFunArg(dat2proc, return_dat = F)
+  dat2proc <- deparseDataFunArg(dat2proc)
+  
   if ("stopping" %in% colnames(dat2proc))
     dat2proc[, "stopping"] <- NULL
   
@@ -30,5 +33,5 @@ addVar4Stopping <- function(dat2proc,
   
   dat2proc$stopping[is.na(dat2proc$stopping)] <- "no_stopping"
   
-  return(dat2proc)
+  assign(name4obj, dat2proc, env = .GlobalEnv)
 }

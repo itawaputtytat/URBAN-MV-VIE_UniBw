@@ -2,11 +2,12 @@
 ## ... given the longitudinal behavior of the driver could be modeled
 ## ... by the parameter set associated with hypothesis Hi
 
-predLiebner_compProb_O_Hi <- function(set4sim, pos4carryout_m, dat4sim, P_O_Hi) {
+predLiebner_compProb_O_Hi <- function(sett_sim, pos4carryout_m, dat4sim, P_O_Hi) {
 
     ## Get actual values
-    dist_m.act <- set4sim_temp$dist2
-    speed_ms.act <- set4sim_temp$speed1
+    dist_m.act <- sett_sim_temp$dist2
+    #speed_ms.act <- sett_sim_temp$speed1
+    speed_ms.act <- sett_sim_temp$speed2
     #print(speed_ms.act)
     
     ## Get final values from IDM simulation
@@ -75,53 +76,53 @@ predLiebner_compProb_O_Hi <- function(set4sim, pos4carryout_m, dat4sim, P_O_Hi) 
       
     
     # colnames4dist <-
-    #   colnames(dat4prob$obs)[grepl(paste(set4dat$varname4dist_m, "sim", sep = "_"), cols)]
+    #   colnames(dat4prob$obs)[grepl(paste(sett_dat$varname4dist_m, "sim", sep = "_"), cols)]
     # colnames4speed <-
-    #   colnames(dat4prob$obs)[grepl(paste(set4dat$varname4speed, "sim", sep = "_"), cols)]
+    #   colnames(dat4prob$obs)[grepl(paste(sett_dat$varname4speed, "sim", sep = "_"), cols)]
 
     # dat4prob$sigma_s_m <- sd(dat4prob$obs[, colnames4dist], na.rm = T)
     # dat4prob$sigma_v_ms <- sd(dat4prob$obs[, colnames4speed], na.rm = T)
     #print(dat4prob$sigma_s_m)
     #print(dat4prob$sigma_v_ms)
     
-    #for(j in 1:length(set4sim$computeI)) { ## For each intent ...
+    #for(j in 1:length(sett_sim$computeI)) { ## For each intent ...
       
-      #if(j %in% c(2,4) | set4sim$pos4carryout <= set4sim$objpos[j])
+      #if(j %in% c(2,4) | sett_sim$pos4carryout <= sett_sim$objpos[j])
       ## New column names
       # colnames4dist <-
-      #   colnames(dat4prob$obs)[grepl(paste(set4dat$varname4dist_m, "sim", paste("j", j, sep = ""), sep = "_"), cols)]
+      #   colnames(dat4prob$obs)[grepl(paste(sett_dat$varname4dist_m, "sim", paste("j", j, sep = ""), sep = "_"), cols)]
       # colnames4speed <-
-      #   colnames(dat4prob$obs)[grepl(paste(set4dat$varname4speed, "sim", paste("j", j, sep = ""), sep = "_"), cols)]
+      #   colnames(dat4prob$obs)[grepl(paste(sett_dat$varname4speed, "sim", paste("j", j, sep = ""), sep = "_"), cols)]
       # 
       # dat4prob$sigma_s_m <- sd(dat4prob$obs[, colnames4dist], na.rm = T)
       # dat4prob$sigma_v_ms <- sd(dat4prob$obs[, colnames4speed], na.rm = T)
       # # }
       
-      #for(k in 1:length(set4sim$v_ms.max)) { ## For desired velocity model ...
-        #for(l in 1:length(set4sim$acclon_ms2.max)) { ## For each acc model ...
+      #for(k in 1:length(sett_sim$v_ms.max)) { ## For desired velocity model ...
+        #for(l in 1:length(sett_sim$acclon_ms2.max)) { ## For each acc model ...
           
-          # if(j %in% c(1,3) | set4sim$pos4carryout <= set4sim$objpos[j]) {
+          # if(j %in% c(1,3) | sett_sim$pos4carryout <= sett_sim$objpos[j]) {
           #i = i + 1 ## Increase run counter
           
           ## Define current hypothesis index
           #suffix_temp <- paste("j", j, "_k", k, "_l", l, sep = "")
           
-          # if(j %in% c(2,4) & set4sim$pos4carryout <= set4sim$objpos[j]) {
+          # if(j %in% c(2,4) & sett_sim$pos4carryout <= sett_sim$objpos[j]) {
           #   y = 0
           # } else 
           # {
           #   ## Each velocity profile of the hyotheses terminate at ...
           #   ## ... different distances and velocities
           #   dat4prob$dist_m.est <-
-          #     dat4prob$obs[, paste(set4dat$varname4dist_m, "sim", suffix_temp, sep = "_")]
+          #     dat4prob$obs[, paste(sett_dat$varname4dist_m, "sim", suffix_temp, sep = "_")]
           #   dat4prob$speed_ms.est <-
-          #     dat4prob$obs[, paste(set4dat$varname4speed, "sim", suffix_temp, sep = "_")]
+          #     dat4prob$obs[, paste(sett_dat$varname4speed, "sim", suffix_temp, sep = "_")]
             
             
             # colnames4dist <-
-            #   colnames(dat4prob$obs)[grepl(paste(set4dat$varname4dist_m, "sim", paste("j", j, sep = ""), paste("k", k, sep = ""), sep = "_"), cols)]
+            #   colnames(dat4prob$obs)[grepl(paste(sett_dat$varname4dist_m, "sim", paste("j", j, sep = ""), paste("k", k, sep = ""), sep = "_"), cols)]
             # colnames4speed <-
-            #   colnames(dat4prob$obs)[grepl(paste(set4dat$varname4speed, "sim", paste("j", j, sep = ""), paste("k", k, sep = ""), sep = "_"), cols)]
+            #   colnames(dat4prob$obs)[grepl(paste(sett_dat$varname4speed, "sim", paste("j", j, sep = ""), paste("k", k, sep = ""), sep = "_"), cols)]
             # 
             # dat4prob$sigma_s_m <- sd(dat4prob$obs[, colnames4dist], na.rm = T)
             # dat4prob$sigma_v_ms <- sd(dat4prob$obs[, colnames4speed], na.rm = T)
@@ -166,20 +167,20 @@ predLiebner_compProb_O_Hi <- function(set4sim, pos4carryout_m, dat4sim, P_O_Hi) 
   # 
   # 
   # 
-  # if(set4algo$hypscore == "comparison-based") {
+  # if(sett_algo$hypscore == "comparison-based") {
   #   
   #   ## Get complete values from IDM simulation
   #   dat4prob$obs <- dat4sim
   #   
   #   ## Complete list for columns related to IDM accelerations
-  #   cols4acclon <- colnames(dat4prob$obs)[grepl(paste(set4dat$varname4acclon, "sim", sep = "_"), cols)]
+  #   cols4acclon <- colnames(dat4prob$obs)[grepl(paste(sett_dat$varname4acclon, "sim", sep = "_"), cols)]
   #   
   #   ## Initialise collector variable for probabilies over time
   #   coll <- c()
   #   
   #   for(row in 2:nrow(dat4sim)) { ## For each data row
   #     
-  #     if(set4algo$hypscore == "comparison-based") {
+  #     if(sett_algo$hypscore == "comparison-based") {
   #       dat4prob$sigma_a_ms2 <- sd(dat4prob$obs[row, cols4acclon], na.rm = T)
   #     }
   #     
@@ -198,9 +199,9 @@ predLiebner_compProb_O_Hi <- function(set4sim, pos4carryout_m, dat4sim, P_O_Hi) 
   #     ## Initialise counter
   #     i <- 0
   #     
-  #     for(j in 1:length(set4sim$computeI)) { # For each intent ...
-  #       for(k in 1:length(set4sim$v_ms.max)) { # For each v model ...
-  #         for(l in 1:length(set4sim$acclon_ms2.max)) { #For each a model ...
+  #     for(j in 1:length(sett_sim$computeI)) { # For each intent ...
+  #       for(k in 1:length(sett_sim$v_ms.max)) { # For each v model ...
+  #         for(l in 1:length(sett_sim$acclon_ms2.max)) { #For each a model ...
   #           
   #           i = i+1  # Increase counter
   #           
@@ -208,17 +209,17 @@ predLiebner_compProb_O_Hi <- function(set4sim, pos4carryout_m, dat4sim, P_O_Hi) 
   #           suffix_temp <- paste("j", j, "_k", k, "_l", l, sep = "")
   #           
   #           dat4prob$acclon_ms2.est <-
-  #             dat4prob$obs[row, paste(set4dat$varname4acclon, "sim", suffix_temp, sep = "_")] #/ dat4sim$time_s_diff[row]
+  #             dat4prob$obs[row, paste(sett_dat$varname4acclon, "sim", suffix_temp, sep = "_")] #/ dat4sim$time_s_diff[row]
   #           
   #           y <- predLiebner_pdf4comp(dat4prob$acc_ms2.act,
   #                                     dat4prob$acclon_ms2.est,
   #                                     dat4prob$sigma_a_ms2)
   #           
   #           ## In case of already passed objects
-  #           if(j == 2 & dat4sim$dist2sx_m_v2a_rnd1[row] >= set4sim$objpos[2])
+  #           if(j == 2 & dat4sim$dist2sx_m_v2a_rnd1[row] >= sett_sim$objpos[2])
   #             y <- 0
   #           
-  #           if(j == 4 & dat4sim$dist2sx_m_v2a_rnd1[row] >= set4sim$objpos[4])
+  #           if(j == 4 & dat4sim$dist2sx_m_v2a_rnd1[row] >= sett_sim$objpos[4])
   #             y <- 0
   #           
   #           ## Collect likelihood of current observation
