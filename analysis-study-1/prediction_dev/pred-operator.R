@@ -74,7 +74,8 @@ source("fun_Liebner_2013/settings/sett_idm.R")
 
 # Run prediction for single position --------------------------------------
 
-sett_proc$carryout_am_single <- sample(dat_test[, sett_dat$col_name_am], 1)
+sett_proc$carryout_am_single <- -25
+#sett_proc$carryout_am_single <- sample(dat_test[, sett_dat$col_name_am], 1)
 source("analysis-study-1/prediction_dev/load-test-data.R")
 source("analysis-study-1/prediction_dev/pred-single.R")
 
@@ -82,7 +83,7 @@ source("analysis-study-1/prediction_dev/pred-single.R")
 
 # Run prediction for group pf passings -------------------------------------
 
-dat_pred_results_dat_pred_results_coll_overall <- c()
+dat_pred_results_coll_overall <- c()
 for (case in sett_dat$case) {
   sett_dat$case <- case
   outputString(paste("* Currently processing:", case))

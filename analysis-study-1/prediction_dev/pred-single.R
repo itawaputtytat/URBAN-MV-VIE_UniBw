@@ -1,3 +1,4 @@
+ptm <- proc.time()
 ## Initialise temporary simulation settings
 sett_sim_temp <- c()
 sett_sim_temp$dist2 <- sett_proc$carryout_am_single
@@ -28,3 +29,5 @@ source("analysis-study-1/prediction_dev/pred.R")
 
 source("analysis-study-1/prediction_dev/_plot-template_single.R")
 source("analysis-study-1/prediction_dev/_plot_single.R")
+
+outputProcTime(ptm)

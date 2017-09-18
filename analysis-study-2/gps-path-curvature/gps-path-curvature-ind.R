@@ -2,7 +2,7 @@
 # Preparatory settings ----------------------------------------------------
 
 sett_proc <- c()
-sett$df_name <- "study1_t_adtf_pxx_full_dti_rnd1_intrpld_cut" 
+sett_proc$df_name <- "study1_t_adtf_pxx_full_dti_rnd1_intrpld_cut" 
 sett_proc$pxx <- sett_query$pxx
 sett_proc$groupby <- c("pxx", "pxx_dti_m_rnd1")
 sett_proc$plot <- T
@@ -21,7 +21,7 @@ sett_proc$row4origin <- 1
 # Get initial data --------------------------------------------------------
 
 dat <-  
-  get(sett$df_name) %>% 
+  get(sett_proc$df_name) %>% 
   filter(pxx == sett_proc$pxx)
 
 
@@ -73,6 +73,48 @@ plot_gps_paths_median <-
             colour = "orange")
 
 plot(plot_gps_paths_median)
+
+
+
+
+# Visualize steering angle ------------------------------------------------
+
+rfilter <- 
+  dat %>% 
+  filter(round_txt == "stress") %>% 
+  distinct(passing) %>% 
+  unlist(use.names = F)
+
+map <- getMapImage(17, zoom = 19)
+
+dat_steer_med <- 
+  dat %>% 
+  group_by(pxx_dti_m_rnd1) %>% 
+  summarise(steer_med = median(steer_angle_deg))
+
+ggplot() + 
+  geom_line(data = dat,
+            aes(x = pxx_dti_m_rnd1,
+                y = steer_angle_deg,
+                group = passing)) + 
+  geom_line(data = dat_steer_med,
+            aes(x = pxx_dti_m_rnd1,
+                y = steer_med),
+            colour = "red",
+            size = 2) + 
+  geom_line(data = study1_t_adtf_pxx_full_dti_rnd1 %>% 
+              filter(passing == "p17_stress_s25"),
+            aes(x = pxx_dti_m_rnd1,
+                y = steer_angle_deg,
+                group = passing),
+            colour = "blue") + 
+  geom_line(data = study1_t_adtf_pxx_full_dti_rnd1 %>% 
+              filter(passing == "p17_stress_s27"),
+            aes(x = pxx_dti_m_rnd1,
+                y = steer_angle_deg,
+                group = passing),
+            colour = "blue") + 
+  facet_grid(round_txt~.)
 
 
 
