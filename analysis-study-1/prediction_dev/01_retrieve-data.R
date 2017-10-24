@@ -3,18 +3,18 @@ writeSelfAsLog("sett_query")
 # Query settings ----------------------------------------------------------
 
 sett_query <- c()
-sett_query$db_name <- "URBAN_MV_VIE_UniBw_Study1"
+sett_query$db_name <- "URBAN-MV-VIE_UniBw_Study-1"
 sett_query$db_conn_name <- dbFindConnObj(sett_query$db_name, output = F)
 sett_query$src_name_prefix <- "t_adtf"
 sett_query$src_name_suffix <- "full_dti_rnd1"
 sett_query$df_name_prefix <- "study1"
-sett_query$pxx   <- c(1:18)
+sett_query$pxx   <- c(4)
 sett_query$round <- c("intro", "normal", "stress")
 sett_query$subject <- c(1:31)
 sett_query$col_name_am_suffix <- "dti_m_rnd1"
 sett_query$col_name_am <- paste_("pxx", sett_query$col_name_am_suffix)
 sett_query$am_limit1 <- -100
-sett_query$am_limit2 <- 100
+sett_query$am_limit2 <- 50
 sett_query$am_buffer <- 50
 sett_query$col_names_session <-
   c("subject_id",

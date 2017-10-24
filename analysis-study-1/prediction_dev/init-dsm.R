@@ -24,23 +24,23 @@ dat_dsm.spread <-
 # sett_dsm$objname4dsm <- "dat_dsm.spread_v2"
 # sett_dsm$objname4dsm <- "dat_dsm.spread"
 
-clustresults_means_h <- 
-  read.csv2("../../URBAN-MV-VIE_UniBw_V3/modeling_Liebner_2013_V3/_archive/clustresults_means_h.txt",
-            sep = ",",
-            dec = ".",
-            stringsAsFactors = F)
-
-dat_dsm.spread_v2 <- c()
-dat_dsm.spread_v2$dist <- as.numeric(unique(clustresults_means_h$temp_dist))
-dat_dsm.spread_v2$k1 <- clustresults_means_h[which(clustresults_means_h$clust_nr == 1), "values"]
-dat_dsm.spread_v2$k2 <- clustresults_means_h[which(clustresults_means_h$clust_nr == 2), "values"]
-dat_dsm.spread_v2$k3 <- clustresults_means_h[which(clustresults_means_h$clust_nr == 3), "values"]
-dat_dsm.spread_v2 <- as.data.frame(dat_dsm.spread_v2)
-dat_dsm.spread_v2$dist <- round(dat_dsm.spread_v2$dist, 1)
-
+# clustresults_means_h <- 
+#   read.csv2("../../URBAN-MV-VIE_UniBw_V3/modeling_Liebner_2013_V3/_archive/clustresults_means_h.txt",
+#             sep = ",",
+#             dec = ".",
+#             stringsAsFactors = F)
+# 
+# dat_dsm.spread_v2 <- c()
+# dat_dsm.spread_v2$dist <- as.numeric(unique(clustresults_means_h$temp_dist))
+# dat_dsm.spread_v2$k1 <- clustresults_means_h[which(clustresults_means_h$clust_nr == 1), "values"]
+# dat_dsm.spread_v2$k2 <- clustresults_means_h[which(clustresults_means_h$clust_nr == 2), "values"]
+# dat_dsm.spread_v2$k3 <- clustresults_means_h[which(clustresults_means_h$clust_nr == 3), "values"]
+# dat_dsm.spread_v2 <- as.data.frame(dat_dsm.spread_v2)
+# dat_dsm.spread_v2$dist <- round(dat_dsm.spread_v2$dist, 1)
+# 
 print(sett_dsm$objname4dsm)
-dat_dsm <- 
-  get(sett_dsm$objname4dsm) %>% 
+dat_dsm <-
+  get(sett_dsm$objname4dsm) %>%
   data.frame()
 
 

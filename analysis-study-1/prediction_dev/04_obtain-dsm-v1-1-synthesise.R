@@ -11,7 +11,7 @@ sett_synth$col_name_speed <- "speed_ms"
 sett_synth$pxx <- sett_query$pxx
 sett_synth$am_limit1 <- sett_query$am_limit1
 sett_synth$am_limit2 <- sett_query$am_limit2
-sett_synth$show_plot <- T
+sett_synth$show_plot <- F
 sett_synth$show_plot_by_subject <- 1
 
 ## Load parameters for IDM 

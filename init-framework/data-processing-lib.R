@@ -1,8 +1,8 @@
 library(zoo) ## Interpolation, rollmean
-library(tripack) ## Compute path curvature
-library(geosphere) ## Computing gps-distances
-library(TraMineR) # Sequence analysis
-library(TraMineRextras) # Sequence analysis
+#library(tripack) ## Compute path curvature
+#library(geosphere) ## Computing gps-distances
+#library(TraMineR) # Sequence analysis
+#library(TraMineRextras) # Sequence analysis
 #library(lazyeval) # Dynamic filter variables in dplyr
 ## Cluster analysis
 library(LICORS) ## kmeanspp

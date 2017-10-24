@@ -13,7 +13,7 @@ sett_clust$procedure = "kmeanspp" #kmeans, kmeanspp, hclust
 sett_clust$algorithm = "Hartigan-Wong"
 sett_clust$diss_method <- "DTWARP"
 sett_clust$am_limit <- sett_synth$am_limit
-sett_clust$show_plot <- T
+sett_clust$show_plot <- F
 
 
 

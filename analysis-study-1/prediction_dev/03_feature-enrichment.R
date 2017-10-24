@@ -1,6 +1,6 @@
 sett_feat <- c()
-sett_feat$df_name <- paste_(sett_query$df_name, "intrpld")
-#sett_feat$df_name <- paste_(sett_query$df_name, "intrpld", "cut")
+#sett_feat$df_name <- paste_(sett_query$df_name, "intrpld")
+sett_feat$df_name <- paste_(sett_query$df_name, "intrpld", "cut")
 
 assign(sett_feat$df_name, 
        get(sett_feat$df_name) %>% 

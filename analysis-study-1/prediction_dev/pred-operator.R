@@ -10,7 +10,7 @@ sett_dat$col_name_dist <- "dist_m"
 sett_dat$col_name_speed <- "speed_ms"
 sett_dat$col_name_acc_lon <- "acc_lon_ms2"
 
-sett_dat$case <- "p17_stress_s08"
+sett_dat$case <- "p04_stress_s08"
 sett_dat$cases <- 
   #unique(get(sett_dat$df_name)[, sett_dat$col_name_group])[c(8, 12, 38, 52, 83)]
   sort(unique(get(sett_dat$df_name)[, sett_dat$col_name_group]))
@@ -84,13 +84,12 @@ source("analysis-study-1/prediction_dev/pred-single.R")
 # Run prediction for group pf passings -------------------------------------
 
 dat_pred_results_coll_overall <- c()
-for (case in sett_dat$case) {
+for (case in sett_dat$cases) {
   sett_dat$case <- case
   outputString(paste("* Currently processing:", case))
-  source("analysis-study-1/prediction_dev/load-test-data.R")
+  source("analysis-study-1/prediction_dev/load-test-data.R", print.eval = F)
   source("analysis-study-1/prediction_dev/pred-complete.R")
 }
-
 
 
 # Print evolution of prior ------------------------------------------------
@@ -166,6 +165,10 @@ ggplot() +
 coord_cartesian(ylim = c(0, 1)) +
   scale_x_continuous(expand = c(0, 0)) +
   theme_bw()
+
+
+## Idea
+## Plot envelope
 
 
 # plot(x = coll4prior$s, y = coll4prior$X1, type = "l", col = "blue", ylim = c(0,1), main = "PriorDev")
