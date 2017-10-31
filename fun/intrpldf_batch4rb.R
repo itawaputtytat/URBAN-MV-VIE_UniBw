@@ -1,5 +1,6 @@
 intrpldf_batch4rb <- function(dat,
                               col_name_ref,
+                              col_name_group = "passing",
                               stepsize = 0.1,
                               colnames2excl = NULL,
                               binary_vars = NULL,
@@ -16,7 +17,7 @@ intrpldf_batch4rb <- function(dat,
   col_name_ref_finder <- grep(col_name_ref, colnames(dat))
   col_name_ref <- colnames(dat)[col_name_ref_finder]
   dat_intrpld <- 
-    invisible( lapply(unique(dat$passing), function(p) {
+    invisible( lapply(unique(dat[, col_name_group]), function(p) {
       
       if (outputFlag)
         outputString(paste0("* Interpolating: ", p, " ... "), linebreak = F)

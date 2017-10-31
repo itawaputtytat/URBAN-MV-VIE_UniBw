@@ -3,6 +3,7 @@ dbGetQuery_pxxBatch <- function(db_conn_name,
                                 sett_i = sett_id_names,
                                 bind_rows = T, 
                                 df_name = NULL,
+                                df_name_prefix = "dat",
                                 ceate_df_name_by_pxx = T,
                                 show_query_string = F,
                                 ...) {
@@ -66,6 +67,9 @@ dbGetQuery_pxxBatch <- function(db_conn_name,
         if (!is.null(sett_q$df_name_prefix))
           df_name <- paste_(sett_q$df_name_prefix, df_name)
         
+        if (!is.null(df_name_prefix))
+          df_name <- paste_(df_name_prefix, df_name)
+        
         assign(df_name, dat, envir = .GlobalEnv)
         outputString(paste("* New object:", df_name))
       }
@@ -84,6 +88,9 @@ dbGetQuery_pxxBatch <- function(db_conn_name,
         
     if (!is.null(sett_q$df_name_prefix))
       df_name <- paste_(sett_q$df_name_prefix, df_name)
+    
+    if (!is.null(df_name_prefix))
+      df_name <- paste_(df_name_prefix, df_name)
 
     sett_q$df_name <- df_name
     assign(sett_name, sett_q, envir = .GlobalEnv)
