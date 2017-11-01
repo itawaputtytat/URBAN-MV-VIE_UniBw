@@ -26,7 +26,7 @@ set_plot$glance$color$right <- "green4"
 dat <- 
   get(set_dat$df_name) %>% 
   filter_(paste(set_dat$col_name_am, "<= 0")) %>% 
-  filter(pxx == 1) %>% 
+  filter(pxx == 2) %>% 
   filter(round_txt == "normal")
 
 dat2 <- dat
@@ -76,8 +76,6 @@ glancerates_temp <-
 
 glances_rates1st <- glancerates_temp$dat_full_1st
 glances_rates <- glancerates_temp$dat_full
-
-
 
 plotdat.glances_rates1st <-
   ##plotdat.visibility +

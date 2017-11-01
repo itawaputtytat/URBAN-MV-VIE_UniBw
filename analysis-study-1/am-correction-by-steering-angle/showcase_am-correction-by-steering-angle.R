@@ -8,13 +8,11 @@ sett_expl <- c()
 sett_expl$df_name$data <- paste_(sett_query$df_name, "intrpld")
 sett_expl$df_name$intersection_attributes <- "t_pxx_intersection_attributes"
 #sett_expl$pxx <- sett_query$pxx
-sett_expl$pxx <- 12
+sett_expl$pxx <- 17
 sett_expl$col_name_am <- sett_query$col_name_am
 sett_expl$col_name_group <- "passing"
 sett_expl$col_name_round <- "round_txt"
 sett_expl$col_name_steer_angle <- "steer_angle_deg"
-sett_expl$col_name_speed <- "speed_ms"
-sett_expl$col_name_speed_max <- paste_(sett_expl$col_name_speed, "max")
 sett_expl$dist_max <- 18 ## Set threshold for distance for finding maximum steering angle
 sett_expl$dti_min <- -15 ## Special case for situation 3 see below! (next section)
 sett_expl$treshold_factor <- 1
@@ -51,7 +49,7 @@ plot_steer <-
   ggtitle("Original values",
           subtitle = paste("Intersection:", sett_expl$pxx))
 
-#plot(plot_steer)
+plot(plot_steer)
 
 
 
@@ -112,7 +110,7 @@ plot_steer_max <-
                         color = "round_txt")) + 
   geom_vline(xintercept = dat_am_steer_max)
 
-#plot(plot_steer_max)
+plot(plot_steer_max)
 
 
 
@@ -126,7 +124,7 @@ dat_steer_min1 <-
                      sa_max_dti = pxx_dti_m_rnd1_min)) %>%
   filter_(paste(sett_expl$col_name_am, ">=", -50, "&",
           sett_expl$col_name_am, "<=", 50)) %>% 
-  filter_(paste(sett_expl$col_name_steer_angle, "<=", 80)) %>% 
+  filter_(paste("abs(", sett_expl$col_name_steer_angle, ")", "<=", 80)) %>% 
   filter_(paste(sett_expl$col_name_am, "<=", dat_am_steer_max)) %>% 
   #filter_(paste(sett_expl$col_name_am, "<= sa_max_dti")) %>% 
   group_by_(sett_expl$col_name_round, 
@@ -178,7 +176,7 @@ plot_steer_min1 <-
                         color = "round_txt")) + 
   geom_vline(xintercept = dat_am_steer_min1)
 
-#plot(plot_steer_min1)
+plot(plot_steer_min1)
 
 
 
@@ -189,7 +187,7 @@ dat_steer_min2 <-
   filter_(paste(sett_expl$col_name_am, ">=", -50, "&",
                 sett_expl$col_name_am, "<=", 50)) %>% 
   filter_(paste(sett_expl$col_name_am, ">=", dat_am_steer_max)) %>% 
-  filter_(paste(sett_expl$col_name_steer_angle, "<=", 80)) %>% 
+  filter_(paste("abs(", sett_expl$col_name_steer_angle, ")", "<=", 80)) %>% 
   group_by_(sett_expl$col_name_round, 
             sett_expl$col_name_group) %>%
   # filter_( paste("abs(", sett_expl$col_name_steer_angle, ")", "==", 
@@ -239,7 +237,7 @@ plot_steer_min2 <-
                         color = "round_txt")) + 
   geom_vline(xintercept = dat_am_steer_min2)
 
-#plot(plot_steer_min2)
+plot(plot_steer_min2)
 
 
 

@@ -1,6 +1,6 @@
 intrpldf_batch4rb(sett_query$df_name, 
                   col_name_ref = sett_query$col_name_am, 
-                  binary_vars = c("glance_dir_level_v2", "glance_dur_s", "glance_dur_s_dir_cum"),
+                  binary_vars = c("glance_dir_level_v2", "glance_dur_s"),
                   suffix = "intrpld", 
                   outputFlag = T)
 
