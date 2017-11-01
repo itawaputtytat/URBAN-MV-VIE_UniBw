@@ -23,7 +23,7 @@ sett_query$col_names_session <-
     "dist_m")
 
 sett_query$col_names_data <-
-  c("glance_dir_code_v2",
+  c("glance_dir_level_v2",
     "glance_dir_label_v2",
     "glance_dur_s")
 
