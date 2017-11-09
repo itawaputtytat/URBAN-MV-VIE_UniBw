@@ -9,3 +9,4 @@
 *.RData
 settings/db-pwd.txt
 _log*/
+*.xlsx
