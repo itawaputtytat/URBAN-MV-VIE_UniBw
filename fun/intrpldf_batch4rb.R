@@ -42,7 +42,7 @@ intrpldf_batch4rb <- function(dat,
     ) %>% dplyr::bind_rows()
 
   assign(name4obj, dat_intrpld, env = .GlobalEnv)
+  rm(dat_intrpld)
   outputString(paste("* New object:", name4obj))
-
   outputDone(T)
 }

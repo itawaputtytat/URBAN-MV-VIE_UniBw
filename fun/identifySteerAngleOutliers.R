@@ -1,14 +1,16 @@
 
 identifySteerAngleOutliers <- function(dat, 
-                                      col_name_am,
-                                      col_name_case,
-                                      col_name_group,
-                                      col_name_sa,
-                                      am_thresholds_sa_max,
-                                      am_thresholds_sa_min1,
-                                      am_thresholds_sa_min2,
-                                      sa_threshold_min,
-                                      z_cut_off = 1.96) {
+                                       col_name_am,
+                                       col_name_case,
+                                       col_name_group,
+                                       col_name_sa,
+                                       am_thresholds_sa_max = c(-20, 25),
+                                       am_thresholds_sa_min1 = c(-50, 50),
+                                       am_thresholds_sa_min2 = c(-50, 50),
+                                       am_thresholds_adapt = c(0, 0, 0),
+                                       sa_threshold_min = 100,
+                                       z_cut_off = 1.96,
+                                       return_cases_only = F) {
   
   outputFunProc(R)
   
@@ -20,9 +22,9 @@ identifySteerAngleOutliers <- function(dat,
   dat_max <- 
     dat %>%
     filter_(paste(col_name_am, ">=", 
-                  am_thresholds_sa_max[1], "&",
+                  am_thresholds_adapt[1] + am_thresholds_sa_max[1], "&",
                   col_name_am, "<=", 
-                  am_thresholds_sa_max[2])) %>% 
+                  am_thresholds_adapt[1] + am_thresholds_sa_max[2])) %>% 
     
     group_by_(col_name_group, 
               col_name_case) %>%
@@ -62,6 +64,16 @@ identifySteerAngleOutliers <- function(dat,
     as.vector() %>% 
     median()
   
+  ## Adaptive thresholds can be set to fixed value
+  ## ... or depending on dat_am_steer_max (requires value T)
+  if (am_thresholds_adapt[2]) {
+    am_thresholds_adapt[2] <- dat_am_steer_max
+  }
+  
+  if (am_thresholds_adapt[3]) {
+    am_thresholds_adapt[3] <- dat_am_steer_max
+  }
+  
   
   
   # Identify AM of min. SA before turning ---------------------------------
@@ -73,9 +85,9 @@ identifySteerAngleOutliers <- function(dat,
                        sa_max_dti = pxx_dti_m_rnd1_min)) %>%
     
     filter_(paste(col_name_am, ">=", 
-                  am_thresholds_sa_min1[1], "&",
+                  am_thresholds_adapt[2] + am_thresholds_sa_min1[1], "&",
                   col_name_am, "<=", 
-                  am_thresholds_sa_min1[2])) %>% 
+                  am_thresholds_adapt[2] + am_thresholds_sa_min1[2])) %>% 
     filter_(paste("abs(", col_name_sa, ")", "<=", sa_threshold_min)) %>% 
     filter_(paste(col_name_am, "<=", dat_am_steer_max)) %>% 
     
@@ -118,9 +130,9 @@ identifySteerAngleOutliers <- function(dat,
   dat_min2 <- 
     dat %>%
     filter_(paste(col_name_am, ">=", 
-                  am_thresholds_sa_min2[1], "&",
+                  am_thresholds_adapt[3] + am_thresholds_sa_min2[1], "&",
                   col_name_am, "<=", 
-                  am_thresholds_sa_min2[2])) %>% 
+                  am_thresholds_adapt[3] + am_thresholds_sa_min2[2])) %>% 
     filter_(paste(col_name_am, ">=", dat_am_steer_max)) %>% 
     filter_(paste("abs(", col_name_sa, ")", "<=", sa_threshold_min)) %>% 
     group_by_(col_name_group, 
@@ -203,28 +215,47 @@ identifySteerAngleOutliers <- function(dat,
                              outlier_steer_min1,
                              outlier_steer_min2)) %>% 
     mutate(is_outlier = ifelse(outlier_sum == 3, T, F)) %>% 
-    arrange(outlier_sum) %>% 
+    arrange(outlier_sum)
+
+  
+  
+
+  # Create final outlier data ---------------------------------------------
+  
+  # Combine data on outliers and AM on max. SA
+  # Add info on correction direction 
+  dat_outlier <- 
+    left_join(dat_outlier,
+              dat_max) %>% 
+    mutate_(.dots = setNames(list(
+      interp(~ pos_max - pos, 
+             pos = as.name(paste_(col_name_am, "min")),
+             pos_max = dat_am_steer_max)),
+      paste_(col_name_am, "min", "vs_median"))) %>% 
+    # mutate_(.dots = setNames(list(
+    #   interp(~ f(pos > pos_max, "backward", "forward"), 
+    #          f = as.name("ifelse"), 
+    #          pos = as.name(paste_(col_name_am, "min")), 
+    #          pos_max = dat_am_steer_max)), "correction_direction")) %>% 
     data.frame()
   
-  print(dat_outlier %>% filter(is_outlier))
-  
-  
-  dat_outlier <-
-    left_join(dat,
-              dat_outlier %>% select(passing, is_outlier))
-  
+
 
   # Return list of data frames --------------------------------------------
   
-  return(list(dat_max = dat_max,
-              dat_max_summary = dat_max_summary,
-              dat_am_steer_max = dat_am_steer_max,
-              dat_min1 = dat_min1,
-              dat_min1_summary = dat_min1_summary,
-              dat_am_steer_min1 = dat_am_steer_min1,
-              dat_min2 = dat_min2,
-              dat_min2_summary = dat_min2_summary,
-              dat_am_steer_min2 = dat_am_steer_min2,
-              dat_outlier = dat_outlier))
+  if (!return_cases_only) {
+    return(list(#dat_max = dat_max,
+      dat_max_summary = dat_max_summary,
+      #dat_am_steer_max = dat_am_steer_max,
+      #dat_min1 = dat_min1,
+      #dat_min1_summary = dat_min1_summary,
+      #dat_am_steer_min1 = dat_am_steer_min1,
+      #dat_min2 = dat_min2,
+      #dat_min2_summary = dat_min2_summary,
+      #dat_am_steer_min2 = dat_am_steer_min2,
+      dat_outlier = dat_outlier))
+  } else {
+    dat_outlier[dat_outlier$is_outlier, col_name_case]
+  }
 
 }

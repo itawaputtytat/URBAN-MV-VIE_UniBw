@@ -26,7 +26,7 @@ set_plot$glance$color$right <- "green4"
 dat <- 
   get(set_dat$df_name) %>% 
   filter_(paste(set_dat$col_name_am, "<= 0")) %>% 
-  filter(pxx == 2) %>% 
+  filter(pxx == 5) %>% 
   filter(round_txt == "normal")
 
 dat2 <- dat
@@ -37,6 +37,7 @@ dat2[, set_dat$col_name_act_level] <-
 
 dat2[, set_dat$col_name_case] <- 
   factor(dat2[, set_dat$col_name_case])
+
 
 
 # Plot sequence plot ------------------------------------------------------
@@ -52,7 +53,8 @@ plot_seq <-
   scale_color_manual(values = unlist(set_plot$glance$color)) + 
   theme_bw()
 
-plot(plot_seq)
+windows(); plot(plot_seq)
+dev.off()
 
 
 
@@ -134,11 +136,6 @@ plotdat.glances_rates1st_2 <-
   guides(colour = F, fill = F, size = F, alpha = F)
 
 plot(plotdat.glances_rates1st_2)
-
-
-
-
-
 
 
 

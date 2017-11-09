@@ -67,10 +67,11 @@ outputDone(step = T)
 
 # Liebner et al. (2013) ---------------------------------------------------
 
-outputSectionTitle("Liebner et al. (2013)")
-source("init-framework/Liebner-lib.R")
-source("init-framework/Liebner-fun.R")
-
+initLiebner2013 <- function() {
+  outputSectionTitle("Attaching Liebner et al. (2013)")
+  source("init-framework/Liebner-lib.R")
+  source("init-framework/Liebner-fun.R")
+}
 
 
 # Attaching functions -----------------------------------------------------

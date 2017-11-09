@@ -2,7 +2,7 @@
 sourceWithEcho("fun/renameVar_pxx.R")
 sourceWithEcho("fun/intrpldf_batch.R")
 sourceWithEcho("fun/intrpldf_batch4rb.R")
-sourceWithEcho("fun/corrPosAnom.R")
+sourceWithEcho("fun/correctPositionAnomalies.R")
 sourceWithEcho("fun/corrPosAnom_batch4rb.R")
 sourceWithEcho("fun/correctAccPedalPos.R")
 sourceWithEcho("fun/codePedalActivity.R")
