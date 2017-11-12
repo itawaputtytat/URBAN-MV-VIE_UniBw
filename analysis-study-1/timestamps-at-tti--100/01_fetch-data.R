@@ -9,12 +9,13 @@ sett_query$src_name_prefix <- "t_adtf"
 sett_query$src_name_suffix <- "full_dti_rnd1"
 sett_query$df_name_prefix <- "study1"
 sett_query$pxx   <- c(1:18)
-sett_query$round <- c("intro")
+#sett_query$round <- c("intro")
+sett_query$round <- c("intro", "normal", "stress")
 sett_query$subject <- c(1:31)
 sett_query$col_name_am_suffix <- "dti_m_rnd1"
 sett_query$col_name_am <- paste_("pxx", sett_query$col_name_am_suffix)
 sett_query$am_limit1 <- -100
-sett_query$am_limit2 <- -90
+sett_query$am_limit2 <- 10
 sett_query$am_buffer <- 0
 sett_query$col_names_session <-
   c("subject_id",

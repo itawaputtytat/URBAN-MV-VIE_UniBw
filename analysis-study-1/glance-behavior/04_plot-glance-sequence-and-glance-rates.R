@@ -5,7 +5,7 @@ set_dat <- c()
 set_dat$df_name <- "dat_study1_t_glances_pxx_full_dti_rnd1_intrpld_cut"
 set_dat$col_name_act_level <- "glance_dir_level_v2"
 set_dat$col_name_act_label <- "glance_dir_label_v2"
-set_dat$col_name_case_id <- "passing"
+set_dat$col_name_case <- "passing"
 set_dat$col_name_am <- "pxx_dti_m_rnd1"
 
 set_act <- c()
@@ -62,14 +62,14 @@ dev.off()
 
 col_name_act_level = set_dat$col_name_act_level
 col_name_am = set_dat$col_name_am
-col_name_case_id = set_dat$col_name_case_id
+col_name_case = set_dat$col_name_case
 col_name_time = "time_s"
 
 glancerates_temp <-
   computeActivityRates(dat,
                        set_dat$col_name_act_level,
                        set_dat$col_name_am,
-                       set_dat$col_name_case_id,
+                       set_dat$col_name_case,
                        unique_level = set_act$level)
 
 
