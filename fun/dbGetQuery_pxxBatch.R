@@ -72,6 +72,7 @@ dbGetQuery_pxxBatch <- function(db_conn_name,
         
         assign(df_name, dat, envir = .GlobalEnv)
         outputString(paste("* New object:", df_name))
+        rm(dat)
       }
     }) ## lapply
   ) ## invisible
@@ -96,6 +97,7 @@ dbGetQuery_pxxBatch <- function(db_conn_name,
     assign(sett_name, sett_q, envir = .GlobalEnv)
     
     assign(df_name, dat_coll, envir = .GlobalEnv)
+    rm(dat_coll)
   
     ## Add dsett_Q to dat attributes
     eval_string <- paste0("attr(", df_name, ", \"sett_query\") <- sett_query")

@@ -40,7 +40,7 @@ dat_visibility <-
   ## Compute percentage to image center
   mutate(width_img_center_to_left_perc = 
            100 / sett_proc$img_center * width_img_center_to_left,
-         width_img_center_to_rigth_perc = 
+         width_img_center_to_right_perc = 
            100 / sett_proc$img_center * width_img_center_to_right)
 
 

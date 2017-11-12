@@ -1,8 +1,8 @@
 addVar4PrecVeh <- function(dat, 
                            db_conn_name,
-                           varname4subject = "subject_id", 
-                           varname4round = "round_txt",
-                           varname4pxx = "pxx") {
+                           col_name_subject = "subject_id", 
+                           col_name_round = "round_txt",
+                           col_name_position = "pxx") {
   
   outputFunProc(R)
 
@@ -10,7 +10,7 @@ addVar4PrecVeh <- function(dat,
   dat <- deparseDataFunArg(dat)
   
   ## Find unique situations in data
-  pxx_unique <- unique(dat[, varname4pxx])
+  pxx_unique <- unique(dat[, col_name_position])
     
   ## Load data from database
   db_conn <- get(db_conn_name)
@@ -25,7 +25,7 @@ addVar4PrecVeh <- function(dat,
   ## ... and gather into single variable for each situation and value
   dat_prec_veh <- 
     dat_prec_veh %>% 
-    select_(.dots = c(varname4subject, varname4round, pxx_colfinder)) %>% 
+    select_(.dots = c(col_name_subject, col_name_round, pxx_colfinder)) %>% 
     gather_("pxx", "preceded", pxx_colfinder) %>% 
     mutate(pxx = as.numeric(sub("p", "", pxx)))
   
@@ -45,7 +45,7 @@ addVar4PrecVeh <- function(dat,
   dat <- 
     left_join(dat,
               dat_prec_veh,
-              by = c(varname4subject, varname4round, varname4pxx))
+              by = c(col_name_subject, col_name_round, col_name_position))
   
   assign(name4obj, dat, env = .GlobalEnv)
 }

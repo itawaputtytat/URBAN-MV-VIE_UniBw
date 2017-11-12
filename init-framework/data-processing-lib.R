@@ -8,6 +8,6 @@ library(zoo) ## Interpolation, rollmean
 library(LICORS) ## kmeanspp
 library(dtw) ## Hierarchical clustering distance measures
 library(TSclust) # Calculating different distances measures
-library(kml) ## Clustering of longitudinal data
+#library(kml) ## Clustering of longitudinal data
 library(psych) ## Correlation matrix (e.g. pairs.panels)
 library(lazyeval) ## for interp

@@ -1,4 +1,4 @@
-correctPositionAnomamlies <- function(dat,
+correctPositionAnmalies <- function(dat,
                                       db_conn_name,
                                       src_name_correction_info = 
                                         "t_steer_angle_outliers",
@@ -49,6 +49,4 @@ correctPositionAnomamlies <- function(dat,
   } else {
     return(dat)
   }
-  
-  
 }

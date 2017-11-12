@@ -40,7 +40,8 @@ dat_long <-
   gather_("direction", "percentage",
           gather_cols = c(sett_proc$col_names$value_left,
                           sett_proc$col_names$value_right)) %>% 
-  filter_(paste("direction", "%in%", sett_proc$clust$target))
+  filter_(paste("direction", "%in%", deparse(quote(sett_proc$clust$target)), 
+                collapse = "|"))
 
 
 ## Recode direction values
