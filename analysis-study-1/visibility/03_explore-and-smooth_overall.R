@@ -52,13 +52,13 @@ for (p in sett_proc$positions) {
   
   ## Smooth values
   dat_temp_smooth_left <- 
-    fitGLM(dat_temp, 
+    fitPercentageCurveGLM(dat_temp, 
            sett_dat$col_names$am, 
            sett_proc$col_names$value_left, 
            sett_proc$poly)
   
   dat_temp_smooth_right <- 
-    fitGLM(dat_temp, 
+    fitPercentageCurveGLM(dat_temp, 
            sett_dat$col_names$am, 
            sett_proc$col_names$value_right, 
            sett_proc$poly)
@@ -87,18 +87,18 @@ for (p in sett_proc$positions) {
   
 }
 
-
-
-# Write to database -------------------------------------------------------
-
-## Reporder columns
+## Reorder columns
 dat_coll <- 
   dat_coll %>% 
   select_(.dots = c(unlist(sett_dat$col_names, use.names = F),
                     unlist(sett_proc$col_names, use.names = F)))
 
+
+
+# Write to database -------------------------------------------------------
+
 dbWriteTable(get(sett_dat$db_conn_name),
-             "t_visibility_smoothed", 
+             "t_visibility_perc_smoothed", 
              dat_coll, 
              row.names = F,
              overwrite = T)

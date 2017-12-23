@@ -10,10 +10,14 @@ identifySteerAngleOutliers <- function(dat,
                                        am_thresholds_adapt = c(0, 0, 0),
                                        sa_threshold_min = 100,
                                        z_cut_off = 1.96,
+                                       outlier_sum_threshold = 3,
                                        return_cases_only = F) {
   
   outputFunProc(R)
   
+  ## Get data
+  dat_name <- deparseDataFunArg(dat, return_dat = F)
+  dat <- deparseDataFunArg(dat)
   
   
   # Identify AM of max. SA ------------------------------------------------
@@ -182,7 +186,7 @@ identifySteerAngleOutliers <- function(dat,
               setNames(list(interp(~ v - dat_am_steer_max,
                                    v = as.name(paste_(col_name_am, "min")))),
                        "diff")) %>% 
-    mutate(is_outlier = codeOutliersZ(diff, zCutOff = z_cut_off)) %>% 
+    mutate(is_outlier = codeOutliersZ(diff, zCutOff = z_cut_off[1])) %>% 
     select_(col_name_case, 
             .dots = setNames(list(interp(~ is_outlier)), "outlier_steer_max"))
   
@@ -192,7 +196,7 @@ identifySteerAngleOutliers <- function(dat,
               setNames(list(interp(~ v - dat_am_steer_min1,
                                    v = as.name(paste_(col_name_am, "max")))),
                        "diff")) %>% 
-    mutate(is_outlier = codeOutliersZ(diff, zCutOff = z_cut_off)) %>% 
+    mutate(is_outlier = codeOutliersZ(diff, zCutOff = z_cut_off[2])) %>% 
     select_(col_name_case, 
             .dots = setNames(list(interp(~ is_outlier)), "outlier_steer_min1"))
   
@@ -202,7 +206,7 @@ identifySteerAngleOutliers <- function(dat,
               setNames(list(interp(~ v - dat_am_steer_min2,
                                    v = as.name(paste_(col_name_am, "min")))),
                        "diff")) %>% 
-    mutate(is_outlier = codeOutliersZ(diff, zCutOff = z_cut_off)) %>% 
+    mutate(is_outlier = codeOutliersZ(diff, zCutOff = z_cut_off[3])) %>% 
     select_(col_name_case, 
             .dots = setNames(list(interp(~ is_outlier)), "outlier_steer_min2"))
   
@@ -214,10 +218,9 @@ identifySteerAngleOutliers <- function(dat,
     mutate(outlier_sum = sum(outlier_steer_max,
                              outlier_steer_min1,
                              outlier_steer_min2)) %>% 
-    mutate(is_outlier = ifelse(outlier_sum == 3, T, F)) %>% 
+    mutate(is_outlier = ifelse(outlier_sum == outlier_sum_threshold, T, F)) %>% 
     arrange(outlier_sum)
 
-  
   
 
   # Create final outlier data ---------------------------------------------
@@ -239,9 +242,9 @@ identifySteerAngleOutliers <- function(dat,
     #          pos_max = dat_am_steer_max)), "correction_direction")) %>% 
     data.frame()
   
+  
 
-
-  # Return list of data frames --------------------------------------------
+    # Return list of data frames --------------------------------------------
   
   if (!return_cases_only) {
     return(list(#dat_max = dat_max,

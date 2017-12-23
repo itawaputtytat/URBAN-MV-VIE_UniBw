@@ -8,7 +8,6 @@ sett_dat <- c()
 sett_dat$df_name$data <- paste_(sett_query$df_name, "intrpld")
 sett_dat$df_name$intersection_attributes <- "t_pxx_intersection_attributes"
 #sett_dat$pxx <- sett_query$pxx
-sett_dat$pxx <- c(1:18)
 sett_dat$col_name_am <- sett_query$col_name_am
 sett_dat$col_name_subject <- "subject_id"
 sett_dat$col_name_position <- "pxx"
@@ -18,14 +17,19 @@ sett_dat$col_name_sa <- "steer_angle_deg"
 sett_dat$col_name_gps <- c("gps_lon", "gps_lat")
 
 sett_proc <- c()
-sett_proc$am_thresholds_sa_max <- c(-20, 25)
+#sett_proc$pxx <- c(1:18)
+sett_proc$pxx <- 14
+sett_proc$am_thresholds_sa_max <- c(-20, 50)
 sett_proc$am_thresholds_sa_min1 <- c(-50, 50)
 sett_proc$am_thresholds_sa_min2 <- c(-50, 50)
 sett_proc$am_thresholds_adapt <- c(0, 0, 0)
-sett_proc$sa_threshold_min <- 100
-sett_proc$z_cut_off <- 1.96
+sett_proc$sa_threshold_min <- 80
+sett_proc$z_cut_off <- c(1.96, 1.96, 1.96)
+sett_proc$outlier_sum_threshold <- 3
+## Percentile (z): 90 (1.28), 95 (1.645), 97.5 (1.96), 99 (2.33), 99.5 (2.58)
+sett_proc$outliers_add <- c("p17_stress_s27", "p14_intro_s22")
+sett_proc$outliers_remove <- c("")
 sett_proc$plot <- F
-sett_proc$pause <- F
 
 
 
@@ -34,7 +38,7 @@ sett_proc$pause <- F
 dat_outlier_coll <- c()
 dat_max_summary_coll <- c()
 
-for (p in sett_dat$pxx) {
+for (p in sett_proc$pxx) {
 #for (p in 18) {
   
   dat <- 
@@ -60,24 +64,49 @@ for (p in sett_dat$pxx) {
                                sett_proc$am_thresholds_sa_min2,
                                sett_proc$am_thresholds_adapt,
                                sett_proc$sa_threshold_min,
-                               sett_proc$z_cut_off)
+                               sett_proc$z_cut_off,
+                               sett_proc$outlier_sum_threshold)
   )
   
+  ## Add outliers manually
+  row_finder <- 
+    dat_outlier_results$dat_outlier$passing %in% sett_proc$outliers_add
+  dat_outlier_results$dat_outlier$is_outlier[row_finder] <- T
+  
+  ## Remove outliers manually
+  row_finder <- 
+    dat_outlier_results$dat_outlier$passing %in% sett_proc$outliers_remove
+  dat_outlier_results$dat_outlier$is_outlier[row_finder] <- F
+  
+  ## Recompute summary without outliers
+  ## Not included in function identifySteerAngleOutliers ...
+  ## ... in order to enable adding additional outliers manually
+  dat_max_summary_wo_outliers <-
+    computeSummary(dat_outlier_results$dat_outlier %>% 
+                     filter(!is_outlier),
+                   sett_dat$col_name_group,
+                   c(paste_(sett_dat$col_name_am, "min"),
+                     paste_(sett_dat$col_name_sa, "max")),
+                   c("min", "max", "mean", "sd", "median"))  
   
   ## Add position information and collect data
-  dat_outlier_results$dat_max_summary[sett_dat$col_name_position] <- p
-    
+  dat_max_summary_wo_outliers[, sett_dat$col_name_position] <- p
+  
   dat_max_summary_coll <- 
     rbind(dat_max_summary_coll, 
-          dat_outlier_results$dat_max_summary)
+          dat_max_summary_wo_outliers)
 
   dat_outlier_coll <- 
     rbind(dat_outlier_coll,
           dat_outlier_results$dat_outlier)
   
+  outlier_n <- 
+    dat_outlier_results$dat_outlier %>% 
+    filter(is_outlier) %>% 
+    count()
 
-  ## Visualize
-  if (sett_proc$plot) {
+  ## Visualize (only in case of outliers)
+  if (sett_proc$plot & outlier_n > 0) {
     
     ## Join data and outlier information
     dat <- 
@@ -99,33 +128,20 @@ for (p in sett_dat$pxx) {
                 color = "red") + 
       ggtitle(paste(sett_dat$col_name_case, p, sep = ": "))
     
-    plot(plot_outlier); pauseAndContinue()
+    windows(); plot(plot_outlier)
     
     ## Plot GPS data of outlier
-    map <- getMapImage(18, zoom = 19)
-    
-    plot_outlier_map <- 
-      ggmap(map) +
-      geom_path(dat = dat %>% filter(is_outlier),
-                aes_string(x = "gps_lon",
-                           y = "gps_lat",
-                           color = sett_dat$col_name_case))
-    
-    # plot_outlier_map <- 
-    #   plotGPSPath(dat, p, sett_dat$col_name_case, 
-    #               dat_outlier_results$dat_outlier %>% 
-    #                 filter(is_outlier) %>% 
-    #                 distinct(passing) %>% 
-    #                 pull())
-    
-    plot(plot_outlier_map); pauseAndContinue()
+    plot_outlier_map <-
+      plotGPSPath(dat, p, sett_dat$col_name_case,
+                  dat_outlier_results$dat_outlier %>%
+                    filter(is_outlier) %>%
+                    distinct(passing) %>%
+                    pull())
+
+    windows(); plot(plot_outlier_map); pauseAndContinue()
     
   }
-  
-  if (sett_dat$pause) {
-    pauseAndContinue()
-  }
-  
+
 }
 print(dat_outlier_coll %>% filter(is_outlier))
 
@@ -133,12 +149,12 @@ print(dat_outlier_coll %>% filter(is_outlier))
 
 # Post-process data -------------------------------------------------------
 
-## Add info on individual cases and reorder columns
+## Add position id on individual cases and reorder columns
 dat_outlier_coll <-
   left_join(dat_outlier_coll,
             get(sett_dat$df_name$data) %>%
-              select_(sett_dat$col_name_position, 
-                      sett_dat$col_name_subject, 
+              select_(sett_dat$col_name_position,
+                      sett_dat$col_name_subject,
                       sett_dat$col_name_case) %>%
               distinct(),
             by = sett_dat$col_name_case) %>%
@@ -165,7 +181,7 @@ dat_max_summary_coll <-
 
 # Write summary to DB -----------------------------------------------------
 
-dbWriteTable(db_conn_6,
+dbWriteTable(dbFindConnObj("Study-1"),
              name = "t_steer_angle_outliers",
              value = dat_outlier_coll,
              row.names = F,
@@ -175,8 +191,8 @@ dbWriteTable(db_conn_6,
 
 # Write outlier info to DB ------------------------------------------------
 
-dbWriteTable(db_conn_6,
-             name = "t_steer_angle_max_summary",
+dbWriteTable(dbFindConnObj("Study-1"),
+             name = "t_steer_angle_max_summary_wo_outlier",
              value = dat_max_summary_coll,
              row.names = F,
              overwrite = T)

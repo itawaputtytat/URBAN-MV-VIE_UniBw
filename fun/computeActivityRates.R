@@ -213,6 +213,7 @@ computeActivityRates <- function(dat,
   dat_full <- 
     extendActivityRatesOnFullData(
       dat_n_ratio,
+      col_name_am = col_name_am,
       col_name_ref_related = "am_min_PER_act_id",
       col_name_act_level = col_name_act_level,
       col_names_ratio_related = grep("ON", names(dat_n_ratio), value = T),
@@ -227,6 +228,7 @@ computeActivityRates <- function(dat,
   dat_full_1st <- 
     extendActivityRatesOnFullData(
       dat_n_1st_ratio,
+      col_name_am = col_name_am,
       col_name_ref_related = "am_min_PER_case_id_and_act_level",
       col_name_act_level = col_name_act_level,
       col_names_ratio_related = grep("ON", names(dat_n_1st_ratio), value = T),

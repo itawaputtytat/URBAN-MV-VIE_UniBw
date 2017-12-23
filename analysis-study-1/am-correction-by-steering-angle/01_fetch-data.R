@@ -18,21 +18,10 @@ sett_query$am_limit2 <- 50
 sett_query$am_buffer <- 50
 sett_query$col_names_session <-
   c("subject_id",
-    "round_txt",
-    "time_s",
-    "dist_m",
-    "gps_lat",
-    "gps_lon")
+    "round_txt")
 
 sett_query$col_names_data <-
-  c("speed_kmh",
-    "acc_lon_ms2",
-    "acc_lat_ms2",
-    "acc_pedal_pos_perc",
-    "brake_status",
-    "brake_press_bar",
-    "steer_angle_deg",
-    "yaw_rate_degs")
+  c("steer_angle_deg")
 
 sett_query$filter$sets <-
   list(

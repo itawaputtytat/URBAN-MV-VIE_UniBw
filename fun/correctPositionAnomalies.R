@@ -1,4 +1,4 @@
-correctPositionAnmalies <- function(dat,
+correctPositionAnomalies <- function(dat,
                                       db_conn_name,
                                       src_name_correction_info = 
                                         "t_steer_angle_outliers",
@@ -25,28 +25,32 @@ correctPositionAnmalies <- function(dat,
   case_finder <- dat_cases[case_finder, col_name_case]
   
   if (length(case_finder) == 0) {
-    stop("No cases to be corrected")
-  }
-
-  for (case in case_finder) {
-    
-    outputString(paste("* Processing:", case))
-
-    ## Extract correction value
-    row_finder <- dat_cases[, col_name_case] == case
-    correction <- dat_cases[row_finder, col_name_am_corr]
-    
-    row_finder <- dat[, col_name_case] == case
-    dat[row_finder, col_name_am] <- dat[row_finder, col_name_am] + correction
-    
-    outputString(paste("** Corrected distance:", correction))
-    
-  }
-  
-  ## Assign changes to old dataname
-  if (save_global) {
-    assign(dat_name, dat, env = .GlobalEnv)
+    outputString("* No cases to be corrected")
   } else {
-    return(dat)
+    
+    for (case in case_finder) {
+      
+      outputString(paste("* Processing:", case))
+      
+      ## Extract correction value
+      row_finder <- dat_cases[, col_name_case] == case
+      correction <- dat_cases[row_finder, col_name_am_corr]
+      
+      row_finder <- dat[, col_name_case] == case
+      dat[row_finder, col_name_am] <- dat[row_finder, col_name_am] + correction
+      
+      outputString(paste("** Corrected distance:", correction))
+      
+    }
+    
+    ## Assign changes to old dataname
+    if (save_global) {
+      assign(dat_name, dat, env = .GlobalEnv)
+    } else {
+      return(dat)
+    }
+    
   }
+
+  
 }

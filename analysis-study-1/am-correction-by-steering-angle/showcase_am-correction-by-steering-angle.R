@@ -7,14 +7,14 @@
 sett_dat <- c()
 sett_dat$df_name$data <- paste_(sett_query$df_name, "intrpld")
 sett_dat$df_name$intersection_attributes <- "t_pxx_intersection_attributes"
-#sett_dat$pxx <- sett_query$pxx
-sett_dat$pxx <- 5
+#sett_proc$pxx <- sett_query$pxx
 sett_dat$col_name_am <- sett_query$col_name_am
 sett_dat$col_name_group <- "passing"
 sett_dat$col_name_round <- "round_txt"
 sett_dat$col_name_steer_angle <- "steer_angle_deg"
 
 sett_proc <- c()
+sett_proc$pxx <- 17
 sett_proc$dist_max <- 18 ## Set threshold for distance for finding maximum steering angle
 sett_proc$dti_min <- -15 ## Special case for situation 3 see below! (next section)
 sett_proc$treshold_factor <- 1
@@ -26,7 +26,7 @@ sett_proc$plot <- F
 
 dat_steer <- 
   get(sett_dat$df_name$data) %>% 
-  filter(pxx == sett_dat$pxx) %>% 
+  filter(pxx == sett_proc$pxx) %>% 
   select_(sett_dat$col_name_round,
           sett_dat$col_name_group,
           sett_dat$col_name_am,
@@ -49,7 +49,7 @@ plot_steer <-
   guides(colour = F) + 
   facet_grid(.~round_txt) + 
   ggtitle("Original values",
-          subtitle = paste("Intersection:", sett_dat$pxx))
+          subtitle = paste("Intersection:", sett_proc$pxx))
 
 plot(plot_steer)
 
@@ -321,7 +321,7 @@ plot_outlier <-
 # outlier <- dat_steer_max %>% filter(is_outlier) %>% pull(passing)
 # print(outlier)
 # 
-# plot_gps_path <- plotGPSPath(test_merge, sett_dat$pxx, c(outlier))
+# plot_gps_path <- plotGPSPath(test_merge, sett_proc$pxx, c(outlier))
 # 
 # plot_gps_path_max_steer <- 
 #   plot_gps_path + 
@@ -345,7 +345,7 @@ plot_outlier <-
 # 
 # plot(plot_gps_path_max_steer)
 
-# map <- getMapImage(sett_dat$pxx, zoom = 19)
+# map <- getMapImage(sett_proc$pxx, zoom = 19)
 # 
 # ggmap(map) + 
 #   geom_path(dat = test_merge %>% filter(passing == "p14_stress_s22"),
