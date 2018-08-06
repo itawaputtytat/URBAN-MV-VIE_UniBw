@@ -11,7 +11,7 @@ sett_prob$show_plot <- T
 
 dat_prob <- 
   dat_clust %>% 
-  select_("passing", "round_txt", "cluster_group")
+  select_("passing", "round_id", "cluster_group")
 
 
 

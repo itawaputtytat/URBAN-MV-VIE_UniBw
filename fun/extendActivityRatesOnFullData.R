@@ -24,14 +24,14 @@ extendActivityRatesOnFullData <- function(dat,
   
   ## Extract unique activity level available in current data
   ## Ignore given data in unique_level
-  dat_unique_act_level <- unique(dat[, col_name_act_level])
+  unique_act_level_in_dat <- unique(dat[, col_name_act_level])
   
   ## Initialise collector based on longitudinal reference data
   dat_coll <- dat_long_ref
   
   
   ## Loop through activity levels
-  for (act_level in dat_unique_act_level) {
+  for (act_level in unique_act_level_in_dat) {
     
     ## Get temporary data for current activity level
     row_finder <- which(dat[, col_name_act_level] == act_level)
@@ -68,25 +68,20 @@ extendActivityRatesOnFullData <- function(dat,
     
   } # End of loop through activity level
   
-  
-  ## In case there was no value for a single preredefined level
+  ## In case there was no value for one of the pre-defined levels
   ## ... am additional column will be created with every row being 0
-  col_names_to_check <- 
-    lapply(dat_unique_act_level, 
-           function(x) 
+  col_names_to_check <-
+    lapply(unique_level,
+           function(x)
              paste(col_names_ratio_related, x, sep = "__"))
   col_names_to_check <- unlist(col_names_to_check)
   
   ## Find missing columns
-  val_finder <- !which(col_names_to_check %in% names(dat_coll))
-  col_names_missing <- col_names_to_check[val_finder]
+  col_names_missing <- setdiff(col_names_to_check, names(dat_coll))
   
   ## Add column with zeros for all missing columns
   for (col_name in col_names_missing) {
-    colnames_old <- names(dat_coll)
-    colnames_new <- c(names(dat_coll), col_name)
-    dat_coll <- cbind(dat_coll, rep(0, nrow(dat_coll)))
-    names(dat_coll) <- colnames_new
+    dat_coll[, col_name] <- 0
   }
   
   ## Create consistent column order

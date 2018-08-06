@@ -6,7 +6,7 @@
 
 sett_dat <- c()
 sett_dat$db_conn_name <- dbFindConnObj("Study-1")
-sett_dat$src_name <- "t_visibility_xy_pos"
+sett_dat$src_name <- "t_visibility_annotations"
 
 sett_proc <- c()
 sett_proc$img_width <- 800
@@ -63,7 +63,7 @@ dat_visibility <-
 # Write to database -------------------------------------------------------
 
 dbWriteTable(get(sett_dat$db_conn_name), 
-             "t_visibility_perc", 
+             "t_visibility_percentage", 
              dat_visibility,
              row.names = F,
              overwrite = T)

@@ -6,8 +6,9 @@ dbGetQuery_pxxBatch <- function(db_conn_name,
                                 df_name_prefix = "dat",
                                 ceate_df_name_by_pxx = T,
                                 show_query_string = F,
-                                ...) {
+                                include_other_am = T) {
 
+  
   outputFunProc(R)
   ptm <- proc.time()
 
@@ -15,6 +16,17 @@ dbGetQuery_pxxBatch <- function(db_conn_name,
   
   ## Remember argument for settings for saving df_name
   sett_name <- deparse(substitute(sett_q))
+  
+  ## Adjust selection query
+  sett_q$filter$sets <-
+    list(
+      list(sett_id_names$active$round, sett_q$round, "=", "OR"),
+      list(sett_id_names$active$subject, sett_q$subject, "=", "OR"),
+      list(sett_q$var_dist, sett_q$am_limit1 - sett_q$am_buffer, ">="),
+      list(sett_q$var_dist, sett_q$am_limit2 + sett_q$am_buffer, "<=")
+    )
+  sett_q$filter$bool_op_between <- c("OR")
+  sett_q$filter$bool_op_between <- c("AND")
   
   ## In case of row-binding of queried data is set to TRUE (default)
   ## ... initialise object for data collection
@@ -24,10 +36,15 @@ dbGetQuery_pxxBatch <- function(db_conn_name,
   invisible( 
     lapply(sett_q$pxx, function(pxx, ...) {
       
-      outputString(paste0("* Fetching ", sprintf("p%02d", pxx), " ... "), linebreak = F)
+      outputString(
+        paste0("* Fetching ", sprintf("p%02d", pxx), " ... "), 
+        linebreak = F)
       
       ## Create query string
-      query <- dbCreateQueryString(pxx, sett_q, sett_i)
+      query <- 
+        dbCreateQueryString(pxx, sett_q, sett_i,
+                            include_other_am = include_other_am)
+      
       if (show_query_string)
         messageWithSepLine(query)
       
@@ -49,9 +66,13 @@ dbGetQuery_pxxBatch <- function(db_conn_name,
       ## ... otherwise single objects will be created
       if (bind_rows) { 
         passing <-  
-          paste(sprintf("p%02d", pxx), 
-                dat$round_txt, 
-                sprintf("s%02d", dat[, sett_i$active$subject]), sep = "_")
+          paste_(sprintf("p%02d", pxx), 
+                dat$round_id)
+        if (!is.null(sett_q$subject)) {
+          passing <- 
+            paste_(passing, 
+                   sprintf("s%02d", dat[, sett_i$active$subject]))
+        }
         dat <- cbind(passing, pxx, dat, stringsAsFactors = F)
         dat <- renameVar_pxx(dat)
         dat_coll <<- rbind(dat_coll, dat, stringsAsFactors = F) 

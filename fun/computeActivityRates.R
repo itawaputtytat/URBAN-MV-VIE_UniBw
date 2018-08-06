@@ -209,8 +209,8 @@ computeActivityRates <- function(dat,
   
   
   # LOCF over longitudinal reference for all activities ---------------------
-  
-  dat_full <- 
+
+  dat_full <-
     extendActivityRatesOnFullData(
       dat_n_ratio,
       col_name_am = col_name_am,
@@ -219,7 +219,10 @@ computeActivityRates <- function(dat,
       col_names_ratio_related = grep("ON", names(dat_n_ratio), value = T),
       dat_long_ref = template,
       unique_level
-    )
+    ) %>% 
+    ## Summarize per AM to maximum
+    group_by_(col_name_am) %>% 
+    summarise_all(max)
   
   
   
@@ -234,7 +237,10 @@ computeActivityRates <- function(dat,
       col_names_ratio_related = grep("ON", names(dat_n_1st_ratio), value = T),
       dat_long_ref = template,
       unique_level
-    )
+    ) %>%
+    ## Summarize per AM to maximum
+    group_by_(col_name_am) %>% 
+    summarise_all(max)
   
   
   

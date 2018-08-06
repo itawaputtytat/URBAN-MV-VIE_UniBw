@@ -1,5 +1,5 @@
 engineerFeatures <- function(df_name, 
-                          convert_speed_kmh_into_speed_ms = F,
+                          convert_speed_kmh_into_speed_ms = T,
                           add_prec_veh = F,
                           add_stopping = F,
                           db_conn_name = sett_query$db_conn_name,
@@ -10,7 +10,7 @@ engineerFeatures <- function(df_name,
   if (convert_speed_kmh_into_speed_ms) {
     assign(df_name, 
            get(df_name) %>% 
-             mutate(speed_ms = speed_kmh / 3.6))
+             mutate(speed_ms = speed_kmh / 3.6), env = .GlobalEnv)
   }
   
   if (add_prec_veh) {
@@ -20,7 +20,7 @@ engineerFeatures <- function(df_name,
   }
   
   if (add_stopping) {
-    addVar4Stopping(df_name,
+    identifyStoppings(df_name,
                     col_name_am = col_name_am,
                     ...)
   }

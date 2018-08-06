@@ -7,13 +7,13 @@ sett_clust$col_name_am <- sett_query$col_name_am
 #sett_clust$col_name_speed <- "speed_ms"
 sett_clust$col_name_speed <- "speed_ms_u_smoothed"
 sett_clust$col_name_group <- "passing"
-sett_clust$col_name_round <- "round_txt"
+sett_clust$col_name_round <- "round_id"
 sett_clust$k <- 3
 sett_clust$procedure = "kmeanspp" #kmeans, kmeanspp, hclust
 sett_clust$algorithm = "Hartigan-Wong"
 sett_clust$diss_method <- "DTWARP"
 sett_clust$am_limit <- sett_synth$am_limit
-sett_clust$show_plot <- F
+sett_clust$show_plot <- T
 
 
 

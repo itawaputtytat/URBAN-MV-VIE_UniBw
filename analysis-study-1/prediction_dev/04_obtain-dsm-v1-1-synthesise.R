@@ -6,7 +6,7 @@ sett_synth$df_name <- paste_(sett_query$df_name, "intrpld", "cut")
 sett_synth$col_name_am <- sett_query$col_name_am
 sett_synth$col_name_time <- "time_s"
 sett_synth$col_name_group <- "passing"
-sett_synth$col_name_round <- "round_txt"
+sett_synth$col_name_round <- "round_id"
 sett_synth$col_name_speed <- "speed_ms"
 sett_synth$pxx <- sett_query$pxx
 sett_synth$am_limit1 <- sett_query$am_limit1
@@ -37,7 +37,8 @@ dat_synth <-
   filter(pxx %in% sett_synth$pxx) %>% 
   filter_(paste(sett_synth$col_name_am, ">=", sett_query$am_limit1, "&",
             sett_synth$col_name_am, "<=", sett_query$am_limit2)) %>% 
-  filter(stopping == "no_stopping") %>% 
+  #filter(stopping == "no_stopping") %>% 
+  filter(is_stopping == 0) %>% 
   #filter(preceded == 0) %>% 
   select_(sett_synth$col_name_am,
           sett_synth$col_name_group,

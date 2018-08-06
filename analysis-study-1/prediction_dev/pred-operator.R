@@ -2,11 +2,11 @@
 # Settings: Data ----------------------------------------------------------
 
 sett_dat <- c()
-sett_dat$df_name <- "study1_t_adtf_pxx_full_dti_rnd1_intrpld_cut"
-sett_dat$col_name_am <- "pxx_dti_m_rnd1"
+sett_dat$df_name <- "dat_study1_t_adtf_pxx_full_aggr_dti_rnd1_intrpld_cut"
+sett_dat$col_name_am <- "dti_m_rnd1"
 sett_dat$col_name_group <- "passing"
 sett_dat$col_name_time <- "time_s"
-sett_dat$col_name_dist <- "dist_m"
+sett_dat$col_name_dist <- "driven_distance_m"
 sett_dat$col_name_speed <- "speed_ms"
 sett_dat$col_name_acc_lon <- "acc_lon_ms2"
 
@@ -26,7 +26,7 @@ sett_proc <- c()
 sett_proc$stepwise_pause <- F
 sett_proc$stepwise_proc_time <- F
 sett_proc$plot <- F
-sett_proc$plot_live <- T
+sett_proc$plot_live <- F
 sett_proc$real_time <- F
 sett_proc$append_results <- T
 sett_proc$carryout_am_single <- -25
@@ -85,6 +85,7 @@ source("analysis-study-1/prediction_dev/pred-single.R")
 
 dat_pred_results_coll_overall <- c()
 for (case in sett_dat$cases) {
+#for (case in sett_dat$case) {
   sett_dat$case <- case
   outputString(paste("* Currently processing:", case))
   source("analysis-study-1/prediction_dev/load-test-data.R", print.eval = F)

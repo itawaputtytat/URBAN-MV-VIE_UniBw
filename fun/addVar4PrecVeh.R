@@ -1,7 +1,7 @@
 addVar4PrecVeh <- function(dat, 
                            db_conn_name,
                            col_name_subject = "subject_id", 
-                           col_name_round = "round_txt",
+                           col_name_round = "round_id",
                            col_name_position = "pxx") {
   
   outputFunProc(R)
@@ -14,7 +14,7 @@ addVar4PrecVeh <- function(dat,
     
   ## Load data from database
   db_conn <- get(db_conn_name)
-  dat_prec_veh <- dbGetSrc(db_conn_name, "t_pxx_preceding_vehicles")
+  dat_prec_veh <- dbGetSrc(db_conn_name, "t_preceding_vehicles")
   #dat_prec_veh <- dat_prec_veh %>% filter(round_txt %in% round2plot)
   
   ## .... and filter for unique situations

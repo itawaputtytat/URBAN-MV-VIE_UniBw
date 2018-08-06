@@ -67,7 +67,7 @@ computeDistanceToSteerMax <- function(dat,
 }
 
 
-computeDistanceToSteerMax(bckp)
+#computeDistanceToSteerMax(bckp)
 
 # 
 # 

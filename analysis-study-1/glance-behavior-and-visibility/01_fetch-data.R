@@ -1,4 +1,3 @@
-writeSelfAsLog("sett_query")
 
 # Query settings ----------------------------------------------------------
 
@@ -8,14 +7,14 @@ sett_query$db_conn_name <- dbFindConnObj(sett_query$db_name, output = F)
 sett_query$src_name_prefix <- "t_glances"
 sett_query$src_name_suffix <- "full_dti_rnd1"
 sett_query$df_name_prefix <- "study1"
-sett_query$pxx   <- c(5)
+sett_query$pxx <- c(1:18)
 sett_query$round <- c("normal", "stress")
 sett_query$subject <- c(1:31)
 sett_query$col_name_am_suffix <- "dti_m_rnd1"
 sett_query$col_name_am <- paste_("pxx", sett_query$col_name_am_suffix)
-sett_query$am_limit1 <- -100
-sett_query$am_limit2 <- 50
-sett_query$am_buffer <- 50
+sett_query$am_limit1 <- -50
+sett_query$am_limit2 <- 0
+sett_query$am_buffer <- 25
 sett_query$col_names_session <-
   c("subject_id",
     "round_txt",
@@ -41,6 +40,6 @@ sett_query$filter$bool_op_between <- c("AND")
 
 
 
-# Data processing ---------------------------------------------------------
+# Fetch data --------------------------------------------------------------
 
 dbGetQuery_pxxBatch(sett_query$db_conn_name, sett_query, bind_rows = T)

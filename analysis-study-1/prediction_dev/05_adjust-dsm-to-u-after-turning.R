@@ -16,7 +16,7 @@ source("fun_Liebner_2013/settings/sett_sim.R")
 dat_clust_centers <- 
   dat_clust_centers %>% 
   mutate(speed_ms_u_smoothed_limitted_avg = 
-           ifelse(pxx_dti_m_rnd1 >= sett_dsm$am_limit,
+           ifelse(dti_m_rnd1 >= sett_dsm$am_limit,
                   rev(sett_dsm$v_ms_max)[cluster_group],
                   speed_ms_u_smoothed_avg))
   

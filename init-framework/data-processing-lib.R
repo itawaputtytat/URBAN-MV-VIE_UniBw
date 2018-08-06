@@ -1,3 +1,4 @@
+library(readxl)
 library(zoo) ## Interpolation, rollmean
 #library(tripack) ## Compute path curvature
 #library(geosphere) ## Computing gps-distances

@@ -158,7 +158,7 @@ plot_visibility <-
        x = "Distance to intersection",
        y = "Percentage") + 
   scale_x_continuous(expand = c(0, 0)) +
-  coord_cartesian(xlim = c(-100, 0)) 
+  coord_cartesian(xlim = c(-50, 0)) 
 
 
 

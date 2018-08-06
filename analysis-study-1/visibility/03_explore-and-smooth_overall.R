@@ -3,7 +3,7 @@
 
 sett_dat <- c()
 sett_dat$db_conn_name <- dbFindConnObj("Study-1")
-sett_dat$src_name <- "t_visibility_perc"
+sett_dat$src_name <- "t_visibility_percentage"
 sett_dat$col_names$position = "position_id"
 sett_dat$col_names$am <- "pxx_dti_m_rnd1"
 
@@ -98,7 +98,7 @@ dat_coll <-
 # Write to database -------------------------------------------------------
 
 dbWriteTable(get(sett_dat$db_conn_name),
-             "t_visibility_perc_smoothed", 
+             "t_visibility_percentage_smoothed", 
              dat_coll, 
              row.names = F,
              overwrite = T)

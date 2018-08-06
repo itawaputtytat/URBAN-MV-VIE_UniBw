@@ -9,4 +9,6 @@
 *.RData
 settings/db-pwd.txt
 _log*/
+*/_log_seq4query/
 *.xlsx
+*_set4query.R

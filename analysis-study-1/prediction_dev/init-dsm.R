@@ -5,10 +5,10 @@
 #dat_dsm <- read.csv(sett_dsm$filepath, header = T)
 dat_dsm <- 
   dat_clust_centers %>% 
-  group_by(cluster_group, pxx_dti_m_rnd1) %>% 
+  group_by(cluster_group, dti_m_rnd1) %>% 
   summarise(speed_ms_u_smoothed_limitted_avg  = mean(speed_ms_u_smoothed_limitted_avg )) %>% 
   #filter(round_txt == "intro") %>% 
-  select_(k = "cluster_group", dist = "pxx_dti_m_rnd1",#sett_dat$varname4dist_m, 
+  select_(k = "cluster_group", dist = "dti_m_rnd1",#sett_dat$varname4dist_m, 
           speed = "speed_ms_u_smoothed_limitted_avg ")
           #speed = "speed_ms.avg")
 
