@@ -48,7 +48,7 @@ sett_sim$objpos[4] <- 4
 # Settings: Visualization -------------------------------------------------
 
 sett_vis <- c()
-sett_vis$sim$xmin <- -75
+sett_vis$sim$xmin <- -200#-75
 sett_vis$sim$xmax <- 25
 sett_vis$sim$ymin <- 0
 sett_vis$sim$ymax <- 20
@@ -68,7 +68,6 @@ source("analysis-study-1/prediction_dev/init-dsm.R")
 
 source("fun_Liebner_2013/settings/sett_algo.R")
 source("fun_Liebner_2013/settings/sett_idm.R")
-
 
 
 

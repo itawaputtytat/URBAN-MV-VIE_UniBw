@@ -4,7 +4,7 @@ replayPlot(plot_template4sim)
 
 # History of simulated speed profiles
 if (sett_vis$plot_simulation_history) {
-  invisible(lapply(seq_along(dat_sim_tails_coll), function(x) {
+  invisible(lapply(seq_along(coll), function(x) {
     dat <- dat_sim_tails_coll[[x]][-1, ]
     #dat <- tail(coll4dat4sim[[x]], 2)
     name <- names(dat_sim_tails_coll)[[x]]
@@ -29,13 +29,13 @@ if (sett_vis$plot_simulation_history) {
 # replayPlot(plot_template4sim)
 
 ## Rectangle for timelag
-rect(xleft = sett_sim_temp$dist1, xright = sett_sim_temp$pos4carryout_precise,
+rect(xleft = sett_sim_temp$am1, xright = sett_sim_temp$am2,
      ybottom = sett_vis$sim$ymin, ytop = sett_vis$sim$ymax,
      col = "#00EE0022")
-abline(v = sett_sim_temp$pos4carryout_precise, col = "green4")
-abline(v = sett_sim_temp$dist1, col = "green4")
-arrows(x0 = sett_sim_temp$pos4carryout_precise, 
-       x1 = sett_sim_temp$dist1,
+abline(v = sett_sim_temp$am2, col = "green4")
+abline(v = sett_sim_temp$am1, col = "green4")
+arrows(x0 = sett_sim_temp$am2, 
+       x1 = sett_sim_temp$am1,
        y0 = sett_vis$sim$ymax - 2.5,
        lwd = 2,
        angle = 40,
@@ -44,23 +44,23 @@ arrows(x0 = sett_sim_temp$pos4carryout_precise,
        xpd = T)
 
 ## Text for timelag
-rect(xleft = (sett_sim_temp$pos4carryout_precise + sett_sim_temp$dist1)/2 - 3, 
-     xright = (sett_sim_temp$pos4carryout_precise + sett_sim_temp$dist1)/2 + 3,
+rect(xleft = (sett_sim_temp$am2 + sett_sim_temp$am1)/2 - 3, 
+     xright = (sett_sim_temp$am2 + sett_sim_temp$am1)/2 + 3,
      ybottom = sett_vis$sim$ymax - 4.5, ytop = sett_vis$sim$ymax - 3.5,
      col = "#00EE0099")
-text(x = (sett_sim_temp$pos4carryout_precise + sett_sim_temp$dist1)/2,
+text(x = (sett_sim_temp$am2 + sett_sim_temp$am1)/2,
      y =  sett_vis$sim$ymax - 4,
      labels = paste(sett_sim$timelag_s, "s"))
 
 ## Text for current position
-rect(xleft = (sett_sim_temp$pos4carryout_precise + sett_sim_temp$dist1)/2 - 3, 
-     xright = (sett_sim_temp$pos4carryout_precise + sett_sim_temp$dist1)/2 + 3,
+rect(xleft = (sett_sim_temp$am2 + sett_sim_temp$am1)/2 - 3, 
+     xright = (sett_sim_temp$am2 + sett_sim_temp$am1)/2 + 3,
      ybottom = sett_vis$sim$ymax - 1.5, ytop = sett_vis$sim$ymax - 0.5,
 
      col = "white")
-text(x = (sett_sim_temp$pos4carryout_precise + sett_sim_temp$dist1)/2,
+text(x = (sett_sim_temp$am2 + sett_sim_temp$am1)/2,
      y =  sett_vis$sim$ymax - 1,
-     labels = paste(round(sett_sim_temp$pos4carryout_precise, 1), "m"))
+     labels = paste(round(sett_sim_temp$am2, 1), "m"))
 
 
 ## Current simulated speed profiles

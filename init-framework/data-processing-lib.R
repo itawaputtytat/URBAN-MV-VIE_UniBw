@@ -1,7 +1,7 @@
 library(readxl)
 library(zoo) ## Interpolation, rollmean
-#library(tripack) ## Compute path curvature
-#library(geosphere) ## Computing gps-distances
+library(tripack) ## Compute path curvature
+library(geosphere) ## Computing gps-distances
 #library(TraMineR) # Sequence analysis
 #library(TraMineRextras) # Sequence analysis
 #library(lazyeval) # Dynamic filter variables in dplyr
@@ -12,3 +12,5 @@ library(TSclust) # Calculating different distances measures
 #library(kml) ## Clustering of longitudinal data
 library(psych) ## Correlation matrix (e.g. pairs.panels)
 library(lazyeval) ## for interp
+library(mice) ## imputation
+library(afex) ## ANOVA

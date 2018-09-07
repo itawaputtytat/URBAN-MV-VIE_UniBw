@@ -28,13 +28,13 @@ dbCreateQueryString <- function(pxx,
   # ## WHERE
   if (!is.null(sett_q$subject)) {
     WHERE_subject_id <-
-      paste(paste(sett_i$active$subject, "=", sett_q$subject),
+      paste(paste0(sett_i$active$subject, " = ", sett_q$subject),
             collapse = " OR\n")
   } else {
     WHERE_subject_id <- NULL
   }
   WHERE_round_id <-
-    paste(paste0("round_id", "= '", sett_q$round, "'"),
+    paste(paste0(sett_i$active$round, " = '", sett_q$round, "'"),
           collapse = " OR\n")
 
   ## Add buffer for selected distance criteria

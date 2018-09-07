@@ -1,69 +1,108 @@
 
-sett_sim_temp$time_s_diff <- rep(0.01, 1 / 0.01)
-sett_sim_temp$pos4carryout_precise <- sett_sim_temp$dist2
-
 # Start timer -------------------------------------------------------------
 
-# outputSectionTitle("Start of prediction")
-# outputString(paste("* Approach:", sett_algo$hypscore))
-# outputString(paste("* Carried out at:", sett_sim$pos4carryout, "m"))
-# outputString(paste("* Time lag:", sett_sim$timelag_s, "s"))
-
-if (sett_proc$stepwise_proc_time)
+if (sett_pred$print_ptm_stepwise) { 
   ptm_step <- proc.time()
+}
+
+
 
 # Simulate trajectories ---------------------------------------------------
 
-coll4simtail <- coll4simtail_template
-#rm(dat_sim); invisible(gc())
-dat_sim <-
-  predLiebner_modelDrivBehav_batch("simulation-based",
-                                   sett_sim_temp$pos4carryout_precise,
-                                   sett_sim,
-                                   sett_sim_temp,
-                                   sett_dat,
-                                   dat_dsm,
-                                   coll4simtail)
+sett_sim_temp$time_s_diff <- rep(0.01, sett_sim$time_sim_s / 0.01)
 
+dat_sim <-
+  predLiebner_modelDrivBehav_batch(
+    states_n_I = sett_bn$states_n$I,
+    states_n_S = sett_bn$states_n$S,
+    states_n_A = sett_bn$states_n$A,
+    thresholds_u_max = sett_dsm$thresholds$u_max,
+    thresholds_acc_lon_max = sett_dsm$thresholds$acc_lon_max,
+    dat_dsm_spread = dat_dsm_spread,
+    am1 = sett_sim_temp$am1,
+    am2 = sett_sim_temp$am2,
+    speed1 = sett_sim_temp$speed1,
+    time_s_diff = sett_sim_temp$time_s_diff,
+    idm_delta = sett_idm$delta,
+    idm_d0 = sett_idm$d0,
+    idm_b = sett_idm$b,
+    obj_positions = sett_sim$obj_pos)
+  
 
 
 # Compute P(O|Hi) ---------------------------------------------------------
 
-dat_prob <- predLiebner_compProb_O_Hi(sett_sim, sett_sim_temp$pos4carryout_precise, dat_sim, P_O_Hi)
+dat_prob <- 
+  predLiebner_compProb_O_Hi(
+    dat_sim,
+    am2 = sett_sim_temp$am2,
+    speed2 = sett_sim_temp$speed2,
+    coll_prob = coll_prob_template,
+    sigma_s_m = sett_pred$sigma_s_m,
+    sigma_v_ms = sett_pred$sigma_v_ms)
 
-
-# Re-order P(O|Hi) --------------------------------------------------------
-
-# dat_prob_temp <- data.frame(dat_prob[sett_bn$idorder],
-#                             1 - dat_prob[sett_bn$idorder])
-# dat_prob_temp <- as.vector(t(dat_prob_temp))
-# dat_prob_temp <- data.frame(as.vector(dat_prob), 1 - as.vector(dat_prob))
-# dat_prob_temp <- as.vector(t(dat_prob_temp))
-dat_prob_temp <- as.vector(t(dat_prob))
-dat_prob_temp <- rbind(dat_prob_temp, 1 - dat_prob_temp)
-  # dat_prob_temp <- 
-#   data.table::rbindlist(list(dat_prob, 1-dat_prob)) %>% 
-#   data.frame()
 
 
 # Set evidence and query results ------------------------------------------
 
 ## Prepare CPT for node O
-sett_bn$O <-
-  array(dat_prob_temp,
-        dim = c(2, 4, 3, 3),
-        dimnames = list(O = sett_bn$states$O,
-                        I = sett_bn$states$I,
-                        V = sett_bn$states$V,
-                        A = sett_bn$states$A))
+## Compute complementary probabilities
+sett_bn$likelihoods$O <- dat_prob
+sett_bn$likelihoods$O <- as.vector(t(sett_bn$likelihoods$O))
+sett_bn$likelihoods$O <- 
+  rbind(sett_bn$likelihoods$O, 
+        1 - sett_bn$likelihoods$O)
+attributes(sett_bn$likelihoods$O) <- attributes(sett_bn$priors$O)
 
-bn <- predLiebner_updateBN(bn, sett_bn$O, sett_bn)
-bn.evidence <- setEvidence(bn, nodes = c("O"), states = c("dat_prob$obs"))
+if (sett_pred$bn_version == "Liebner") {
+  
+  bn <- 
+    predLiebner_updateBN(
+      "bn", 
+      likelihood_O = sett_bn$likelihoods$O,
+      state_names_O = sett_bn$state_names$O)
+  
+  ## Set evidence and query results
+  bn.evidence <- setEvidence(bn, nodes = c("O"), states = c("dat_prob$obs"))
+}
+
+
+if (sett_pred$bn_version == "stress" | sett_pred$bn_version == "stress2") {
+  
+  bn <- 
+    predLiebner_updateBN_stress(
+      "bn", 
+      likelihood_O = sett_bn$likelihoods$O,
+      state_names_O = sett_bn$state_names$O)
+  
+  ## Set evidence and query results
+  #bn.evidence <- setEvidence(bn, nodes = c("O"), states = c("dat_prob$obs"))
+  bn.evidence <- setEvidence(bn, nodes = c("O", "stress"), states = c("dat_prob$obs", "stress"))
+  #bn.evidence <- setEvidence(bn, nodes = c("O", "stress", "S"), states = c("dat_prob$obs", "stress", "k1"))
+}
+
+if (sett_pred$bn_version == "stress_style") {
+  
+  bn <- 
+    predLiebner_updateBN_stress_style(
+      "bn", 
+      likelihood_O = sett_bn$likelihoods$O,
+      state_names_O = sett_bn$state_names$O)
+  
+  ## Set evidence and query results
+  bn.evidence <- setEvidence(bn, nodes = c("O"), states = c("dat_prob$obs"))
+  #bn.evidence <- setEvidence(bn, nodes = c("O", "stress"), states = c("dat_prob$obs", "stress"))
+  #bn.evidence <- setEvidence(bn, nodes = c("O", "stress", "S"), states = c("dat_prob$obs", "stress", "k1"))
+}
+
+
+## iplot(bn)
 dat_pred_results <- querygrain(bn.evidence, nodes = "I")$I
 
 
 
 # Stop timer --------------------------------------------------------------
 
-if (sett_proc$stepwise_proc_time)
+if (sett_pred$print_ptm_stepwise) {
   outputProcTime(ptm_step)
+}

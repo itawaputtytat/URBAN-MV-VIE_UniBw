@@ -1,3 +1,5 @@
+sourceWithEcho("fun_Liebner_2013/predLiebner_computeIDM.R")
+
 sourceWithEcho("fun_Liebner_2013/idm_createSimDat.R")
 sourceWithEcho("fun_Liebner_2013/idmGap.R")
 sourceWithEcho("fun_Liebner_2013/idmGap_act.R")
@@ -16,8 +18,14 @@ sourceWithEcho("fun_Liebner_2013/predLiebner_compProb_O_Hi.R")
 
 sourceWithEcho("fun_Liebner_2013/predLiebner_initObj4Set.R")
 sourceWithEcho("fun_Liebner_2013/predLiebner_initBN.R")
+sourceWithEcho("fun_Liebner_2013/predLiebner_initBN_stress.R")
+sourceWithEcho("fun_Liebner_2013/predLiebner_initBN_stress2.R")
+sourceWithEcho("fun_Liebner_2013/predLiebner_initBN_stress2_style.R")
+
 sourceWithEcho("fun_Liebner_2013/predLiebner_updateBN.R")
-sourceWithEcho("fun_Liebner_2013/predLiebner_getStartVal4Sim.R")
+sourceWithEcho("fun_Liebner_2013/predLiebner_updateBN_stress.R")
+
+sourceWithEcho("fun_Liebner_2013/predLiebner_findSimStartValues.R")
 sourceWithEcho("fun_Liebner_2013/predLiebner_modelDrivBehav.R")
 sourceWithEcho("fun_Liebner_2013/predLiebner_modelDrivBehav_batch.R")
 sourceWithEcho("fun_Liebner_2013/predLiebner_modelDrivBehav_batch_cpp.R")
@@ -29,3 +37,9 @@ sourceWithEcho("fun_Liebner_2013/predLiebner_visDVM.R")
 sourceWithEcho("fun_Liebner_2013/predLiebner_visPassing.R")
 sourceWithEcho("fun_Liebner_2013/predLiebner_visPos.R")
 sourceWithEcho("fun_Liebner_2013/predLiebner_visProf.R")
+
+sourceWithEcho("fun_Liebner_2013/predLiebner_initDSM.R")
+sourceWithEcho("fun_Liebner_2013/settings/sett_bn.R") # predLiebner_initSettingsForBN
+sourceWithEcho("fun_Liebner_2013/settings/sett_bn_stress.R")
+sourceWithEcho("fun_Liebner_2013/settings/sett_bn_stress2.R")
+sourceWithEcho("fun_Liebner_2013/settings/sett_bn_stress2_style.R")

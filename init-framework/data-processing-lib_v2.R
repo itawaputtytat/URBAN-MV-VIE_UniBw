@@ -1,7 +1,7 @@
 readxl
 zoo ## Interpolation, rollmean
-#tripack ## Compute path curvature
-#geosphere ## Computing gps-distances
+tripack ## Compute path curvature
+geosphere ## Computing gps-distances
 #TraMineR # Sequence analysis
 #TraMineRextras # Sequence analysis
 #lazyeval # Dynamic filter variables in dplyr
@@ -12,6 +12,7 @@ TSclust # Calculating different distances measures
 #kml ## Clustering of longitudinal data
 psych ## Correlation matrix (e.g. pairs.panels
 lazyeval ## for interp
+mice ## imputation
 
 
 for(x in test) { 

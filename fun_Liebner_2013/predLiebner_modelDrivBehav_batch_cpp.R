@@ -32,11 +32,11 @@ cppFunction('
             if (j == 1 || j == 3 || pos4carryout <= objpos) {
 
                 for(int i = 1; i < time_s_diff.length(); i++) {
-                
-                  if ((j == 2) || (j == 4)) {
+                  
+                  //if ((j == 2) || (j == 4)) {
                     gap_des = d0 + d0 * v_sim[i-1] + ( pow(v_sim[i-1], 2) / ( 2 * sqrt((a_max * b)) ) );
                     gap_act = s_sim[i-1] - objpos;
-                  }
+                  //}
                   a_sim = a * ( (1 - pow((v_sim[i-1] / u), delta)) - pow(( gap_des / gap_act), 2) );
                   
                   v_sim[i] = v_sim[i-1] + a_sim;

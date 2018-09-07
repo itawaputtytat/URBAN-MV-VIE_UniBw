@@ -1,121 +1,94 @@
 
-predLiebner_compProb_al_Mk <- function(dat4prob, 
-                                       dat4accmax, 
-                                       acc_lon_thresholds,
-                                       varname4id = "passing",
-                                       varname4clustgroup = "cluster_group", 
-                                       varname4group = NULL,
+predLiebner_compProb_al_Mk <- function(dat, 
+                                       col_name_id = "passing",
+                                       col_name_cluster_group = "cluster_group", 
+                                       col_name_acc_lon_max = "acc_lon_ms2_max",
+                                       col_name_group = NULL,
+                                       thresholds_acc,
                                        return_assignments = F,
-                                       showplot = F) {
+                                       show_plot = F) {
   
-  ## Join cluster assignments and max. lon. acceleration
-  prob.assignment <- inner_join(dat4prob, dat4accmax)
+  ## Select relevant columns
+  dat_prob <- 
+    dat %>% 
+    distinct_(col_name_id, 
+              col_name_cluster_group, 
+              col_name_acc_lon_max) 
   
-  ## Assign groups by acceleration thresholds
-  prob.assignment$a <- 0
-  for(x in 1:length(acc_lon_thresholds) )  {
-    
-    prob.assignment <-
-      prob.assignment %>%
-      mutate(a_rnd05 = round(acc_lon_ms2_max / 0.5) * 0.5) %>% 
-      mutate(a = ifelse(#acc_lon_ms2_max <= acc_lon_thresholds[1], 
-                        a_rnd05 <= acc_lon_thresholds[1],
-                        paste("l", 1, sep = ""),
-                        a) ) %>% 
-      mutate(a = ifelse(x != 1 & a == 0 & 
-                          #acc_lon_ms2_max <= acc_lon_thresholds[x + 1],
-                          a_rnd05 <= acc_lon_thresholds[x + 1],
-                        paste("l", x, sep = ""),
-                        a) ) %>% 
-      mutate(a = ifelse(x == length(acc_lon_thresholds) & 
-                          #acc_lon_ms2_max > 
-                          a_rnd05 >=
-                            acc_lon_thresholds[length(acc_lon_thresholds)],
-                        paste("l", x, sep = ""),
-                        a) ) 
+  ## Assign groups based on thresholds
+  dat_prob[, "a"] <- NA
+  for (i in 1:length(thresholds_acc)) {
+    row_finder <- 
+      is.na(dat_prob[, "a"]) & dat_prob[, col_name_acc_lon_max] <= 
+      thresholds_acc[i]
+    dat_prob[row_finder, "a"] <- paste0("l", i)
   }
   
-  ## Rename columns
-  prob <- 
-    prob.assignment %>% 
-    select_(.dots = c(varname4id, 
-                      varname4group, 
-                      M = varname4clustgroup, "a")) %>% 
-    mutate(M = paste("k", M, sep = ""))
+  ## Assign an additional category for values exceeding the last threshold
+  row_finder <- is.na(dat_prob[, "a"])
+  dat_prob[row_finder, "a"] <- paste0("l", length(thresholds_acc) + 1)
   
-  ## Create complete combinations to join
-  k_unique <- unique(prob$M)
-  l_unique <- paste("l", 1:length(acc_lon_thresholds), sep = "")
+  ## Convert a groups to factor to keep levels alive with dply::complete
+  temp_levels <- paste0("l", seq(length(thresholds_acc) + 1))
+  dat_prob$a <- factor(dat_prob$a, levels = temp_levels)
   
-  ## MUST BE EXTENDED TO VIP!!!
-  if (!is.null(varname4group)) {
-    group_unique <- unique(dat4prob[, varname4group])
-    prob.template <-
-      expand.grid(M = k_unique, 
-                  a = l_unique, 
-                  group = group_unique,
-                  stringsAsFactors = F)
-    names(prob.template) <- c("M", "a", varname4group)
-  } else {
-    prob.template <- 
-      expand.grid(M = k_unique, 
-                  a = l_unique, 
-                  stringsAsFactors = F)
-  }
+  ## Convert M groups to factor to keep levels alive with dplyr::compelte
+  dat_prob[, col_name_cluster_group] <-
+    paste0("k", dat_prob[, col_name_cluster_group])
+  dat_prob[, col_name_cluster_group] <-
+    factor(dat_prob[, col_name_cluster_group])
   
-  ## Compute rates
-  prob <- 
-    prob %>% 
-    group_by_(.dots = lapply(c("M", "a", varname4group), as.symbol)) %>% 
-    summarise(count = n()) %>% 
-    group_by_(.dots = lapply(c("M", varname4group), as.symbol)) %>% 
-    mutate(rate = count/sum(count))
+  ## Compute rate per cluster group and threshold
+  ## Sort values by M and a 
+  dat_prob <- 
+    dat_prob %>% 
+    group_by_(col_name_cluster_group, "a") %>% 
+    mutate(count_per_group = n()) %>% 
+    group_by_(col_name_cluster_group) %>% 
+    mutate(rate = count_per_group / n()) %>% 
+    arrange_(col_name_cluster_group, "a") %>% 
+    tidyr::complete_(c(col_name_cluster_group, "a"),
+                     fill = list(rate = 0)) %>% 
+    distinct_(col_name_cluster_group, "a", "rate")
   
-  prob <-
-    left_join(prob.template,
-              prob) %>% 
-    mutate(count = ifelse(is.na(count), 0, count),
-           rate = ifelse(is.na(rate), 0, rate)) 
+  ## Rename cluster group column
+  dat_prob <- 
+    dat_prob %>% 
+    rename_at(col_name_cluster_group, funs(paste0("M")))
+  
+  plot_dat <- "No plot data available"
   
   ## Visualisation
-  txt4caption <- 
-    paste(
-      paste(
-        paste("l", c(1:length(acc_lon_thresholds)), sep = ""),
-        "~",
-        acc_lon_thresholds,
-        collapse = "; "),
-      "m/s²")
-  
-  plotdat <-
-    ggplot() +
-    geom_bar(data = prob,
-             aes(x = a,
-                 y = rate,
-                 fill = M),
-             stat = "identity") +
-    facet_grid(.~M) +
-    scale_y_continuous(expand = c(0, 0)) + 
-    #scale_fill_manual(values = c("#ED2124", "#6ABD45", "#3953A4")) + 
-    coord_cartesian(ylim = c(0,1)) +
-    labs(title = "Distribution of max. acc. parameter a",
-         subtitle = paste("Rate of passings in each model Mk"
-                          , " with \n", txt4caption, sep = ""),
-         x = "a (m/s²)",
-         y = "P(a | Model k)") + 
-    theme_bw()
-  
-  if (!is.null(varname4group))
-    plotdat <-
-    plotdat + 
-    facet_grid(as.formula(paste("M ~", varname4group)))
-  
-  if (showplot) 
-    plot(plotdat)
+  if (show_plot) {
     
-  dat2return <- list(prob = prob, plotdat = plotdat)
-      
-  if (return_assignments)
-    return(append(dat2return, list(prob.assignment = prob.assignment))) else
-    return(dat2return)
+    plot_dat <-
+      ggplot() +
+      geom_bar(data = dat_prob,
+               aes_string(x = "a",
+                          y = "rate",
+                          fill = "M"),
+               stat = "identity") +
+      facet_grid(.~M, drop = FALSE) +
+      scale_x_discrete(drop = FALSE) +
+      scale_y_continuous(expand = c(0, 0)) + 
+      coord_cartesian(ylim = c(0,1)) +
+      labs(title = "Distribution of max. acc. parameter a",
+           x = "a (m/s²)",
+           y = "P(a | Model k)") + 
+      theme_bw()
+    
+    if (!is.null(col_name_group)) {
+      plot_dat <-
+        plot_dat + 
+        facet_grid(as.formula(paste("M ~", col_name_group)))
+    }
+    
+    plot(plot_dat)
+    
+  }
+  
+  
+  dat_return <- list(results = dat_prob, plot_dat = plot_dat)
+  
+  return(dat_return)
 }

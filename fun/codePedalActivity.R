@@ -4,7 +4,7 @@
 ## -1 = braking pedal
 
 codePedalActivity <- function(dat,
-                              colname_acc_pedal_pos = "acc_pedal_pos_perc_corr",
+                              colname_acc_pedal_pos = "acc_pedal_position_perc",
                               colname_brake_status = "brake_status",
                               colname_brake_press = "brake_press_bar",
                               colname_group = "passing",

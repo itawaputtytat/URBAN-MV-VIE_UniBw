@@ -58,8 +58,8 @@ theme_thesis <- function(){
       #panel.background = element_rect(fill = "grey95"),
       panel.background = 
         element_rect(fill = NA),
-      panel.border = 
-        element_rect(color = "#ced0d1", 
+      panel.border =
+        element_rect(color = "#ced0d1",
                      fill = NA),
       panel.grid.major = 
         element_line(colour = "grey93",

@@ -9,12 +9,12 @@
 clust2groups <-
   function (dat2proc.wide,
             k = 3,
-            procedure = "kmeans",
+            procedure = "kmeans", #kmeans, kmeanspp, hclust
             algorithm = "Hartigan-Wong",
             iter.max = 500,
             nstart = 1,
             start = "random",
-            measure4diss = "EUCL",
+            measure4diss = "EUCL", #DTWARP
             method4agglo = "single",
             seed = 42,
             ...) {

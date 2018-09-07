@@ -1,0 +1,269 @@
+
+# Settings ----------------------------------------------------------------
+
+sett <- list()
+sett$db$db_names$study2 <- "URBAN-MV-VIE_UniBw_Study-2"
+sett$db$db_names$quest <- "Questionnaires"
+sett$db$conn_names$study2 <- dbFindConnObj(sett$db$db_names$study2, output = F)
+sett$db$conn_names$quest <- dbFindConnObj(sett$db$db_names$quest, output = F)
+sett$db$src_names$bfi10 <- "t_q_bfi10_scores"
+sett$db$src_names$tloc <- "t_q_tloc_scores" 
+sett$lang <- "ger"
+sett$filter1 <- "bfi10"
+sett$filter1_subscale <- "o"
+sett$filter2 <- "tloc"
+
+initQuestSettings(sett$filter1, 
+                  sett$db$conn_names$quest, 
+                  "BFI-10_Rammstedt_2012",
+                  lang = sett$lang)
+
+initQuestSettings(sett$filter2, 
+                  sett$db$conn_names$quest, 
+                  "T-LOC_Özkan_2005",
+                  lang = sett$lang)
+
+
+
+# Query data --------------------------------------------------------------
+
+dat_bfi10 <- dbGetSrc(sett$db$conn_names$study2, sett$db$src_names$bfi10)
+dat_tloc <- dbGetSrc(sett$db$conn_names$study2, sett$db$src_names$tloc)
+
+
+
+# Join data ---------------------------------------------------------------
+
+dat_all <- left_join(dat_bfi10, dat_tloc)
+
+
+
+# Correlation visualization -----------------------------------------------
+
+pairs.panels(
+  dat_all[, 2:ncol(dat_all)],
+  method = "pearson",
+  hist.col = "#00AFBB",
+  density = TRUE,
+  ellipses = TRUE,
+  stars = TRUE
+)
+
+
+# Correlation matrix ------------------------------------------------------
+
+dat_corr <- corr.test_v2(dat_all[,2:ncol(dat_all)])
+
+## Create flat table
+dat_corr_flat <- dat_corr$ci
+
+## Get pair names
+dat_corr_flat$pair_name <- rownames(dat_corr_flat)
+rownames(dat_corr_flat) <- NULL
+
+## Get seperate variable names
+dat_corr_flat <- 
+  dat_corr_flat %>% 
+  rowwise() %>% 
+  mutate(var1 = strsplit(pair_name, "-")[[1]][1],
+         var2 = strsplit(pair_name, "-")[[1]][2]) %>% 
+  data.frame()
+
+## Round values
+col_finder <- c("lower", "upper", "r")
+dat_corr_flat[, col_finder] <- round(dat_corr_flat[, col_finder], 2)
+col_finder <- c("p")
+dat_corr_flat[, col_finder] <- round(dat_corr_flat[, col_finder], 3)
+
+
+
+# Prepare data vor visualization ------------------------------------------
+
+dat_plot <- dat_corr_flat
+
+## Remember column with main values
+if (length(unique(dat_plot$var1_subscale)) != 1) {
+  col_finder_subscales_main <- "var1_subscales"
+  col_finder_subscales_sec <- "var2_subscales"
+} else {
+  col_finder_subscales_main <- "var2_subscales"
+  col_finder_subscales_sec <- "var1_subscales"
+}
+
+## Extract subscale
+dat_plot <- 
+  dat_plot %>% 
+  rowwise() %>% 
+  mutate(var1_subscales = strsplit(var1, "_")[[1]][2],
+         var2_subscales = strsplit(var2, "_")[[1]][2]) %>% 
+  data.frame()
+
+## Filter for questionnaires
+dat_plot <- 
+  dat_plot %>% 
+  filter(grepl(sett$filter1, pair_name) & 
+           grepl(sett$filter2, pair_name)) 
+
+## Filter for specific subscale
+row_finder <- which(dat_plot[col_finder_subscales_main] == sett$filter1_subscale)
+dat_plot <- dat_plot[row_finder, ]
+
+## Get scale names
+dat_subscale_names <- sett$quest[[sett$filter2]]$subscales$abbr_eng_and_names_lang
+names(dat_subscale_names) <- c(col_finder_subscales_sec, "subscale_name")
+dat_subscale_names[, col_finder_subscales_sec] <- 
+  tolower(dat_subscale_names[, col_finder_subscales_sec])
+dat_plot <- 
+  left_join(
+    dat_plot,
+    dat_subscale_names)
+
+## Sort values
+dat_plot <- 
+  dat_plot %>% 
+  arrange(r)
+
+## Save order of elements
+levels <- 
+  dat_plot %>% 
+  distinct_(col_finder_subscales_sec) %>% 
+  unlist(use.names = FALSE) %>% 
+  rev()
+
+labels <- 
+  dat_plot[, "subscale_name"] %>% 
+  rev()
+
+## Create factor to sort elements in plot
+dat_plot$subscales_fct <- 
+  factor(dat_plot[, col_finder_subscales_sec], 
+         levels = levels,
+         labels = labels)
+
+## Set colors
+dat_plot <- 
+  dat_plot %>% 
+  mutate(color_r = 
+           ifelse(r < 0,
+                  RColorBrewer::brewer.pal(11, "RdYlGn")[2],
+                  RColorBrewer::brewer.pal(11, "RdYlGn")[10] )) %>% 
+  mutate(color_p = 
+           ifelse(p < 0.05,
+                  color_r,
+                  "black" ))
+
+## Set texts
+dat_plot <- 
+  dat_plot %>% 
+  mutate(text_r = paste0("r = ", r)) %>% 
+  mutate(text_p = paste0("p = ", p)) %>% 
+  # mutate(text_position_y = ifelse(r < 0, 0.05, 0),
+  #        text_position_y = ifelse(r > 0, -0.45, text_position_y))
+  mutate(text_position_y = r + sign(r) * 0.08,
+         text_position_y =
+           ifelse(r < 0,
+                  text_position_y - 0.3,
+                  text_position_y))
+
+
+
+# Visualization -----------------------------------------------------------
+
+## Plot bars
+plot_corr <- 
+  ggplot() + 
+  geom_bar(data = dat_plot,
+           aes(x = subscales_fct ,
+               y = r,
+               fill = color_r ),
+           stat = "identity",
+           fill = dat_plot$color_r) + 
+  coord_flip(ylim = c(-1, 1)) 
+
+## Plot coefficients and p values for positive correlations
+dat_plot_temp <- dat_plot %>% filter(r > 0)
+plot_corr <- 
+  plot_corr + 
+  geom_text(data = dat_plot_temp,
+            aes(x = subscales_fct,
+                y = text_position_y,
+                label = text_r),
+            vjust = -0.3,
+            hjust = 0,
+            size = size,
+            fontface = "bold",
+            color = dat_plot_temp$color_p) + 
+  geom_text(data = dat_plot_temp,
+            aes(x = subscales_fct,
+                y = text_position_y,
+                label = text_p,
+                color = color_p),
+            vjust = 1.3,
+            hjust = 0,
+            size = size,
+            color = dat_plot_temp$color_p)
+
+## Plot coefficients and p values for negative correlations
+dat_plot_temp <- dat_plot %>% filter(r < 0)
+plot_corr <- 
+  plot_corr + 
+  geom_text(data = dat_plot_temp,
+            aes(x = subscales_fct,
+                y = text_position_y,
+                label = text_r,
+                color = color_p),
+            vjust = -0.3,
+            hjust = 0,
+            size = size,
+            fontface = "bold",
+            color = dat_plot_temp$color_p) + 
+  geom_text(data = dat_plot_temp,
+            aes(x = subscales_fct,
+                y = text_position_y,
+                label = text_p,
+                color = color_p),
+            vjust = 1.3,
+            hjust = 0,
+            size = size,
+            color = dat_plot_temp$color_p)
+
+## Add separating line at r = 0
+plot_corr <- 
+  plot_corr + 
+  geom_hline(aes(yintercept = 0),
+             size = 0.1)
+
+## Get name of main subscale
+row_finder <- which(
+  tolower(sett$quest[[sett$filter1]]$subscales$
+            abbr_eng_and_names_lang$
+            subscale_name_eng_abbr) == 
+    sett$filter1_subscale)
+temp <- 
+  sett$quest[[sett$filter1]]$subscales$
+  abbr_eng_and_names_lang[row_finder, "subscale_name"]
+
+plot_corr_post <- 
+  plot_corr +
+  guides(color = F) + 
+  scale_x_discrete(position = "top") +
+  ggtitle("Korrelation von BFI-10 und T-LOC",
+          subtitle = paste0("BFI-10 Skala: ", temp)) + 
+  labs(x = NULL,
+       y = "Korrelation") + 
+  theme_thesis()
+
+temp <- 
+  paste_("correlation",
+         sett$filter1,
+         sett$filter1_subscale,
+         sett$filter2)
+
+ggsave(filename = figureFileName(temp),
+       plot = plot_corr_post,
+       path = figurePath(),
+       width = 8,
+       height = 4.5,
+       units = "cm",
+       dpi = 1000,
+       type = "cairo-png")

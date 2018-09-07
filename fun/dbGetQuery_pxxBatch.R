@@ -67,11 +67,11 @@ dbGetQuery_pxxBatch <- function(db_conn_name,
       if (bind_rows) { 
         passing <-  
           paste_(sprintf("p%02d", pxx), 
-                dat$round_id)
+                 sprintf("s%02d", dat[, sett_i$active$subject]))
         if (!is.null(sett_q$subject)) {
           passing <- 
             paste_(passing, 
-                   sprintf("s%02d", dat[, sett_i$active$subject]))
+                   dat[, sett_i$active$round])
         }
         dat <- cbind(passing, pxx, dat, stringsAsFactors = F)
         dat <- renameVar_pxx(dat)

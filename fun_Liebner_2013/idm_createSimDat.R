@@ -1,7 +1,12 @@
-idm_createSimDat <- function(indices, varnames, prefix = "sim_", val4start = NULL) {
+idm_createSimDat <- function(indices, 
+                             varnames = "", 
+                             prefix = "", 
+                             val4start = NULL,
+                             id_order = NULL) {
  
-  if(is.null(val4start))
+  if (is.null(val4start)) {
     val4start <- rep(0, length(varnames))
+  }
   
   ## Get names of indices
   names4ind <- names(indices)
@@ -17,7 +22,7 @@ idm_createSimDat <- function(indices, varnames, prefix = "sim_", val4start = NUL
   colnames(ind) <- names4ind
   
   ## Arrange by j and k
-  ind <- as.data.frame(ind) %>% arrange(j, k)
+  ind <- as.data.frame(ind) %>% arrange(Ij, Mk)
   
   ## Create combindes string for each index combination
   ind <- apply(ind, 1, function(x) paste(x, collapse = "_"))
@@ -33,6 +38,10 @@ idm_createSimDat <- function(indices, varnames, prefix = "sim_", val4start = NUL
   colfinder <- grep("dist", colnames(dat4sim))
   dat4sim[1, colfinder] <- val4start[grep("dist", varnames)]
   rownames(dat4sim) <- NULL
+  
+  if (!is.null(id_order)) {
+    dat4sim <- dat4sim[id_order]
+  }
   
   return(dat4sim)
 }

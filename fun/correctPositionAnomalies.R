@@ -1,7 +1,7 @@
 correctPositionAnomalies <- function(dat,
                                       db_conn_name,
                                       src_name_correction_info = 
-                                        "t_steer_angle_outliers",
+                                        "t_steering_angle_outliers",
                                       col_name_case = "passing",
                                       col_name_am = 
                                         "pxx_dti_m_rnd1",
