@@ -12,13 +12,13 @@ sett_dat$col_name_am <- sett_query$col_name_am
 sett_dat$col_name_subject <- "subject_id"
 sett_dat$col_name_position <- "pxx"
 sett_dat$col_name_case <- "passing"
-sett_dat$col_name_group <- "round_txt"
-sett_dat$col_name_sa <- "steer_angle_deg"
+sett_dat$col_name_group <- "round_id"
+sett_dat$col_name_sa <- "steering_wheel_angle_deg"
 sett_dat$col_name_gps <- c("gps_lon", "gps_lat")
 
 sett_proc <- c()
-#sett_proc$pxx <- c(1:18)
-sett_proc$pxx <- 14
+sett_proc$pxx <- c(1:18)
+#sett_proc$pxx <- 1
 sett_proc$am_thresholds_sa_max <- c(-20, 50)
 sett_proc$am_thresholds_sa_min1 <- c(-50, 50)
 sett_proc$am_thresholds_sa_min2 <- c(-50, 50)
@@ -29,7 +29,7 @@ sett_proc$outlier_sum_threshold <- 3
 ## Percentile (z): 90 (1.28), 95 (1.645), 97.5 (1.96), 99 (2.33), 99.5 (2.58)
 sett_proc$outliers_add <- c("p17_stress_s27", "p14_intro_s22")
 sett_proc$outliers_remove <- c("")
-sett_proc$plot <- F
+sett_proc$plot <- FALSE
 
 
 
@@ -90,6 +90,7 @@ for (p in sett_proc$pxx) {
                    c("min", "max", "mean", "sd", "median"))  
   
   ## Add position information and collect data
+  dat_max_summary_wo_outliers <- dat_max_summary_wo_outliers[[paste_(sett_dat$col_name_am, "min")]]
   dat_max_summary_wo_outliers[, sett_dat$col_name_position] <- p
   
   dat_max_summary_coll <- 
@@ -181,8 +182,8 @@ dat_max_summary_coll <-
 
 # Write summary to DB -----------------------------------------------------
 
-dbWriteTable(dbFindConnObj("Study-1"),
-             name = "t_steer_angle_outliers",
+dbWriteTable(get(dbFindConnObj("Study-1")),
+             name = "t_steering_wheel_angle_outliers",
              value = dat_outlier_coll,
              row.names = F,
              overwrite = T)
@@ -191,8 +192,8 @@ dbWriteTable(dbFindConnObj("Study-1"),
 
 # Write outlier info to DB ------------------------------------------------
 
-dbWriteTable(dbFindConnObj("Study-1"),
-             name = "t_steer_angle_max_summary_wo_outlier",
+dbWriteTable(get(dbFindConnObj("Study-1")),
+             name = "t_steering_wheel_angle_max_summary_wo_outlier",
              value = dat_max_summary_coll,
              row.names = F,
              overwrite = T)
@@ -202,12 +203,12 @@ dbWriteTable(dbFindConnObj("Study-1"),
 # Visualization: Post-processing ------------------------------------------
 
 plot_steer <-
-  plot_dat +
+  plot_outlier +
   coord_cartesian(xlim = c(min(dat[, sett_dat$col_name_am]),
                            max(dat[, sett_dat$col_name_am])),
                   ylim = c(-600, 600)) + 
   guides(colour = F) + 
-  facet_grid(.~round_txt) + 
+  facet_grid(as.formula(paste(".~", sett_dat$col_name_group))) + 
   ggtitle("Original values",
           subtitle = paste("Intersection:", sett_dat$pxx))
 

@@ -3,15 +3,18 @@
 # par(xaxs = "r", yaxs = "r")
 #results2 <- unlist(results)
 barplot(height = dat_pred_results,
+        ylim = c(-0.05,1.05),
         # names.arg = 
         #   c("Go \nstraight",
         #     "Stop\n",
         #     "Turn\n",
         #     "nTurn/\nStop"),
         xaxt = "n",
-        ylim = c(0, 1),
         col = c("#6FCDDD", "orange", "#ED2125", "#B9539F"),
         ylab = "Probability")
+# axis(side = 2, 
+#      at = seq(0,1.1,0.5),
+#      labels = seq(0,1.1,0.5))
 # abline(h = results2[1], col = "#6FCDDD")
 # abline(h = results2[2], col = "orange")
 # abline(h = results2[3], col = "#ED2125")
@@ -33,5 +36,4 @@ mtext('Turn', side=1, line=0.5, at=3.1)
 mtext('Turn/\nStop', side=1, line=1.5, at=4.3)
 
 ## Left-align title
-title("Current P(Hi|v(t),s(t))", 
-      adj = 0)
+title(expression(bold("P(H"["i"]*"|v(t),s(t))")), adj = 0)

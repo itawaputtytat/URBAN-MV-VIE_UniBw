@@ -1,11 +1,11 @@
 
 # Preparatory settings ----------------------------------------------------
 
-sett_dat <- ()
+sett_dat <- c()
 sett_dat$df_name <- paste_(sett_query$df_name, "intrpld")
-sett_dat$col_name_am <- "pxx_dti_m_rnd1"
+sett_dat$col_name_am <- "dti_m_rnd1"
 sett_dat$col_name_position <- "pxx"
-sett_dat$col_name_steer_angle <- "steer_angle_deg"
+sett_dat$col_name_steer_angle <- "steering_wheel_angle_deg"
 
 
 # Visualize original DTI --------------------------------------------------

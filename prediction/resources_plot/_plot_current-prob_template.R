@@ -4,20 +4,17 @@
 
 ## Draw plot with (initial) prior
 barplot(height = sett_bn$prior$I, 
-        #names.arg = sett_bn$states$I,
-        # names.arg = 
-        #   c("Go \nstraight",
-        #     "Stop\n",
-        #     "Turn\n",
-        #     "nTurn/\nStop"),
-        #font = 2,
-        #yaxt = "n",
-        ylim = c(0, 1),
+        ylim = c(-0.05,1.05),
         col = c("#6FCDDD", "orange", "#ED2125", "#B9539F"),
         ylab = "Probability",
-        xaxt = "n"#,
+        xaxt = "n",
         #font.lab = 2
         )
+
+# axis(side = 2, 
+#      at = seq(0,1.1,0.5),
+#      labels = seq(0,1.1,0.5))
+
 text(x = c(0.7, 1.9, 3.1, 4.3), 
      y = sett_bn$prior$I, 
      labels = paste(sett_bn$prior$I * 100, "%", sep  =""), 
@@ -29,8 +26,4 @@ mtext('Turn', side=1, line=0.5, at=3.1)
 mtext('Turn/\nStop', side=1, line=1.5, at=4.3)
 
 ## Left-align title
-title("Current P(Hi|v(t),s(t))", 
-      adj = 0)
-
-## Save plot to template
-#plot_template4intentprob <- recordPlot()
+title(expression(bold("P(H"["i"]*"|v(t),s(t))")), adj = 0)

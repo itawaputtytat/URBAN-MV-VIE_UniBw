@@ -5,6 +5,12 @@ source("prediction/load-case-data.R")
 
 
 
+# Initialise prediction framework -----------------------------------------
+
+source("prediction/initialise-prediction-framework.R")
+
+
+
 # Start timer -------------------------------------------------------------
 
 ptm <- proc.time()
@@ -48,15 +54,16 @@ if (sett_plot$plot) {
 while(T) {
   
   ## End loop if AM limit is reached
-  if (sett_sim_temp$am2 >= sett_pred$carryout_am_end)
+  if (sett_sim_temp$am2 >= sett_pred$carryout_am_end) {
     break
+  }
   
   ## Find start values for simulation
   sett_sim_temp <- 
     modifyList(sett_sim_temp, 
                predLiebner_findSimStartValues(
                  dat_case, 
-                 ## AM selection fifferent from singe prediction
+                 ## AM selection fifferent from single prediction
                  am_carryout = sett_sim_temp$am2,
                  col_name_am = sett_case$col_names$am,
                  col_name_time = sett_case$col_names$time,
@@ -69,32 +76,13 @@ while(T) {
   }
 
   ## Run prediction
-  source("analysis-study-1/prediction_dev/pred.R")
+  source("prediction/pred.R")
 
   ## Collect prediction results
   dat_pred_results_coll <- 
     data.table::rbindlist(list(
       dat_pred_results_coll,
       data.frame(sett_sim_temp$am2, t(dat_pred_results))))
-
-  ## Extract simulation values
-  ## ... for all hypothesis
-  ## ... and both variables speed and distance
-  dat_sim_tails <- 
-    lapply(dat_sim, function(hyp)
-      lapply(hyp, function(var) {
-        if (is.null(var)) {
-          NA
-        } else {
-          tail(var, 1)
-        }
-      }))
-  
-  dat_sim_tails <- 
-    as.data.frame( 
-      data.table::rbindlist(dat_sim_tails, 
-                            idcol = T, 
-                            fill  = T))
   
   ## Collect tails of simulated speed profiles for history plots
   if (sett_pred$collect_sim_tails) {
@@ -145,13 +133,42 @@ outputProcTime(ptm)
 
 
 # Going on ... ------------------------------------------------------------
-# 
-# if (sett_proc$append_results) {
-#   dat_pred_results_coll_overall <- 
-#     rbind(dat_pred_results_coll_overall, 
-#           data.frame(passing = sett_dat$case,
-#                      dat_pred_results_coll))
-# }
+
+if (sett_pred$append_results) {
+  
+  sett_pred$meta_info <- c()
+  
+  ## Version and case
+  sett_pred$meta_info$dsm <- sett_dsm$version
+  sett_pred$meta_info$version <- sett_pred$bn_version
+  sett_pred$meta_info$passing <- sett_case$case_id
+  
+  ## Node info for driving style
+  finder <- which(sett_pred$bn_evidence$nodes == "DS")
+  sett_pred$meta_info["evidence_ds"] <-
+    ifelse(length(which(sett_pred$bn_evidence$nodes == "DS")), 
+           sett_pred$bn_evidence$states[finder], 
+           NA)
+  
+  ## Node info for stress
+  finder <- which(sett_pred$bn_evidence$nodes == "ST")
+  sett_pred$meta_info["evidence_st"] <-
+    ifelse(length(which(sett_pred$bn_evidence$nodes == "ST")), 
+           sett_pred$bn_evidence$states[finder], 
+           NA)
+  
+  # dat_pred_results_coll_overall <-
+  #   rbind(dat_pred_results_coll_overall,
+  #         data.frame(passing = sett_case$case_id,
+  #                    version = sett_pred$bn_version,
+  #                    evidence = sett_pred$bn_evidence$print,
+  #                    dat_pred_results_coll))
+  
+  dat_pred_results_coll_overall <-
+    rbind(dat_pred_results_coll_overall,
+          merge(data.frame(sett_pred$meta_info),
+                data.frame(dat_pred_results_coll))) 
+}
 #   
 # 
 # if (!sett_pred$append_results) {

@@ -38,7 +38,6 @@ dat_dsm.spread <-
 # dat_dsm.spread_v2 <- as.data.frame(dat_dsm.spread_v2)
 # dat_dsm.spread_v2$dist <- round(dat_dsm.spread_v2$dist, 1)
 # 
-print(sett_dsm$objname4dsm)
 dat_dsm <-
   get(sett_dsm$objname4dsm) %>%
   data.frame()

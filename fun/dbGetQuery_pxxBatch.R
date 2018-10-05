@@ -64,6 +64,7 @@ dbGetQuery_pxxBatch <- function(db_conn_name,
       ## In case of row-binding of queried data is set to TRUE (default)
       ## ... row-bind data into a single data.frame
       ## ... otherwise single objects will be created
+
       if (bind_rows) { 
         passing <-  
           paste_(sprintf("p%02d", pxx), 

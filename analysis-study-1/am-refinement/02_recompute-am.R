@@ -31,8 +31,10 @@ t_experimental_conditions <-
 
 # Re-compute GPS distance -------------------------------------------------
 
-dat_study1_t_adtf_pxx_full_intrpld <- 
-  dat_study1_t_adtf_pxx_full_intrpld %>% 
+test <- 
+  dat_study1_t_adtf_pxx_full_aggr_dti_rnd1_intrpld %>% 
+  filter(dti_m_rnd1 >= -10 & dti_m_rnd1 <= 10) %>% 
+  filter(pxx == 6) %>% 
   rowwise() %>% 
   mutate(gps_dist_m = 
            distm(c(gps_lon, 
@@ -45,8 +47,8 @@ dat_study1_t_adtf_pxx_full_intrpld <-
 
 # Re-compute distance to intersection -------------------------------------
 
-dat_study1_t_adtf_pxx_full_intrpld <- 
-  dat_study1_t_adtf_pxx_full_intrpld %>% 
+test <- 
+  test %>% 
   ungroup() %>% 
   group_by(passing) %>% 
   mutate(driven_distance_m_min = 

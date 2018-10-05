@@ -6,15 +6,34 @@ par(xaxs = "i", yaxs = "i")
 plot(x = 0, 
      y = 0, 
      xlim = c(sett_plot$xmin, sett_plot$xmax), 
-     ylim = c(0,1),
+     ylim = c(-0.05,1.05),
      col = "white",
      xlab = "Distance to intersection (m)",
      ylab = "Probability",
      font.lab = 2)
 
 ## Left-align title
-title("History of P(Hi|v(t),s(t)) ",
+title(expression(bold("History of P(H"["i"]*"|v(t),s(t))")),
       adj = 0)
+
+## BN Version
+mtext(text = 
+         paste("Version:",
+               sett_pred$bn_version),
+      line = 1,
+      side = 3,
+      adj = 1,
+      cex = 1)
+
+## BN evidence
+mtext(text =
+         paste("Evidence:", 
+               paste(sett_pred$bn_evidence$print, collapse = "; ")),
+      line = 0,
+      side = 3,
+      adj = 1,
+      cex = 1)
+
 
 ## Draw lines for object positions
 abline(v = sett_sim$obj_pos[2], 

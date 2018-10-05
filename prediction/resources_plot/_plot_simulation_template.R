@@ -23,16 +23,17 @@ for(i in 1:length(sett_dsm$thresholds$u_max)) {
   ## Maximum u
   abline(h = rev(sett_dsm$thresholds$u_max)[i], 
          col = sett_plot$colors$dsm[i], 
-         lwd = 10 * sett_bn$prior$S[dat_dsm_spread$cluster_group_ordered[i]], 
+         lwd = 10 * querygrain(bn, "S", "joint")[i], 
          #lty = "solid",
          lty = "dashed")
   
   ## DSM
   lines(dat_dsm_spread$am, 
         dat_dsm_spread[, paste0("k", i)], 
-        col = sett_plot$colors$dsm[i], 
-        lwd = 10 * sett_bn$prior$S[i])
+        col = sett_plot$colors$dsm[i],
+        lwd = 10 * querygrain(bn, "S", "joint")[i])
 }
+
 
 ## Draw lines for object positions
 abline(v = sett_sim$obj_pos[2], col = "orange", lty = "dotted")

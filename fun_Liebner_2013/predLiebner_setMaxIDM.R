@@ -10,6 +10,7 @@ predLiebner_setMaxIDM <- function(dat,
   
   dat <- 
     dat %>% 
+    ## Sett u to u max after s_max threshold
     mutate_(.dots = setNames(list(
       interp(~ ifelse(s >= s_max, u_max, u),
              s = as.name(col_name_am),

@@ -24,25 +24,37 @@ if (length(row_finder) == 0) {
   row_finder <- max(row_finder, 1)
 }
 
-testy <- dat_pred_results_coll[row_finder, ]
-
-lines(testy[, get(sett_case$col_names$am)], 
-      testy$Intent1, 
-      col = "#6FCDDD")
-lines(testy[, get(sett_case$col_names$am)], 
-      testy$Intent2, 
-      col = "orange")
-lines(testy[, get(sett_case$col_names$am)], 
-      testy$Intent3, 
-      col = "#ED2125")
-lines(testy[, get(sett_case$col_names$am)], 
-      testy$Intent4, 
-      col = "#B9539F")
+for (i in sett_bn$state_names$I) {
+  lines(dat_pred_results_coll[row_finder, get(sett_case$col_names$am)], 
+        dat_pred_results_coll[row_finder, get(i)], 
+        col = sett_plot$colors$prob[i],
+        lwd = sett_plot$line_width$prob)
+}
+grid(NULL, NULL, lwd = 1, lty = "solid")
+# testy <- dat_pred_results_coll[row_finder, ]
+# 
+# lines(testy[, get(sett_case$col_names$am)], 
+#       testy$Intent1, 
+#       col = "#6FCDDD",
+#       lwd = 2)
+# lines(testy[, get(sett_case$col_names$am)], 
+#       testy$Intent2, 
+#       col = "orange",
+#       lwd = 2)
+# lines(testy[, get(sett_case$col_names$am)], 
+#       testy$Intent3, 
+#       col = "#ED2125",
+#       lwd = 2)
+# lines(testy[, get(sett_case$col_names$am)], 
+#       testy$Intent4, 
+#       col = "#B9539F",
+#       lwd = 2)
 
 ## Combine Intent3 and Intent4
-lines(testy[, get(sett_case$col_names$am)], 
-      testy$Intent3 + testy$Intent4, 
-      col = "#ED212550", 
-      lty = "dashed")
+# lines(testy[, get(sett_case$col_names$am)], 
+#       testy$Intent3 + testy$Intent4, 
+#       col = "#ED212550", 
+#       lty = "dashed",
+#       lwd = 2)
 
 

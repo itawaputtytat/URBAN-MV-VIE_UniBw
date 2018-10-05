@@ -1,54 +1,50 @@
 predLiebner_compProb_Mk <- function(dat,
                                     col_name_id = "passing",
                                     col_name_cluster_group = "cluster_group", 
-                                    col_name_group = NULL,
-                                    show_plot = F) {
-  
-  dat_prob <- 
+                                    col_name_group = NULL) {
+
+  ## In case of no grouping variable
+  col_name_group_init <- col_name_group
+  if (is.null(col_name_group)) {
+    col_name_group <- "dummy"
+    dat[, col_name_group] <- 1
+  }
+
+  dat <- 
     dat %>% 
-    select_(.dots = 
-              c(col_name_id, 
-                M = col_name_cluster_group, 
-                col_name_group)) %>% 
+    rename_at(col_name_cluster_group, funs(paste0("M"))) %>% 
     #mutate_(M = col_name_cluster_group) %>% 
     mutate(M = paste("k", M, sep = "")) %>% 
-    group_by_(.dots = lapply(c(col_name_id, col_name_group, "M"), as.symbol)) %>% 
-    summarise() %>% 
-    group_by_(.dots = lapply(c(col_name_group, "M"), as.symbol)) %>% 
-    summarise(count = n()) %>% 
-    mutate(rate = count/sum(count)) %>% 
+    distinct_(.dots = c(col_name_id, col_name_group, "M")) %>% 
+    group_by_(.dots = c(col_name_group, "M")) %>%
+    summarise(count = n()) %>%
+    ungroup() %>% 
+    complete_(cols = c(col_name_group, "M"), fill = list(count = 0)) %>% 
+    group_by_(.dots = c(col_name_group)) %>% 
+    mutate(count_group = sum(count)) %>%  
+    mutate(rate = count/count_group) %>% 
+    # mutate(rate = count/sum(count)) %>% 
     data.frame()
   
-  plot_dat <- "No plot data available"
-  
-  ## Visualisation
-  if (show_plot) {
-    
-    plot_dat <-
-      ggplot() +
-      geom_bar(data = dat_prob,
-               aes(x = M,
-                   y = rate,
-                   fill = M),
-               stat = "identity") +
-      scale_y_continuous(expand = c(0, 0)) + 
-      coord_cartesian(ylim = c(0,1)) + 
-      labs(title = "Distribution of model M",
-           subtitle = "Rate of passings in each cluster",
-           x = "Model",
-           y = "P(Model)") + 
-      theme_bw()
-    
-    if (!is.null(col_name_group)) {
-      plot_dat <-
-        plot_dat + 
-        facet_grid(as.formula(paste(".~", col_name_group)))
-    }
-    
-    plot(plot_dat)
-    
+  ## Remove dummy group in case of no grouping variable
+  if (is.null(col_name_group_init)) {
+    dat[, "dummy"] <- NULL
   }
   
-  return(list(results = dat_prob,
-              plot_dat = plot_dat))
+  return(dat)
 }
+
+
+# dat_Mk %>% 
+#   rename_at("cluster_group_ordered", funs(paste0("M"))) %>% 
+#   mutate(M = paste("k", M, sep = "")) %>% 
+#   distinct_(.dots = c("passing", "condition_speed", "M")) %>% 
+#   group_by_(.dots = c("condition_speed", "M")) %>%
+#   summarise(count = n()) %>%
+#   ungroup() %>% 
+#   complete_(cols = c("condition_speed", "M"), fill = list(count = 0)) %>% 
+#   group_by_(.dots = c("condition_speed")) %>% 
+#   mutate(count_group = sum(count)) %>%  
+#   mutate(rate = count/count_group)
+
+  

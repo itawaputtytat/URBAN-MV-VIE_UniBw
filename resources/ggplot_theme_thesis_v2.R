@@ -86,6 +86,11 @@ theme_thesis <- function(){
       axis.ticks = 
         element_line(color = "grey90", 
                      size = 0.35),
+    ) +
+    
+    theme(
+      strip.background = element_rect(fill = convRGB2Hex(47, 84, 150)),
+      strip.text = element_text(color = "white")
     )
 }
 

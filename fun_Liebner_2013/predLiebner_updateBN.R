@@ -5,19 +5,14 @@ predLiebner_updateBN <- function(name_bn,
   ## Get BN
   bn <- get(name_bn)
   
+  ## Get CPT for each node
+  cpt <- bn[["cptlist"]]
   ## Create conditional probability table for observation node
-  node_O <- 
-    cptable(~ O|I:S:A, 
-            values = likelihood_O, 
-            levels = state_names_O)
-  
-  node_I <- bn[["cptlist"]]$I
-  node_S <- bn[["cptlist"]]$S
-  node_A <- bn[["cptlist"]]$A
+  cpt$O <- cptable(~ O|I:A:S, values = likelihood_O, levels = state_names_O)
   
   ## Compile conditional probability tables
-  cpt_compiled <- compileCPT(list(node_I, node_S, node_A, node_O))
+  cpt_compiled <- compileCPT(cpt)
   
   ## Build graphical independent network
-  network <- grain(cpt_compiled)
+  bn <- grain(cpt_compiled)
 }

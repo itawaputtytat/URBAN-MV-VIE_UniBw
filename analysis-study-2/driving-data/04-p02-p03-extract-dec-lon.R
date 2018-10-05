@@ -8,7 +8,7 @@ sett$meta$df_name <- "dat_study2_t_adtf_pxx_full_aggr_dti_rnd1_intrpld_cut"
 sett$meta$am <- ifelse(grepl("dti", sett$meta$df_name), "dti", "tti")
 
 ## Filter
-sett$filters$pxx <- 3
+sett$filters$pxx <- 2
 sett$filters$am <- "dti"
 sett$filters$am_lower <- -125
 sett$filters$am_upper <- 50

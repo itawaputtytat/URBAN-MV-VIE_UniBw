@@ -9,7 +9,7 @@ identifySteerAngleOutliers <- function(dat,
                                        am_thresholds_sa_min2 = c(-50, 50),
                                        am_thresholds_adapt = c(0, 0, 0),
                                        sa_threshold_min = 100,
-                                       z_cut_off = 1.96,
+                                       z_cut_off = c(1.96, 1.96, 1.96),
                                        outlier_sum_threshold = 3,
                                        return_cases_only = F) {
   
@@ -30,8 +30,8 @@ identifySteerAngleOutliers <- function(dat,
                   col_name_am, "<=", 
                   am_thresholds_adapt[1] + am_thresholds_sa_max[2])) %>% 
     
-    group_by_(col_name_group, 
-              col_name_case) %>%
+    group_by_(.dots = c(col_name_group, 
+                        col_name_case)) %>%
     filter_( paste("abs(", col_name_sa, ")", "==", 
                    "max(abs(", col_name_sa, "))") ) %>% 
     
@@ -62,8 +62,8 @@ identifySteerAngleOutliers <- function(dat,
   # Extract AM of max. SA -------------------------------------------------
   
   dat_am_steer_max <- 
-    dat_max_summary %>% 
-    select_(paste_(col_name_am, "min_median")) %>%
+    dat_max_summary[[paste_(col_name_am, "min")]] %>% 
+    select_("median") %>%
     pull() %>% 
     as.vector() %>% 
     median()
@@ -85,8 +85,9 @@ identifySteerAngleOutliers <- function(dat,
   dat_min1 <- 
     left_join(dat,
               dat_max %>%
-                select(passing,
-                       sa_max_dti = pxx_dti_m_rnd1_min)) %>%
+                select("passing",
+                       paste_(col_name_am, "min"))) %>%
+    rename_at(paste_(col_name_am, "min"), funs(paste0("sa_max_dti"))) %>% 
     
     filter_(paste(col_name_am, ">=", 
                   am_thresholds_adapt[2] + am_thresholds_sa_min1[1], "&",
@@ -115,14 +116,14 @@ identifySteerAngleOutliers <- function(dat,
                    c(paste_(col_name_am, "max"),
                      paste_(col_name_sa, "min")),
                    c("min", "max", "mean", "sd", "median"))
-  
+
   
   
   # Extract AM of min. SA before turning ------------------------------------
   
   dat_am_steer_min1 <- 
-    dat_min1_summary %>% 
-    select_(paste_(col_name_am, "max_median")) %>%
+    dat_min1_summary[[paste_(col_name_am, "max")]] %>% 
+    select_("median") %>%
     pull() %>% 
     as.vector() %>% 
     median()
@@ -170,8 +171,8 @@ identifySteerAngleOutliers <- function(dat,
   # Extract AM of min. SA after turning -------------------------------------
   
   dat_am_steer_min2 <- 
-    dat_min2_summary %>% 
-    select_(paste_(col_name_am, "min_median")) %>%
+    dat_min2_summary[[paste_(col_name_am, "min")]] %>% 
+    select_("median") %>%
     pull() %>% 
     as.vector() %>% 
     median()

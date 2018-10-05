@@ -5,6 +5,12 @@ source("prediction/load-case-data.R")
 
 
 
+# Initialise prediction framework -----------------------------------------
+
+source("prediction/initialise-prediction-framework.R")
+
+
+
 # Start timer -------------------------------------------------------------
 
 ptm <- proc.time()
@@ -26,7 +32,13 @@ sett_sim_temp <-
 
 # Run prediction ----------------------------------------------------------
 
-source("analysis-study-1/prediction_dev/pred.R")
+source("prediction/pred.R")
+
+
+
+# Print results -----------------------------------------------------------
+
+print(data.frame(dat_pred_results))
 
 
 

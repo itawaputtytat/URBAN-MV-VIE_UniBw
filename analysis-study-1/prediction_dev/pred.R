@@ -27,14 +27,17 @@ dat_sim <-
     idm_d0 = sett_idm$d0,
     idm_b = sett_idm$b,
     obj_positions = sett_sim$obj_pos)
-  
+
+
+dat_sim_tails <- predLiebner_getSimTails(dat_sim)
+
 
 
 # Compute P(O|Hi) ---------------------------------------------------------
 
 dat_prob <- 
   predLiebner_compProb_O_Hi(
-    dat_sim,
+    dat_sim_tails,
     am2 = sett_sim_temp$am2,
     speed2 = sett_sim_temp$speed2,
     coll_prob = coll_prob_template,
@@ -54,49 +57,17 @@ sett_bn$likelihoods$O <-
         1 - sett_bn$likelihoods$O)
 attributes(sett_bn$likelihoods$O) <- attributes(sett_bn$priors$O)
 
-if (sett_pred$bn_version == "Liebner") {
-  
-  bn <- 
-    predLiebner_updateBN(
-      "bn", 
-      likelihood_O = sett_bn$likelihoods$O,
-      state_names_O = sett_bn$state_names$O)
-  
-  ## Set evidence and query results
-  bn.evidence <- setEvidence(bn, nodes = c("O"), states = c("dat_prob$obs"))
-}
+bn <- 
+  predLiebner_updateBN(
+    "bn", 
+    likelihood_O = sett_bn$likelihoods$O,
+    state_names_O = sett_bn$state_names$O)
 
-
-if (sett_pred$bn_version == "stress" | sett_pred$bn_version == "stress2") {
-  
-  bn <- 
-    predLiebner_updateBN_stress(
-      "bn", 
-      likelihood_O = sett_bn$likelihoods$O,
-      state_names_O = sett_bn$state_names$O)
-  
-  ## Set evidence and query results
-  #bn.evidence <- setEvidence(bn, nodes = c("O"), states = c("dat_prob$obs"))
-  bn.evidence <- setEvidence(bn, nodes = c("O", "stress"), states = c("dat_prob$obs", "stress"))
-  #bn.evidence <- setEvidence(bn, nodes = c("O", "stress", "S"), states = c("dat_prob$obs", "stress", "k1"))
-}
-
-if (sett_pred$bn_version == "stress_style") {
-  
-  bn <- 
-    predLiebner_updateBN_stress_style(
-      "bn", 
-      likelihood_O = sett_bn$likelihoods$O,
-      state_names_O = sett_bn$state_names$O)
-  
-  ## Set evidence and query results
-  bn.evidence <- setEvidence(bn, nodes = c("O"), states = c("dat_prob$obs"))
-  #bn.evidence <- setEvidence(bn, nodes = c("O", "stress"), states = c("dat_prob$obs", "stress"))
-  #bn.evidence <- setEvidence(bn, nodes = c("O", "stress", "S"), states = c("dat_prob$obs", "stress", "k1"))
-}
-
-
-## iplot(bn)
+## Set evidence and query results
+bn.evidence <- setEvidence(bn, nodes = c("O"), states = c("dat_prob$obs"))
+#bn.evidence <- setEvidence(bn, nodes = c("O", "stress"), states = c("dat_prob$obs", "stress"))
+#bn.evidence <- setEvidence(bn, nodes = c("O", "stress", "S"), states = c("dat_prob$obs", "stress", "k1"))
+bn.evidence <- setEvidence(bn, nodes = c("O", "driving_style"), states = c("dat_prob$obs", "sporty"))
 dat_pred_results <- querygrain(bn.evidence, nodes = "I")$I
 
 

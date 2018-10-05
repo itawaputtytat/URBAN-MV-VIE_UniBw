@@ -7,7 +7,7 @@
 ## A: Accelerations
 ## O: Observations
 
-predLiebner_initSettingsForBN <- function(
+predLiebner_initSettingsForBN_Liebner <- function(
   state_names_intent_prefix = "Intent",
   state_names_speed_prefix = "k",
   state_names_acc_lon_prefix = "l",
@@ -69,15 +69,18 @@ predLiebner_initSettingsForBN <- function(
   ## ... values have to be re-collected in following order:
   ## For each k and l: Collect values for Intention 1-4
   sett_bn$id_order <-
-    c(c(1, 10), c(19, 28),
-      c(4, 13), c(22, 31),
-      c(7, 16), c(25, 34),
-      c(2, 11), c(20, 29),
-      c(5, 14), c(23, 32),
-      c(8, 17), c(26, 35),
-      c(3, 12), c(21, 30),
-      c(6, 15), c(24, 33),
-      c(9, 18), c(27, 36))
+    deriveOrderOfHypotheses(sett_bn$states_n$I,
+                            sett_bn$states_n$S,
+                            sett_bn$states_n$A)
+    # c(c(1, 10), c(19, 28),
+    #   c(4, 13), c(22, 31),
+    #   c(7, 16), c(25, 34),
+    #   c(2, 11), c(20, 29),
+    #   c(5, 14), c(23, 32),
+    #   c(8, 17), c(26, 35),
+    #   c(3, 12), c(21, 30),
+    #   c(6, 15), c(24, 33),
+    #   c(9, 18), c(27, 36))
   
   return(sett_bn)
 }

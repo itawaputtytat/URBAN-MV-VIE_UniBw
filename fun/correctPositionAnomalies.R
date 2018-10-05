@@ -1,12 +1,12 @@
 correctPositionAnomalies <- function(dat,
                                       db_conn_name,
                                       src_name_correction_info = 
-                                        "t_steering_angle_outliers",
+                                        "t_steering_wheel_angle_outliers",
                                       col_name_case = "passing",
                                       col_name_am = 
-                                        "pxx_dti_m_rnd1",
+                                        "dti_m_rnd1",
                                       col_name_am_corr = 
-                                        "pxx_dti_m_rnd1_min_vs_median",
+                                        "dti_m_rnd1_min_vs_median",
                                       save_global = T) {
   
   outputFunProc(R)

@@ -23,6 +23,7 @@ predLiebner_initDSM <- function(dat,
   
   ## Create dataframe for thresholds
   ## Convert k to character (cluster groups are saved as factors)
+  thresholds_u_max < rev(thresholds_u_max)
   thresholds_u_max <- 
     data.frame(k = seq(length(thresholds_u_max)),
                u_max = rev(thresholds_u_max))

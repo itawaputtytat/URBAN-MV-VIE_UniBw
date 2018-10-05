@@ -12,6 +12,8 @@ sett_query$db_conn_name <- dbFindConnObj(sett_query$db_name, output = F)
 #     "gps_lat", 
 #     "gps_lon")
 
+
+
 # Load GPS data -----------------------------------------------------------
 
 sett_query$col_names <- 

@@ -10,12 +10,13 @@ sett_synth$meta$df_name <-
 
 ## Filters
 sett_synth$filters$pxx <- 3
-sett_synth$filters$condition_speed <- 70
+sett_synth$filters$condition_speed <- c(50, 70)
 
 ## Column names
 sett_synth$col_names$id <- "passing"
 sett_synth$col_names$subject_id <- "subject_id"
 sett_synth$col_names$pxx <- "pxx"
+sett_synth$col_names$condition_run <- "condition_run"
 sett_synth$col_names$condition_speed <- "condition_speed"
 sett_synth$col_names$am <- "dti_m_rnd1"
 sett_synth$col_names$speed <- "speed_ms"
@@ -40,8 +41,20 @@ sett_synth$db$src_names$dat_acc_lon_max <-
       sett_synth$db$src_names$dat_acc_lon_max)
 
 ## IDM
-sett_synth$idm$u_max <- 60 / 3.6
+#sett_synth$idm$u_max <- 60 / 3.6
+sett_synth$idm$u_max_before_turning <- 100 / 3.6
+sett_synth$idm$u_max_after_turning <- 80 / 3.6
 sett_synth$idm$delta <- 4
+
+## Thresholds for setting max. u
+## 10 m after turning is a good thresholds for study 2
+## ... as a sharp is following after the turning
+sett_synth$thresholds$s_max = 10
+sett_synth$thresholds$s_max0 = -10
+
+## Smoothing
+sett_synth$smoothing$k <- 30
+sett_synth$smoothing$align <- "center"
 
 ## Plot
 sett_synth$show_plot <- FALSE
@@ -91,6 +104,9 @@ dat_synth <-
   dat_synth %>% 
   select_(sett_synth$col_names$id,
           sett_synth$col_names$subject_id,
+          sett_synth$col_names$pxx,
+          sett_synth$col_names$condition_run,
+          sett_synth$col_names$condition_speed,
           sett_synth$col_names$am,
           sett_synth$col_names$speed,
           sett_synth$col_names$acc_lon,
@@ -110,34 +126,40 @@ dat_synth <-
     col_name_speed = sett_synth$col_names$speed,
     col_name_acc_lon = sett_synth$col_names$acc_lon,
     col_name_acc_lon_max = sett_synth$col_names$acc_lon_max_renamed,
-    delta = sett_synth$idm$delta) 
+    delta = sett_synth$idm$delta,
+    u_max = sett_synth$idm$u_max_before_turning) 
 
 ## Replace missing values with max. desired speed
 row_finder <- is.na(dat_synth[, sett_synth$col_names$speed_u])
-dat_synth[row_finder, sett_synth$col_names$speed_u] <- sett_synth$idm$u_max
+dat_synth[row_finder, sett_synth$col_names$speed_u] <- 
+  sett_synth$idm$u_max_after_turning
 
-## Set desired speed profiles to max. desired speed after turning
-dat_synth <- 
-  predLiebner_setMaxIDM(
-    dat_synth,
-    col_name_id = sett_synth$col_names$id,
-    col_name_am = sett_synth$col_names$am,
-    col_name_speed = sett_synth$col_names$speed_u,
-    u_max = sett_synth$idm$u_max,
-    s_max = 10,
-    s_max0 = -10)
-  
 ## Smooth synthesized speed profiles
+## Loess was tried, but rolling average gives better results 
 dat_synth <- 
   dat_synth %>% 
   group_by_(.dots = 
               c(sett_synth$col_names$id,
                 sett_synth$col_names$subject_id)) %>% 
   mutate_(.dots = setNames(list(
-    interp(~ rollAvg(v, k = 30, align = "center"),
+    interp(~ rollAvg(v, 
+                     k = sett_synth$smoothing$k, 
+                     align = sett_synth$smoothing$align),
            v = as.name(sett_synth$col_names$speed_u))),
     sett_synth$col_names$speed_u_smooth)) %>% 
   data.frame()
+
+
+## Set desired speed profiles to max. desired speed after turning
+dat_synth <-
+  predLiebner_setMaxIDM(
+    dat_synth,
+    col_name_id = sett_synth$col_names$id,
+    col_name_am = sett_synth$col_names$am,
+    col_name_speed = sett_synth$col_names$speed_u_smooth,
+    u_max = sett_synth$idm$u_max_after_turning,
+    sett_synth$thresholds$s_max,
+    sett_synth$thresholds$s_max0)
 
 
 
@@ -150,13 +172,15 @@ if (sett_synth$show_plot) {
     geom_line(data = dat_synth,
               aes_string(x = sett_synth$col_names$am,
                          y = sett_synth$col_names$speed,
+                         #y = sett_synth$col_names$speed_u,
                          group = sett_synth$col_names$id)) +
     geom_line(data = dat_synth,
               aes_string(x = sett_synth$col_names$am,
                          y = sett_synth$plot$col_name_measure,
                          group = sett_synth$col_names$id),
               color = "red",
-              alpha = 0.5) +
+              alpha = 0.5,
+              size = 1) +
     coord_cartesian(xlim = c(-100, 50),
                     ylim = c(0, 30))
   
